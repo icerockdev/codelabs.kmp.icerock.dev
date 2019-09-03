@@ -1,0 +1,104 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Создание простого mobile приложения под android и iOS с общим кодом</title>
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://storage.googleapis.com/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <google-codelab-analytics gaid="UA-49880327-14"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="kmmp-lesson-1"
+                  title="Создание простого mobile приложения под android и iOS с общим кодом"
+                  environment="web"
+                  feedback-link="">
+    
+      <google-codelab-step label="Вводная" duration="0">
+        <p>В этом уроке с нуля будет реализован проект с двумя платформами, разобраны основные моменты </p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Add a web app manifest" duration="3">
+        <p>By the end of this section, our weather app will pass the following audits:</p>
+<ul>
+<li>Web app manifest does not meet the installability requirements.</li>
+<li>Is not configured for a custom splash screen.</li>
+<li>Does not set an address-bar theme color.</li>
+</ul>
+<h2 is-upgraded><strong>Create the web app manifest</strong></h2>
+<p>The <a href="https://developers.google.com/web/fundamentals/web-app-manifest" target="_blank">web app manifest</a> is a simple JSON file that gives you, the developer, the ability to control how your app appears to the user.</p>
+<p>Using the web app manifest, your web app can:</p>
+<ul>
+<li>Tell the browser you want your app to open in a standalone window (<code>display</code>).</li>
+<li>Define what page is opened when the app is first launched (<code>start_url</code>).</li>
+<li>Define what the app should look like on the dock or app launcher (<code>short_name</code>, <code>icons</code>).</li>
+<li>Create a splash screen (<code>name</code>, <code>icons</code>, <code>colors</code>).</li>
+<li>Tell the browser to open the window in landscape, or portrait mode (<code>orientation</code>).</li>
+<li>And <a href="https://developer.mozilla.org/en-US/docs/Web/Manifest#Members" target="_blank">plenty more</a>.</li>
+</ul>
+<p>Create a file named <code>public/manifest.json</code> in your project and copy/paste the following contents:</p>
+<p><code>public/manifest.json</code></p>
+<pre><code>{
+  &#34;name&#34;: &#34;Weather&#34;,
+  &#34;short_name&#34;: &#34;Weather&#34;,
+  &#34;icons&#34;: [{
+    &#34;src&#34;: &#34;/images/icons/icon-128x128.png&#34;,
+      &#34;sizes&#34;: &#34;128x128&#34;,
+      &#34;type&#34;: &#34;image/png&#34;
+    }, {
+      &#34;src&#34;: &#34;/images/icons/icon-144x144.png&#34;,
+      &#34;sizes&#34;: &#34;144x144&#34;,
+      &#34;type&#34;: &#34;image/png&#34;
+    }, {
+      &#34;src&#34;: &#34;/images/icons/icon-152x152.png&#34;,
+      &#34;sizes&#34;: &#34;152x152&#34;,
+      &#34;type&#34;: &#34;image/png&#34;
+    }, {
+      &#34;src&#34;: &#34;/images/icons/icon-192x192.png&#34;,
+      &#34;sizes&#34;: &#34;192x192&#34;,
+      &#34;type&#34;: &#34;image/png&#34;
+    }, {
+      &#34;src&#34;: &#34;/images/icons/icon-256x256.png&#34;,
+      &#34;sizes&#34;: &#34;256x256&#34;,
+      &#34;type&#34;: &#34;image/png&#34;
+    }, {
+      &#34;src&#34;: &#34;/images/icons/icon-512x512.png&#34;,
+      &#34;sizes&#34;: &#34;512x512&#34;,
+      &#34;type&#34;: &#34;image/png&#34;
+    }],
+  &#34;start_url&#34;: &#34;/index.html&#34;,
+  &#34;display&#34;: &#34;standalone&#34;,
+  &#34;background_color&#34;: &#34;#3E4EB8&#34;,
+  &#34;theme_color&#34;: &#34;#2F3BA2&#34;
+}</code></pre>
+<p>The manifest supports an array of icons, intended for different screen sizes. For this code lab, we&#39;ve included a few others since we needed them for our iOS integration.</p>
+<aside class="special"><p><strong>TIP:</strong> To be installable, Chrome requires that you provide at least a 192x192px icon and a 512x512px icon. But you can also provide other sizes. Chrome uses the icon closest to 48dp, for example, 96px on a 2x device or 144px for a 3x device.</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://storage.googleapis.com/codelab-elements/native-shim.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/prettify.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/codelab-elements.js"></script>
+
+</body>
+</html>
