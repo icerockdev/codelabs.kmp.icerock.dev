@@ -22,73 +22,114 @@
 <body>
   <google-codelab-analytics gaid="UA-49880327-14"></google-codelab-analytics>
   <google-codelab codelab-gaid=""
-                  id="kmmp-lesson-1"
+                  id="kmp-lesson-1"
                   title="Создание простого mobile приложения под android и iOS с общим кодом"
                   environment="web"
-                  feedback-link="">
+                  feedback-link="https://t.me/kotlinmppchats">
     
       <google-codelab-step label="Вводная" duration="0">
-        <p>В этом уроке с нуля будет реализован проект с двумя платформами, разобраны основные моменты </p>
+        <p>В этом уроке мы сделаем из двух стандартных android и ios проектов мультиплатформенный проект с общей библиотекой на Kotlin Multiplatform. </p>
+<p>Для начала потребуются 2 проекта - Android и iOS созданные из шаблонов Android Studio и Xcode. Проекты нужно расположить в одну директорию, чтобы получилось так:</p>
+<pre><code>├── android-app
+│   ├── build.gradle
+│   ├── proguard-rules.pro
+│   └── src
+│       ├── androidTest
+│       │   └── java
+│       │       └── com
+│       │           └── icerockdev
+│       │               └── android_app
+│       │                   └── ExampleInstrumentedTest.kt
+│       ├── main
+│       │   ├── AndroidManifest.xml
+│       │   ├── java
+│       │   │   └── com
+│       │   │       └── icerockdev
+│       │   │           └── android_app
+│       │   │               └── MainActivity.kt
+│       │   └── res
+│       │       ├── drawable
+│       │       │   └── ic_launcher_background.xml
+│       │       ├── drawable-v24
+│       │       │   └── ic_launcher_foreground.xml
+│       │       ├── layout
+│       │       │   └── activity_main.xml
+│       │       ├── mipmap-anydpi-v26
+│       │       │   ├── ic_launcher.xml
+│       │       │   └── ic_launcher_round.xml
+│       │       ├── mipmap-hdpi
+│       │       │   ├── ic_launcher.png
+│       │       │   └── ic_launcher_round.png
+│       │       ├── mipmap-mdpi
+│       │       │   ├── ic_launcher.png
+│       │       │   └── ic_launcher_round.png
+│       │       ├── mipmap-xhdpi
+│       │       │   ├── ic_launcher.png
+│       │       │   └── ic_launcher_round.png
+│       │       ├── mipmap-xxhdpi
+│       │       │   ├── ic_launcher.png
+│       │       │   └── ic_launcher_round.png
+│       │       ├── mipmap-xxxhdpi
+│       │       │   ├── ic_launcher.png
+│       │       │   └── ic_launcher_round.png
+│       │       └── values
+│       │           ├── colors.xml
+│       │           ├── strings.xml
+│       │           └── styles.xml
+│       └── test
+│           └── java
+│               └── com
+│                   └── icerockdev
+│                       └── android_app
+│                           └── ExampleUnitTest.kt
+├── build.gradle
+├── gradle
+│   └── wrapper
+│       ├── gradle-wrapper.jar
+│       └── gradle-wrapper.properties
+├── gradle.properties
+├── gradlew
+├── gradlew.bat
+├── ios-app
+│   ├── ios-app
+│   │   ├── AppDelegate.swift
+│   │   ├── Assets.xcassets
+│   │   │   ├── AppIcon.appiconset
+│   │   │   │   └── Contents.json
+│   │   │   └── Contents.json
+│   │   ├── Base.lproj
+│   │   │   ├── LaunchScreen.storyboard
+│   │   │   └── Main.storyboard
+│   │   ├── Info.plist
+│   │   └── ViewController.swift
+│   └── ios-app.xcodeproj
+│       ├── project.pbxproj
+│       └── project.xcworkspace
+│           └── contents.xcworkspacedata
+└── settings.gradle</code></pre>
+<p>Для этого создаем Android проект, после чего модуль <code>app</code> переименуем в <code>android-app</code> (не забывая изменение в <code>settings.gradle</code>) и создаем ios проект <code>ios-app</code> в корень android проекта.</p>
+<p>Для удобства можно просто скачать проекты архивом <a href="https://github.com/icerockdev/mobile-multiplatform-education/releases/tag/lesson-1-start" target="_blank">https://github.com/icerockdev/mobile-multiplatform-education/releases/tag/lesson-1-start</a></p>
 
 
       </google-codelab-step>
     
-      <google-codelab-step label="Add a web app manifest" duration="3">
-        <p>By the end of this section, our weather app will pass the following audits:</p>
-<ul>
-<li>Web app manifest does not meet the installability requirements.</li>
-<li>Is not configured for a custom splash screen.</li>
-<li>Does not set an address-bar theme color.</li>
-</ul>
-<h2 is-upgraded><strong>Create the web app manifest</strong></h2>
-<p>The <a href="https://developers.google.com/web/fundamentals/web-app-manifest" target="_blank">web app manifest</a> is a simple JSON file that gives you, the developer, the ability to control how your app appears to the user.</p>
-<p>Using the web app manifest, your web app can:</p>
-<ul>
-<li>Tell the browser you want your app to open in a standalone window (<code>display</code>).</li>
-<li>Define what page is opened when the app is first launched (<code>start_url</code>).</li>
-<li>Define what the app should look like on the dock or app launcher (<code>short_name</code>, <code>icons</code>).</li>
-<li>Create a splash screen (<code>name</code>, <code>icons</code>, <code>colors</code>).</li>
-<li>Tell the browser to open the window in landscape, or portrait mode (<code>orientation</code>).</li>
-<li>And <a href="https://developer.mozilla.org/en-US/docs/Web/Manifest#Members" target="_blank">plenty more</a>.</li>
-</ul>
-<p>Create a file named <code>public/manifest.json</code> in your project and copy/paste the following contents:</p>
-<p><code>public/manifest.json</code></p>
-<pre><code>{
-  &#34;name&#34;: &#34;Weather&#34;,
-  &#34;short_name&#34;: &#34;Weather&#34;,
-  &#34;icons&#34;: [{
-    &#34;src&#34;: &#34;/images/icons/icon-128x128.png&#34;,
-      &#34;sizes&#34;: &#34;128x128&#34;,
-      &#34;type&#34;: &#34;image/png&#34;
-    }, {
-      &#34;src&#34;: &#34;/images/icons/icon-144x144.png&#34;,
-      &#34;sizes&#34;: &#34;144x144&#34;,
-      &#34;type&#34;: &#34;image/png&#34;
-    }, {
-      &#34;src&#34;: &#34;/images/icons/icon-152x152.png&#34;,
-      &#34;sizes&#34;: &#34;152x152&#34;,
-      &#34;type&#34;: &#34;image/png&#34;
-    }, {
-      &#34;src&#34;: &#34;/images/icons/icon-192x192.png&#34;,
-      &#34;sizes&#34;: &#34;192x192&#34;,
-      &#34;type&#34;: &#34;image/png&#34;
-    }, {
-      &#34;src&#34;: &#34;/images/icons/icon-256x256.png&#34;,
-      &#34;sizes&#34;: &#34;256x256&#34;,
-      &#34;type&#34;: &#34;image/png&#34;
-    }, {
-      &#34;src&#34;: &#34;/images/icons/icon-512x512.png&#34;,
-      &#34;sizes&#34;: &#34;512x512&#34;,
-      &#34;type&#34;: &#34;image/png&#34;
-    }],
-  &#34;start_url&#34;: &#34;/index.html&#34;,
-  &#34;display&#34;: &#34;standalone&#34;,
-  &#34;background_color&#34;: &#34;#3E4EB8&#34;,
-  &#34;theme_color&#34;: &#34;#2F3BA2&#34;
-}</code></pre>
-<p>The manifest supports an array of icons, intended for different screen sizes. For this code lab, we&#39;ve included a few others since we needed them for our iOS integration.</p>
-<aside class="special"><p><strong>TIP:</strong> To be installable, Chrome requires that you provide at least a 192x192px icon and a 512x512px icon. But you can also provide other sizes. Chrome uses the icon closest to 48dp, for example, 96px on a 2x device or 144px for a 3x device.</p>
-</aside>
+      <google-codelab-step label="Создание модуля общей библиотеки" duration="3">
+        <p>Для добавления общей библиотеки нужно добавить новый gradle модуль (android и mpp библиотеки управляются системой сборки <a href="https://gradle.org/" target="_blank">gradle</a>). Для создания модуля нужно:</p>
+<ol type="1" start="1">
+<li>Создаем директорию mpp-library (так будет называться наш gradle модуль) рядом с приложениями, чтобы получилось:</li>
+</ol>
+<pre><code>├── android-app
+├── ios-app
+└── mpp-library</code></pre>
+<ol type="1" start="2">
+<li>Создаем <code>mpp-library/build.gradle</code> в нем будет располагаться конфигурация мультиплатформенного модуля. Содержимое файла для начала будет:</li>
+</ol>
+<pre><code>apply plugin: &#39;com.android.library&#39;
+apply plugin: &#39;org.jetbrains.kotlin.multiplatform&#39;</code></pre>
+<ol type="1" start="3">
+<li>В <code>settings.gradle</code> добавляем подключение нового модуля:</li>
+</ol>
+<pre><code>include &#39;:mpp-library&#39;</code></pre>
 
 
       </google-codelab-step>

@@ -3,8 +3,8 @@
   "format": "html",
   "prefix": "https://storage.googleapis.com",
   "mainga": "UA-49880327-14",
-  "updated": "2019-09-03T09:17:17Z",
-  "id": "kmmp-lesson-1",
+  "updated": "2019-10-04T06:43:19Z",
+  "id": "kmp-lesson-1",
   "duration": 3,
   "title": "Создание простого mobile приложения под android и iOS с общим кодом",
   "authors": "Aleksey Mikhailov",
@@ -15,10 +15,11 @@
     "published"
   ],
   "category": [
-    "Kotlin Mobile MultiPlatform"
+    "Kotlin Mobile Multiplatform"
   ],
   "tags": [
     "kotlin-mobile-mpp"
   ],
-  "url": "kmmp-lesson-1"
+  "feedback": "https://t.me/kotlinmppchats",
+  "url": "kmp-lesson-1"
 }
