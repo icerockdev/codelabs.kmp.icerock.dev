@@ -1,145 +1,154 @@
 
 <!doctype html>
-
-<html>
+<html lang="en">
 <head>
-  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
-  <meta name="theme-color" content="#4F7DC9">
-  <meta charset="UTF-8">
-  <title>Создание простого mobile приложения под android и iOS с общим кодом</title>
-  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
-  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
-  <link rel="stylesheet" href="https://storage.googleapis.com/codelab-elements/codelab-elements.css">
-  <style>
-    .success {
-      color: #1e8e3e;
-    }
-    .error {
-      color: red;
-    }
-  </style>
+<meta charset="utf-8">
+<meta name="description" content="Обучение разработки мобильных приложений Android, iOS с общим кодом через Kotlin Multiplatform">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="generator" content="Kotlin Multiplatform Codelabs">
+<meta name="application-name" content="Kotlin Multiplatform Codelabs">
+<link rel="canonical" href="https://example.com/">
+<link rel="preconnect" href="https://www.google-analytics.com">
+<script>
+window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+    ga('create', 'UA-49880327-14', 'auto');
+    ga('send', 'pageview');
+</script>
+<script async src="https://www.google-analytics.com/analytics.js"></script>
+<title>Kotlin Multiplatform Codelabs</title>
+<link rel="stylesheet" href="/styles/main.css">
+<link rel="import" href="/elements/elements.html">
+<style is="custom-style">
+:root{--paper-tabs-selection-bar-color:currentcolor;--paper-input-container-underline:{display:none};--paper-input-container-underline-focus:{display:none};}.dropdown-filter{--paper-input-container:{padding:8px}} </style>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#455a64">
+<meta name="apple-mobile-web-app-title" content="Kotlin Multiplatform Codelabs">
+<link rel="apple-touch-icon" sizes="180x180" href="/images/favicons/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/images/favicons/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="194x194" href="/images/favicons/favicon-194x194.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/images/favicons/android-chrome-192x192.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/images/favicons/favicon-16x16.png">
+<link rel="manifest" href="site.webmanifest">
+<link rel="mask-icon" href="/images/favicons/safari-pinned-tab.svg" color="#455a64">
+<meta name="msapplication-TileColor" content="#455a64">
+<meta name="msapplication-TileImage" content="/images/favicons/mstile-144x144.png">
+<meta name="theme-color" content="#455a64">
+<meta name="og:type" property="og:type" content="website">
+<meta name="og:title" property="og:title" content="Kotlin Multiplatform Codelabs">
+<meta name="og:description" property="og:description" content="Обучение разработки мобильных приложений Android, iOS с общим кодом через Kotlin Multiplatform">
+<meta name="og:url" property="og:url" content="https://example.com/">
+<meta name="og:site_name" property="og:site_name" content="Codelabs">
+<meta name="og:determiner" property="og:determiner" content="the">
+<meta name="og:locale" property="og:locale" content="en_US">
+<meta name="og:image" property="og:image" content="/images/og-image.png">
+<meta name="og:image:url" property="og:image:url" content="/images/og-image.png">
+<meta name="og:image:type" property="og:image:type" content="image/png">
+<meta name="og:image:width" property="og:image:width" content="1200">
+<meta name="og:image:height" property="og:image:height" content="1200">
+<meta name="og:image:alt" property="og:image:alt" content="Codelabs">
+<meta name="twitter:card" property="twitter:card" content="summary_large_image">
+<meta name="twitter:title" property="twitter:title" content="Kotlin Multiplatform Codelabs">
+<meta name="twitter:description" property="twitter:description" content="Обучение разработки мобильных приложений Android, iOS с общим кодом через Kotlin Multiplatform">
+<meta name="twitter:image" property="twitter:image" content="/images/og-image.png">
+<meta name="twitter:url" property="twitter:url" content="https://example.com/">
 </head>
-<body>
-  <google-codelab-analytics gaid="UA-49880327-14"></google-codelab-analytics>
-  <google-codelab codelab-gaid=""
-                  id="kmp-lesson-1"
-                  title="Создание простого mobile приложения под android и iOS с общим кодом"
-                  environment="web"
-                  feedback-link="https://t.me/kotlinmppchats">
-    
-      <google-codelab-step label="Вводная" duration="0">
-        <p>В этом уроке мы сделаем из двух стандартных android и ios проектов мультиплатформенный проект с общей библиотекой на Kotlin Multiplatform. </p>
-<p>Для начала потребуются 2 проекта - Android и iOS созданные из шаблонов Android Studio и Xcode. Проекты нужно расположить в одну директорию, чтобы получилось так:</p>
-<pre><code>├── android-app
-│   ├── build.gradle
-│   ├── proguard-rules.pro
-│   └── src
-│       ├── androidTest
-│       │   └── java
-│       │       └── com
-│       │           └── icerockdev
-│       │               └── android_app
-│       │                   └── ExampleInstrumentedTest.kt
-│       ├── main
-│       │   ├── AndroidManifest.xml
-│       │   ├── java
-│       │   │   └── com
-│       │   │       └── icerockdev
-│       │   │           └── android_app
-│       │   │               └── MainActivity.kt
-│       │   └── res
-│       │       ├── drawable
-│       │       │   └── ic_launcher_background.xml
-│       │       ├── drawable-v24
-│       │       │   └── ic_launcher_foreground.xml
-│       │       ├── layout
-│       │       │   └── activity_main.xml
-│       │       ├── mipmap-anydpi-v26
-│       │       │   ├── ic_launcher.xml
-│       │       │   └── ic_launcher_round.xml
-│       │       ├── mipmap-hdpi
-│       │       │   ├── ic_launcher.png
-│       │       │   └── ic_launcher_round.png
-│       │       ├── mipmap-mdpi
-│       │       │   ├── ic_launcher.png
-│       │       │   └── ic_launcher_round.png
-│       │       ├── mipmap-xhdpi
-│       │       │   ├── ic_launcher.png
-│       │       │   └── ic_launcher_round.png
-│       │       ├── mipmap-xxhdpi
-│       │       │   ├── ic_launcher.png
-│       │       │   └── ic_launcher_round.png
-│       │       ├── mipmap-xxxhdpi
-│       │       │   ├── ic_launcher.png
-│       │       │   └── ic_launcher_round.png
-│       │       └── values
-│       │           ├── colors.xml
-│       │           ├── strings.xml
-│       │           └── styles.xml
-│       └── test
-│           └── java
-│               └── com
-│                   └── icerockdev
-│                       └── android_app
-│                           └── ExampleUnitTest.kt
-├── build.gradle
-├── gradle
-│   └── wrapper
-│       ├── gradle-wrapper.jar
-│       └── gradle-wrapper.properties
-├── gradle.properties
-├── gradlew
-├── gradlew.bat
-├── ios-app
-│   ├── ios-app
-│   │   ├── AppDelegate.swift
-│   │   ├── Assets.xcassets
-│   │   │   ├── AppIcon.appiconset
-│   │   │   │   └── Contents.json
-│   │   │   └── Contents.json
-│   │   ├── Base.lproj
-│   │   │   ├── LaunchScreen.storyboard
-│   │   │   └── Main.storyboard
-│   │   ├── Info.plist
-│   │   └── ViewController.swift
-│   └── ios-app.xcodeproj
-│       ├── project.pbxproj
-│       └── project.xcworkspace
-│           └── contents.xcworkspacedata
-└── settings.gradle</code></pre>
-<p>Для этого создаем Android проект, после чего модуль <code>app</code> переименуем в <code>android-app</code> (не забывая изменение в <code>settings.gradle</code>) и создаем ios проект <code>ios-app</code> в корень android проекта.</p>
-<p>Для удобства можно просто скачать проекты архивом <a href="https://github.com/icerockdev/mobile-multiplatform-education/releases/tag/lesson-1-start" target="_blank">https://github.com/icerockdev/mobile-multiplatform-education/releases/tag/lesson-1-start</a></p>
-
-
-      </google-codelab-step>
-    
-      <google-codelab-step label="Создание модуля общей библиотеки" duration="3">
-        <p>Для добавления общей библиотеки нужно добавить новый gradle модуль (android и mpp библиотеки управляются системой сборки <a href="https://gradle.org/" target="_blank">gradle</a>). Для создания модуля нужно:</p>
-<ol type="1" start="1">
-<li>Создаем директорию mpp-library (так будет называться наш gradle модуль) рядом с приложениями, чтобы получилось:</li>
-</ol>
-<pre><code>├── android-app
-├── ios-app
-└── mpp-library</code></pre>
-<ol type="1" start="2">
-<li>Создаем <code>mpp-library/build.gradle</code> в нем будет располагаться конфигурация мультиплатформенного модуля. Содержимое файла для начала будет:</li>
-</ol>
-<pre><code>apply plugin: &#39;com.android.library&#39;
-apply plugin: &#39;org.jetbrains.kotlin.multiplatform&#39;</code></pre>
-<ol type="1" start="3">
-<li>В <code>settings.gradle</code> добавляем подключение нового модуля:</li>
-</ol>
-<pre><code>include &#39;:mpp-library&#39;</code></pre>
-
-
-      </google-codelab-step>
-    
-  </google-codelab>
-
-  <script src="https://storage.googleapis.com/codelab-elements/native-shim.js"></script>
-  <script src="https://storage.googleapis.com/codelab-elements/custom-elements.min.js"></script>
-  <script src="https://storage.googleapis.com/codelab-elements/prettify.js"></script>
-  <script src="https://storage.googleapis.com/codelab-elements/codelab-elements.js"></script>
-
+<body id="app" is="body-bind" class="loading fullbleed">
+<paper-header-panel id="main" mode="standard" main>
+<div id="mainToolbar" class="paper-header">
+<div class="site-width layout horizontal">
+<a href="/">
+<img src="/images/logo.png" class="logo-devs" alt="Codelabs Logo">
+</a>
+<div id="searchbar">
+<paper-input-container no-label-float>
+<paper-icon-button prefix icon="search"></paper-icon-button>
+<label>Search</label>
+<input is="iron-input" bind-value="{{searchVal}}" on-keydown="onSearchKeyDown">
+</paper-input-container>
+</div>
+</div>
+</div>
+<header id="banner" down$="[[_toBoolean(selectedFilter)]]">
+<div class="site-width">
+<h2 class="banner-title">Welcome to Codelabs!</h2>
+<div class="banner-description" data-filter-selected$="[[_toBoolean(selectedFilter)]]">
+<p class="banner-info">
+Codelabs provide a guided, tutorial, hands-on coding experience. Most codelabs will step you through the process of building a small application, or adding a new feature to an existing application.
+<br>
+<a href="https://github.com/googlecodelabs/tools">Codelab tools on GitHub</a>
+</p>
+</div>
+</div>
+</header>
+<main>
+<div id="filters" class="site-width layout horizontal center justified">
+<div id="sortby">
+<paper-tabs selected="0" noink on-iron-activate="sortBy">
+<paper-tab>A-Z</paper-tab>
+<paper-tab>Recent</paper-tab>
+<paper-tab>Duration</paper-tab>
+</paper-tabs>
+</div>
+<paper-dropdown-menu label="Choose an event" class="dropdown-filter" no-label-float noink no-animations>
+<paper-listbox id="eventList" slot="dropdown-content" class="dropdown-content">
+</paper-listbox>
+</paper-dropdown-menu>
+</div>
+<card-sorter id="cards" class="site-width">
+<a href="/codelabs/kmp-mobile-lesson-1/index.html?index=..%2F..index" on-tap="navigate" class="codelab-card category-multiplatform" data-category="multiplatform" data-title="Kotlin Mobile Multiplatform - Lesson 1" data-duration="45" data-updated="2019-10-06T12:07:44+07:00" data-tags="kotlin-mobile-mpp" data-pin="">
+<div class="description">Kotlin Mobile Multiplatform - Lesson 1</div>
+<div class="card-duration">
+<span>45 min </span>
+<span>Updated Oct 6, 2019</span>
+</div>
+<div class="card-footer">
+<div class="category-icon multiplatform-icon"></div>
+<paper-button class="multiplatform-bg">Start</paper-button>
+</div>
+</a>
+</card-sorter>
+<div id="loading-placeholder" class="site-width">
+Loading Codelabs, please wait...
+</div>
+</main>
+<footer id="footer">
+<div class="footer-wrapper site-width">
+<div class="link-list">
+<label>Connect</label>
+<ul>
+<li><a href="https://www.example.com/">Example</a></li>
+</ul>
+</div>
+<div class="link-list">
+<label>Programs</label>
+<ul>
+<li><a href="https://www.example.com/">Example</a></li>
+</ul>
+</div>
+<div class="link-list">
+<label>Developer Consoles</label>
+<ul>
+<li><a href="https://www.example.com/">Example</a></li>
+</ul>
+</div>
+<div class="link-list">
+<label>Explore</label>
+<ul>
+<li><a href="https://www.example.com/">Example</a></li>
+</ul>
+</div>
+</div>
+</footer>
+<div class="footerbar">
+<div class="site-width layout horizontal center justified">
+<span>
+<a href="https://example.com">Terms</a>
+&nbsp; | &nbsp;
+<a href="https://example.com">Privacy</a>
+</span>
+</div>
+</div>
+</paper-header-panel>
+<script src="/scripts/main.js"></script>
 </body>
 </html>
