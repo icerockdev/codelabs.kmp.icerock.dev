@@ -3,7 +3,7 @@
   "format": "html",
   "prefix": "https://storage.googleapis.com",
   "mainga": "UA-49880327-14",
-  "updated": "2019-10-06T12:18:02+07:00",
+  "updated": "2019-10-06T20:41:32+07:00",
   "id": "kmp-mobile-lesson-1",
   "duration": 45,
   "title": "Kotlin Mobile Multiplatform - Lesson 1",
@@ -20,6 +20,5 @@
     "kotlin-mobile-mpp"
   ],
   "feedback": "https://t.me/kotlinmppchats",
-  "ga": "UA-81805223-5",
   "url": "kmp-mobile-lesson-1"
 }
