@@ -168,18 +168,14 @@ kotlin {
 
 [git changes](https://github.com/icerockdev/mobile-multiplatform-education/commit/7ea6d9b919dacf64ef16ebbe4ac48c9f51da8b5a)
 
-После этого можем выполнить `Gradle Sync` и увидим что директории `commonMain/kotlin` и `androidMain/kotlin` посветились как
- директории с исходным кодом. Но `iosMain/kotlin` не подсветился так, к этому вернемся чуть дальше. Сначала сделаем чтобы
- все относящееся к Android находилось в `androidMain`.
+После этого можем выполнить `Gradle Sync` и увидим что директории `commonMain/kotlin` и `androidMain/kotlin` посветились как директории с исходным кодом. Но `iosMain/kotlin` не подсветился так, к этому вернемся чуть дальше. Сначала сделаем чтобы все относящееся к Android находилось в `androidMain`.
 
 ### Конфигурирование Android таргета
 Переносим `AndroidManifest.xml` в `androidMain`:
-`mpp-library/src/main/AndroidManifest.xml` → `mpp-library/src/androidMain/AndroidManifest.xml`
+`mpp-library/src/main/AndroidManifest.xml` → `mpp-library/src/androidMain/AndroidManifest.xml`  
 [git changes](https://github.com/icerockdev/mobile-multiplatform-education/commit/67cf5b1a3743f1701f5a1c6577bacdb24d8f625b)
 
-Но после переноса можно увидеть что `Gradle Sync` опять не находит `AndroidManifest`. Это связано с тем что Android gradle plugin
- ничего не знает про kotlin multiplatform плагин. Чтобы корректно перенести все связанное с Android в `androidMain` требуется добавить
- специальную конфигурацию.
+Но после переноса можно увидеть что `Gradle Sync` опять не находит `AndroidManifest`. Это связано с тем что Android gradle plugin ничего не знает про kotlin multiplatform плагин. Чтобы корректно перенести все связанное с Android в `androidMain` требуется добавить специальную конфигурацию.
 
 Добавляем в `mpp-library/build.gradle`:
 ```groovy
@@ -296,8 +292,7 @@ object AndroidHelloWorld {
 }
 ```
 
-Это позволит нам в Android версии общей библиотеки видеть еще один класс - `AndroidHelloWorld` и внутри платформенного кода мы можем использовать
- любой функционал платформы (в нашем случае использовали `android.util.Log`). Остается вызвать и эту функцию в приложении.
+Это позволит нам в Android версии общей библиотеки видеть еще один класс - `AndroidHelloWorld` и внутри платформенного кода мы можем использовать любой функционал платформы (в нашем случае использовали `android.util.Log`). Остается вызвать и эту функцию в приложении.
 
 Добавляем в `android-app/src/main/java/com/icerockdev/android_app/MainActivity.kt`:
 ```kotlin
@@ -314,10 +309,7 @@ class MainActivity : AppCompatActivity() {
 После изменения можно запустить `android-app` чтобы убедиться что работает и логирование через `println` и через андроидный `Log`. 
 
 ## Реализация примера в iOS приложении
-Ранее мы увидели что `iosMain/kotlin` не распознается IDE как директория с исходным кодом. Это связано с тем, что у нас инициализированы
- два таргета - `iosArm64` и `iosX64`. Исходный код этих таргетов ожидается в `iosArm64/kotlin` и `iosX64/kotlin` соответственно. Из-за
- этого выбор либо дублировать код, либо использовать какой либо вариант обобщения. Рекомендуемый нами вариант - использовать symlink'и
- на `iosMain`. Это позволит не дублировать исходный код и иметь корректную во всех отношениях интеграцию IDE.
+Ранее мы увидели что `iosMain/kotlin` не распознается IDE как директория с исходным кодом. Это связано с тем, что у нас инициализированы два таргета - `iosArm64` и `iosX64`. Исходный код этих таргетов ожидается в `iosArm64/kotlin` и `iosX64/kotlin` соответственно. Из-за этого выбор либо дублировать код, либо использовать какой либо вариант обобщения. Рекомендуемый нами вариант - использовать symlink'и на `iosMain`. Это позволит не дублировать исходный код и иметь корректную во всех отношениях интеграцию IDE.
 
 Создаем symlink'и `mpp-library/src/iosArm64Main` и `mpp-library/src/iosX64Main`, для этого делаем:
 ```bash
@@ -330,8 +322,7 @@ ln -s iosMain iosX64Main
 
 После этого можем запустить `Gradle Sync` и увидеть что `iosX64Main/kotlin` и `iosArm64/kotlin` являются директориями с исходным кодом.
 
-Теперь добавим ios-specific код для iOS, с использованием платформенного API. Для этого мы можем создать файл в IDE через любую из наших
- директорий-symlink'ов (`iosX64Main`,`iosArm64Main`) - они все равно ведут в одно и то же место.
+Теперь добавим ios-specific код для iOS, с использованием платформенного API. Для этого мы можем создать файл в IDE через любую из наших директорий-symlink'ов (`iosX64Main`,`iosArm64Main`) - они все равно ведут в одно и то же место.
 
 Создаем `mpp-library/src/iosMain/kotlin/IosHelloWorld.kt`:
 ```kotlin
@@ -347,8 +338,7 @@ object IosHelloWorld {
 
 Можно увидеть что IDE корректно распознает платформенные API ios, имеет автоимпорт, автокомплит и навигацию к определению.
 
-Теперь нужно собрать `framework` который мы сможем подключить к iOS приложению. Но для компиляции `framework`'а нужно дополнить
- конфигурацию проекта.
+Теперь нужно собрать `framework` который мы сможем подключить к iOS приложению. Но для компиляции `framework`'а нужно дополнить конфигурацию проекта.
 
 В `mpp-library/build.gradle` заменим `iosArm64()` и `iosX64()` на вызов с блоком конфигурации:
 ```groovy
@@ -369,8 +359,7 @@ kotlin {
 ```
 [git changes](https://github.com/icerockdev/mobile-multiplatform-education/commit/01406cfaf1ea087372cdafdcd29a73f5eff535df)
 
-После этого  можем вызвать `Gradle Task` `:mpp-library:linkMultiPlatformLibraryDebugFrameworkIosX64` для компиляции `framework`'а
- для симулятора. По итогу мы получим в директории `build/bin/iosX64/MultiPlatformLibraryDebugFramework/` наш скомпилированный `framework`. И его нужно подключить к iOS приложению.
+После этого  можем вызвать `Gradle Task` `:mpp-library:linkMultiPlatformLibraryDebugFrameworkIosX64` для компиляции `framework`'а для симулятора. По итогу мы получим в директории `build/bin/iosX64/MultiPlatformLibraryDebugFramework/` наш скомпилированный `framework`. И его нужно подключить к iOS приложению.
 
 ### Интегрируем framework в iOS приложение
 Открываем через Xcode `ios-app/ios-app.xcodeproj` и добавляем фреймворк к проекту. Для этого:  
