@@ -224,7 +224,7 @@ object HelloWorld {
 Но IDE сообщит что Kotlin не сконфигурирован. Это связано с тем, что для общего кода нужно еще подключить kotlin stdlib.  
 В `mpp-library/build.gradle`:
 ```groovy
-android {
+kotlin {
     // ...
 
     sourceSets {
