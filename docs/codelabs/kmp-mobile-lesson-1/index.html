@@ -216,7 +216,7 @@ apply plugin: &#39;org.jetbrains.kotlin.multiplatform&#39;
 </code></pre>
 <p><a href="https://github.com/icerockdev/mobile-multiplatform-education/commit/9b174df4fb66d9448d5ebd29930c027ea7f29b09" target="_blank">git changes</a></p>
 <p>Но IDE сообщит что Kotlin не сконфигурирован. Это связано с тем, что для общего кода нужно еще подключить kotlin stdlib.<br><br>В <code>mpp-library/build.gradle</code>:</p>
-<pre><code>android {
+<pre><code>kotlin {
     // ...
 
     sourceSets {
