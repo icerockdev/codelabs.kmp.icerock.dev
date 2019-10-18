@@ -1,5 +1,5 @@
 summary: Создание фичи настроек
-id: moko-template-lesson-1
+id: moko-template-lesson-2
 categories: multiplatform
 environments: kotlin-mobile-mpp
 status: published

@@ -3,12 +3,12 @@
   "format": "html",
   "prefix": "https://storage.googleapis.com",
   "mainga": "UA-49880327-14",
-  "updated": "2019-10-18T11:30:51+07:00",
+  "updated": "2019-10-18T11:28:54+07:00",
   "id": "moko-template-lesson-1",
   "duration": 5,
-  "title": "moko-template #3 - создание фичи экрана элемента",
-  "summary": "Создание фичи настроек",
-  "source": "lesson-moko-template-3.md",
+  "title": "moko-template #1 - создание нового MPP проекта с шаблона",
+  "summary": "Создание нового MPP проекта с шаблона moko-template",
+  "source": "lesson-moko-template-1.md",
   "theme": "",
   "status": [
     "published"
