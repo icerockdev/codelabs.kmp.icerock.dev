@@ -1,5 +1,5 @@
 summary: Создание multiplatform модуля для нативных Android, iOS приложений
-id: kmp-mobile-lesson-1
+id: kmp-mobile-from-zero
 categories: multiplatform
 environments: kotlin-mobile-mpp
 status: published
@@ -7,7 +7,7 @@ Feedback Link: https://t.me/kotlinmppchats
 Analytics Account: UA-81805223-5
 Author: Aleksey Mikhailov <am@icerock.dev>
 
-# Kotlin Mobile Multiplatform - Lesson 1
+# Добавление к существующим Android, iOS проектам общей библиотеки
 ## Вводная
 Duration: 5
 

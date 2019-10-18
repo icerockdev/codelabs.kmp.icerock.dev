@@ -3,12 +3,12 @@
   "format": "html",
   "prefix": "https://storage.googleapis.com",
   "mainga": "UA-49880327-14",
-  "updated": "2019-10-09T08:53:36+07:00",
-  "id": "kmp-mobile-lesson-1",
-  "duration": 50,
-  "title": "Kotlin Mobile Multiplatform - Lesson 1",
-  "summary": "Создание multiplatform модуля для нативных Android, iOS приложений",
-  "source": "lesson1.md",
+  "updated": "2019-10-18T11:30:51+07:00",
+  "id": "moko-template-lesson-1",
+  "duration": 5,
+  "title": "moko-template #3 - создание фичи экрана элемента",
+  "summary": "Создание фичи настроек",
+  "source": "lesson-moko-template-3.md",
   "theme": "",
   "status": [
     "published"
@@ -21,5 +21,5 @@
   ],
   "feedback": "https://t.me/kotlinmppchats",
   "ga": "UA-81805223-5",
-  "url": "kmp-mobile-lesson-1"
+  "url": "moko-template-lesson-1"
 }
