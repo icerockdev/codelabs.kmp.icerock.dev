@@ -1,0 +1,129 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>GiphyApp #1 - Создание приложения на базе moko-template</title>
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://storage.googleapis.com/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <google-codelab-analytics gaid="UA-49880327-14"></google-codelab-analytics>
+  <google-codelab codelab-gaid="UA-81805223-5"
+                  id="giphy-app-1"
+                  title="GiphyApp #1 - Создание приложения на базе moko-template"
+                  environment="web"
+                  feedback-link="https://t.me/kotlinmppchats">
+    
+      <google-codelab-step label="Вводная" duration="5">
+        <p>В этом руководстве будет описано создание небольшого приложения под Android и iOS с технологией <a href="https://kotlinlang.org/docs/reference/multiplatform.html" target="_blank">Kotlin Multiplatform</a> основываясь на шаблоне <a href="https://github.com/icerockdev/moko-template" target="_blank">moko-template</a>.</p>
+<h2 is-upgraded>Инструменты</h2>
+<p>Для работы потребуется:</p>
+<ul>
+<li>Android Studio 3.4.0+ (<strong>не 3.5.1 так как там </strong><a href="https://youtrack.jetbrains.com/issue/KT-34143" target="_blank"><strong>баг, ломающий mpp</strong></a>);</li>
+<li>Xcode 10.3+;</li>
+<li>Xcode Command Line Tools (<code>xcode-select --install</code>);</li>
+<li><a href="https://cocoapods.org/" target="_blank">CocoaPods</a> (<code>sudo gem install cocoapods</code>);</li>
+<li><a href="https://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html" target="_blank">JDK</a> - требуется для запуска <code>gradle</code> из <code>Xcode build phase</code>.</li>
+</ul>
+<h2 is-upgraded>Финальный результат</h2>
+<p>В результате будет получено приложение просмотра гифок с использованием <a href="https://developers.giphy.com/docs/api" target="_blank">GIPHY API</a>. Интерфейс приложения будет полностью нативный, проигрывание Gif будет сделано нативными библиотеками <a href="https://github.com/bumptech/glide" target="_blank">glide</a> для Android и <a href="https://github.com/kirualex/SwiftyGif" target="_blank">SwiftyGif</a> для iOS.</p>
+<table>
+<tr></tr>
+<tr><td colspan="1" rowspan="1"><p class="image-container"><img alt="giphy-android-app" src="img/76c41b40c337a51b.webp"></p>
+</td><td colspan="1" rowspan="1"><p class="image-container"><img alt="giphy-ios-app" src="img/21009ba4c1a2bbe8.webp"></p>
+</td></tr>
+</table>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Создание проекта из moko-template" duration="5">
+        <p>Для создания проекта будет использован шаблон <a href="https://github.com/icerockdev/moko-template" target="_blank">moko-template</a>.</p>
+<aside class="special"><p>Шаблон имеет настроенную конфигурацию сборки Android и iOS приложений с общей библиотекой, что позволяет не тратить время на интеграцию сборки общей библиотеки под iOS с iOS проектом, на конфигурирование Kotlin Multiplatform модулей и зависимостей (используя <a href="https://github.com/icerockdev/mobile-multiplatform-gradle-plugin" target="_blank">mobile-multiplatform-gradle-plugin</a> конфигурация значительно упрощена). Так же шаблон имеет несколько фич-примеров.</p>
+</aside>
+<h2 is-upgraded>Use this template</h2>
+<p>Чтобы использовать шаблон нужно перейти на <a href="https://github.com/icerockdev/moko-template" target="_blank">GitHub репозиторий шаблона moko-template</a> и нажать зеленую кнопку <code>Use this template</code>. Этим действием мы создадим новый репозиторий с контентом, соответствующим последнему коммиту из <code>master</code> ветки <code>moko-template</code>.</p>
+<p>После успешного создания нового репозитория склонируем репозиторий себе - <code>git clone &lt;git адрес в�</code>�шего репозитория&gt;.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Тестовая сборка" duration="20">
+        <p>Чтобы убедиться, что стартовое состояние корректно работает - запустим оба приложения. Для этого нужно:</p>
+<ul>
+<li>Android - открываем через Android Studio корневую директорию репозитория, после завершения <code>Gradle Sync</code> можно запустить модуль <code>android-app</code> как обычное приложение;</li>
+<li>iOS - устанавливаем CocoaPods проекта - в директории <code>ios-app</code> запускаем <code>pod install</code>, а после завершения открываем <code>ios-app/ios-app.xcworkspace</code> и жмем <code>Run</code> для запуска приложения.</li>
+</ul>
+<aside class="special"><p>Время сборки Kotlin/Native части продолжительное (сборка запускается автоматически при <code>pod install</code> для корректной интеграции в проект, а так же при сборке iOS проекта).</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Настройки идентификации приложения" duration="10">
+        <p>Настройки индентификации приложения вносятся полностью так же, как и в обычных Android и iOS приложениях.</p>
+<h2 is-upgraded>Изменение Appliсation Id</h2>
+<p>Android - в файле <code>android-app/build.gradle.kts</code> изменить:</p>
+<pre><code>android {
+    ...
+
+    defaultConfig {
+        ...
+        
+        applicationId = &#34;dev.icerock.codelab.giphy&#34;
+        ...
+    }
+}
+</code></pre>
+<p>iOS - в Xcode в настройках проекта указать <code>Bundle Identifier</code> как на скриншоте:<br><img alt="Xcode bundle identifier" src="img/cf056d8ff2035aab.png"></p>
+<h2 is-upgraded>Изменение имени приложения</h2>
+<p>Android - в файле <code>android-app/src/main/res/values/strings.xml</code> изменить:</p>
+<pre><code>&lt;resources&gt;
+    &lt;string name=&#34;app_name&#34;&gt;Giphy App&lt;/string&gt;
+    ...
+&lt;/resources&gt;
+</code></pre>
+<p>iOS - в Xcode в настройках проекта указать <code>Display name</code> как на скриншоте:<br><img alt="Xcode display name" src="img/c0d539c464739135.png"></p>
+<h2 is-upgraded>Изменение иконки</h2>
+<h2 is-upgraded>Изменение загрузочного экрана</h2>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Смена стартового экрана" duration="5">
+        
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Реализация загрузки списка Gif" duration="30">
+        
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Реализация поиска Gif" duration="15">
+        
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://storage.googleapis.com/codelab-elements/native-shim.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/prettify.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/codelab-elements.js"></script>
+
+</body>
+</html>
