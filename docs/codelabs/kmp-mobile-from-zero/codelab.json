@@ -3,7 +3,7 @@
   "format": "html",
   "prefix": "https://storage.googleapis.com",
   "mainga": "UA-49880327-14",
-  "updated": "2019-10-18T07:27:13+03:00",
+  "updated": "2019-10-21T14:58:57+03:00",
   "id": "kmp-mobile-from-zero",
   "duration": 50,
   "title": "Добавление к существующим Android, iOS проектам общей библиотеки",
@@ -19,7 +19,7 @@
   "tags": [
     "kotlin-mobile-mpp"
   ],
-  "feedback": "https://t.me/kotlinmppchats",
+  "feedback": "https://github.com/icerockdev/kmp-codelabs/issues",
   "ga": "UA-81805223-5",
   "url": "kmp-mobile-from-zero"
 }

@@ -3,7 +3,7 @@
   "format": "html",
   "prefix": "https://storage.googleapis.com",
   "mainga": "UA-49880327-14",
-  "updated": "2019-10-21T14:55:08+03:00",
+  "updated": "2019-10-21T14:58:53+03:00",
   "id": "giphy-app-1",
   "duration": 75,
   "title": "GiphyApp #1 - Создание приложения на базе moko-template",
@@ -19,7 +19,7 @@
   "tags": [
     "moko-template"
   ],
-  "feedback": "https://t.me/kotlinmppchats",
+  "feedback": "https://github.com/icerockdev/kmp-codelabs/issues",
   "ga": "UA-81805223-5",
   "url": "giphy-app-1"
 }

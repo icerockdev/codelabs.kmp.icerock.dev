@@ -3,7 +3,7 @@ id: kmp-mobile-from-zero
 categories: multiplatform
 environments: kotlin-mobile-mpp
 status: published
-Feedback Link: https://t.me/kotlinmppchats
+Feedback Link: https://github.com/icerockdev/kmp-codelabs/issues
 Analytics Account: UA-81805223-5
 Author: Aleksey Mikhailov <am@icerock.dev>
 
