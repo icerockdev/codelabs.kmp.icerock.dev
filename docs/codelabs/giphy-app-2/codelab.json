@@ -3,12 +3,12 @@
   "format": "html",
   "prefix": "https://storage.googleapis.com",
   "mainga": "UA-49880327-14",
-  "updated": "2019-10-22T09:11:50+03:00",
-  "id": "giphy-app-1",
-  "duration": 28,
-  "title": "GiphyApp #1 - Создание приложения на базе moko-template",
-  "summary": "Создание приложения на базе moko-template",
-  "source": "giphy-app-1.md",
+  "updated": "2019-10-22T09:37:59+03:00",
+  "id": "giphy-app-2",
+  "duration": 61,
+  "title": "GiphyApp #2 - Реализация списка Gif",
+  "summary": "Реализация списка Gif",
+  "source": "giphy-app-2.md",
   "theme": "",
   "status": [
     "published"
@@ -21,5 +21,5 @@
   ],
   "feedback": "https://github.com/icerockdev/kmp-codelabs/issues",
   "ga": "UA-81805223-5",
-  "url": "giphy-app-1"
+  "url": "giphy-app-2"
 }

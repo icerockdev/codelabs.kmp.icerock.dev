@@ -39,7 +39,7 @@
 <li><a href="https://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html" target="_blank">JDK</a> - требуется для запуска <code>gradle</code> из <code>Xcode build phase</code>.</li>
 </ul>
 <h2 is-upgraded>Финальный результат</h2>
-<p>В результате будет получено приложение просмотра гифок с использованием <a href="https://developers.giphy.com/docs/api" target="_blank">GIPHY API</a>. Интерфейс приложения будет полностью нативный, проигрывание Gif будет сделано нативными библиотеками <a href="https://github.com/bumptech/glide" target="_blank">glide</a> для Android и <a href="https://github.com/kirualex/SwiftyGif" target="_blank">SwiftyGif</a> для iOS.</p>
+<p>В результате выполнения всех руководств серии <code>GiphyApp</code> будет получено приложение просмотра гифок с использованием <a href="https://developers.giphy.com/docs/api" target="_blank">GIPHY API</a>. Интерфейс приложения будет полностью нативный, проигрывание Gif будет сделано нативными библиотеками <a href="https://github.com/bumptech/glide" target="_blank">glide</a> для Android и <a href="https://github.com/kirualex/SwiftyGif" target="_blank">SwiftyGif</a> для iOS.</p>
 <table>
 <tr></tr>
 <tr><td colspan="1" rowspan="1"><p class="image-container"><img alt="giphy-android-app" src="img/76c41b40c337a51b.webp"></p>
@@ -114,93 +114,9 @@
 
       </google-codelab-step>
     
-      <google-codelab-step label="Реализация загрузки списка Gif" duration="30">
-        <p>Перейдем к реализации логики самого приложения. Нужно чтобы приложение получало список Gif с сервиса GIPHY. В шаблоне сделан пример получения списка новостей с newsapi, реализовано это с использованием <a href="https://github.com/icerockdev/moko-network" target="_blank">moko-network</a>, который генерирует сетевые сущности и API классы из OpenAPI спецификации.</p>
-<p>Имея OpenAPI спецификацию от GIPHY взятую с <a href="https://apis.guru/browse-apis/" target="_blank">apis.guru</a> можно заменить получение новостей на получение Gif.</p>
-<h2 is-upgraded>Замена OpenAPI спецификации</h2>
-<p>Заменим содержимое файла <code>mpp-library/domain/src/openapi.yml</code> содержимым из <a href="assets/giphy-openapi.yml" target="_blank">OpenAPI спецификации сервиса GIPHY</a>. После этого можно вызвать <code>Gradle Sync</code> и по завершению мы увидим что появились ошибки в коде, который работал с <code>newsapi</code>. Нужно обновить этот код под новую API.</p>
-<aside class="special"><p>Сгенерированные файлы находятся по пути <code>mpp-library/domain/build/generate-resources/main/src/main/kotlin</code></p>
-</aside>
-<h2 is-upgraded>Замена новостей на гифки в domain модуле</h2>
-<p>После замены OpenAPI спецификации в <code>domain</code> модуле требуется обновить следующие классы:</p>
-<ul>
-<li><code>News</code> – он должен быть заменен на <code>Gif</code>;</li>
-<li><code>NewsRepository</code> – поправить под <code>GifRepository</code>;</li>
-<li><code>DomainFactory</code> – добавить <code>gifRepository</code> и предоставить ему нужные зависимости.</li>
-</ul>
-<h3 is-upgraded>News -&gt; Gif</h3>
-<p><code>News</code> преобразуем в следующий класс:</p>
-<pre><code>@Parcelize
-data class Gif(
-    val id: Int,
-    val previewUrl: String,
-    val sourceUrl: String
-) : Parcelable
-</code></pre>
-<p>Наша доменная сущность содержит <code>id</code> гифки, нужный для корректного определения элемента в списке и корректных анимаций на UI, а так же два варианта URL - полноразмерный вариант и превью.</p>
-<p>К классу <code>Gif</code> добавим преобразование из сетевой сущности <code>dev.icerock.moko.network.generated.models.Gif</code> в доменную. Для этого добавим дополнительный конструктор:</p>
-<pre><code>@Parcelize
-data class Gif(
-    ...
-) : Parcelable {
+      <google-codelab-step label="Дальнейшие шаги" duration="3">
+        <p>В следующем руководстве <a href="https://codelabs.kmp.icerock.dev/codelabs/giphy-app-2" target="_blank">GiphyApp #2</a> разобрана реализация списка Gif.</p>
 
-    internal constructor(entity: dev.icerock.moko.network.generated.models.Gif) : this(
-        id = entity.url.hashCode(),
-        previewUrl = requireNotNull(entity.images?.downsizedMedium?.url) { &#34;api can&#39;t respond without preview image&#34; },
-        gifUrl = requireNotNull(entity.images?.original?.url) { &#34;api can&#39;t respond without original image&#34; }
-    )
-}
-</code></pre>
-<p>В конструкторе происходит маппинг полей из сетевой сущности в доменную, что позволяет уменьшить количество необходимых изменений при изменении API. Само приложение становится независимым от деталей реализации API.</p>
-<h3 is-upgraded>NewsRepository -&gt; GifRepository</h3>
-<p><code>NewsRepository</code> превратим в <code>GifRepository</code> с следующим контентом:</p>
-<pre><code>class GifRepository internal constructor(
-    private val gifsApi: GifsApi
-) {
-    suspend fun getGifList(query: String): List&lt;Gif&gt; {
-        return gifsApi.searchGifs(
-            q = query,
-            limit = null,
-            offset = null,
-            rating = null,
-            lang = null
-        ).data?.map { Gif(entity = it) }.orEmpty()
-    }
-}
-</code></pre>
-<p>В данном репозитории нам достаточно получить <code>GifsApi</code> (генерируется <code>moko-network</code>) и вызвать метод API <code>searchGifs</code>, где на данный момент используем только поисковой запрос, остальные аргументы оставив по умолчанию.<br>Сетевые сущности сразу преобразуем в доменные, которые можем выдать наружу модуля (сетевые сущности генерируются с модификатором <code>internal</code>).</p>
-<h3 is-upgraded>DomainFactory</h3>
-<p>В <code>DomainFactory</code> нужно заменить создание <code>newsApi</code> и <code>newsRepository</code>, заменим их на следующий код:</p>
-<pre><code>private val gifsApi: GifsApi by lazy {
-    GifsApi(
-        basePath = baseUrl,
-        httpClient = httpClient,
-        json = json
-    )
-}
-
-val gifRepository: GifRepository by lazy {
-    GifRepository(
-        gifsApi = gifsApi
-    )
-}
-</code></pre>
-<p><code>GifsApi</code> это сгенерированный класс, для создания требуется <code>baseUrl</code> (адрес сервера с которым работаем, передается он через фабрику с нативного уровня, для возможности конфигурирования разных окружений сборки на обеих платформах), <code>httpClient</code> (клиент для работы с сервером, от библиотеки <a href="https://github.com/ktorio/ktor/" target="_blank">ktor-client</a>), <code>json</code> (сериализатор Json от библиотеки <a href="https://github.com/Kotlin/kotlinx.serialization" target="_blank">kotlinx.serialization</a>).  API доступно только внутри модуля, предоставляется как зависимость в репозитории.</p>
-<p><code>GifRepository</code> доступен вне модуля, для создания требуется только <code>gifsApi</code>.</p>
-<p>Инициализация делается <code>lazy</code>, это означает что и API и репозиторий являются синглтонами (объекты живы пока жива фабрика, а ее держит <code>SharedFactory</code>, которая жива на все время жизни приложения).</p>
-<h2 is-upgraded>Обновление связи domain и feature:list в SharedFactory</h2>
-
-
-      </google-codelab-step>
-    
-      <google-codelab-step label="Смена стартового экрана" duration="5">
-        <p>В шаблоне по умолчанию приложение запускается с экрана настроек, а только после него делается переход на список. Для нашего приложения изменим стартовый экран сразу на список.</p>
-
-
-      </google-codelab-step>
-    
-      <google-codelab-step label="Реализация поиска Gif" duration="15">
-        
 
       </google-codelab-step>
     
