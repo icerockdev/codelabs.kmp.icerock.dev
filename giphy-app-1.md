@@ -28,6 +28,8 @@ Duration: 5
 |---|---|
 |![giphy-android-app](assets/giphy-android-app.webp)|![giphy-ios-app](assets/giphy-ios-app.webp)|
 
+Готовый код проекта доступен на [github](https://github.com/Alex009/giphy-mobile).
+
 ## Создание проекта из moko-template
 Duration: 5
 

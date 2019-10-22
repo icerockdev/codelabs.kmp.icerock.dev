@@ -9,9 +9,10 @@ Author: Aleksey Mikhailov <am@icerock.dev>
 
 # GiphyApp #2 - Реализация списка Gif
 ## Вводная
-Duration: 1
 
 Данное руководство является продолжением в серии GiphyApp, перед началом требуется выполнить [GiphyApp #1](https://codelabs.kmp.icerock.dev/codelabs/giphy-app-1).
+
+Готовый код проекта доступен на [github](https://github.com/Alex009/giphy-mobile).
 
 ## Создание логики списка Gif в общей библиотеке
 Duration: 30
@@ -456,3 +457,195 @@ class GifListActivity : MvvmActivity<ActivityGifListBinding, ListViewModel<Gif>>
 Теперь можно запустить приложение на Android и увидеть список Gif.
 
 ## Реализация списка Gif на iOS
+Duration: 30
+
+### Указание URL сервера
+Так же как и на android, адрес сервера, с которым работаем, внедряется с уровня приложения в общую библиотеку, чтобы не тратить время на пересборку общей библиотеки когда просто сменили сервер с которым работаем. Настройка на iOS делается в `ios-app/src/AppDelegate.swift`:
+```swift
+AppComponent.factory = SharedFactory(
+    ...
+    baseUrl: "https://api.giphy.com/v1/",
+    ...
+)
+```
+
+### Подключение зависимостей
+Для отображения gif нам потребуется [SwiftyGif](https://github.com/kirualex/SwiftyGif), для его подключения нужно добавить в `ios-app/Podfile` зависимость:
+```ruby
+target 'ios-app' do
+  ...
+  pod 'SwiftyGif', '5.1.1'
+end
+```
+и после этого выполнить команду `pod install` в директории `ios-app`.
+
+### Инициализация SharedFactory
+Для создания `SharedFactory` теперь требуется `gifsUnitsFactory` вместо `newsUnitsFactory`. Чтобы предоставить эту зависимость преобразуем класс `NewsUnitsFactory` в следующий:
+```swift
+class GifsListUnitsFactory: SharedFactoryGifsUnitsFactory {
+    func createGifTile(id: Int64, gifUrl: String) -> UnitItem {
+        // TODO
+    }
+}
+```
+А в `SharedFactory` будем передавать его:
+```swift
+AppComponent.factory = SharedFactory(
+    settings: AppleSettings(delegate: UserDefaults.standard),
+    antilog: DebugAntilog(defaultTag: "MPP"),
+    baseUrl: "https://api.giphy.com/v1/",
+    gifsUnitsFactory: GifsListUnitsFactory()
+)
+```
+
+### Реализация GifListUnitsFactory
+Интерфейс `SharedFactoryGifsUnitsFactory` требует, чтобы мы создали `UnitItem` из `id` и `gifUrl`. Сам интерфейс `UnitItem` относится к библиотеке [moko-units](https://github.com/icerockdev/moko-units) и реализация требует создания xib с интерфейсом ячейки и специального класса ячейки.
+
+Создадим `ios-app/src/units/GifTableViewCell.swift` с содержимым:
+```swift
+import MultiPlatformLibraryUnits
+import SwiftyGif
+
+class GifTableViewCell: UITableViewCell, Fillable {
+    typealias DataType = CellModel
+    
+    struct CellModel {
+        let id: Int64
+        let gifUrl: String
+    }
+    
+    @IBOutlet private var gifImageView: UIImageView!
+    
+    private var gifDownloadTask: URLSessionDataTask?
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        
+        gifDownloadTask?.cancel()
+        gifImageView.clear()
+    }
+    
+    func fill(_ data: GifTableViewCell.CellModel) {
+        gifDownloadTask = gifImageView.setGifFromURL(URL(string: data.gifUrl)!)
+    }
+    
+    func update(_ data: GifTableViewCell.CellModel) {
+        
+    }
+}
+
+extension GifTableViewCell: Reusable {
+    static func reusableIdentifier() -> String {
+        return "GifTableViewCell"
+    }
+    
+    static func xibName() -> String {
+        return "GifTableViewCell"
+    }
+    
+    static func bundle() -> Bundle {
+        return Bundle.main
+    }
+}
+```
+И нужно создать `ios-app/src/units/GifTableViewCell.xib` с версткой ячейки.
+Итоговый результат выглядит так:
+![GifTableViewCell.xib](assets/giphy-2-1.png)
+У самой `UITableViewCell` нужно указать класс `GifTableViewCell`:
+![GifTableViewCell class](assets/giphy-2-2.png)
+А так же указать идентификатор для переиспользования:
+![reuseIdentifier](assets/giphy-2-3.png)
+
+Теперь в `GifListUnitsFactory` можно написать реализацию создания `UnitItem`:
+```swift
+class GifsListUnitsFactory: SharedFactoryGifsUnitsFactory {
+    func createGifTile(id: Int64, gifUrl: String) -> UnitItem {
+        return UITableViewCellUnit<GifTableViewCell>(
+            data: GifTableViewCell.CellModel(
+                id: id,
+                gifUrl: gifUrl
+            ),
+            configurator: nil
+        )
+    }
+}
+```
+
+### Создание экрана списка Gif
+Остается только создать экран, который будет отображать данные из нашей общей логики.
+
+Создадим `ios-app/src/view/GifListViewController.swift` с содержимым:
+```swift
+import MultiPlatformLibraryMvvm
+import MultiPlatformLibraryUnits
+
+class GifListViewController: UIViewController {
+    @IBOutlet private var tableView: UITableView!
+    @IBOutlet private var activityIndicator: UIActivityIndicatorView!
+    @IBOutlet private var emptyView: UIView!
+    @IBOutlet private var errorView: UIView!
+    @IBOutlet private var errorLabel: UILabel!
+    
+    private var viewModel: ListViewModel<Gif>!
+    private var dataSource: FlatUnitTableViewDataSource!
+    private var refreshControl: UIRefreshControl!
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        viewModel = AppComponent.factory.gifsFactory.createListViewModel()
+
+        // binding methods from https://github.com/icerockdev/moko-mvvm
+        activityIndicator.bindVisibility(liveData: viewModel.state.isLoadingState())
+        tableView.bindVisibility(liveData: viewModel.state.isSuccessState())
+        emptyView.bindVisibility(liveData: viewModel.state.isEmptyState())
+        errorView.bindVisibility(liveData: viewModel.state.isErrorState())
+
+        // in/out generics of Kotlin removed in swift, so we should map to valid class
+        let errorText: LiveData<StringDesc> = viewModel.state.error().map { $0 as? StringDesc } as! LiveData<StringDesc>
+        errorLabel.bindText(liveData: errorText)
+
+        // datasource from https://github.com/icerockdev/moko-units
+        dataSource = FlatUnitTableViewDataSource()
+        dataSource.setup(for: tableView)
+
+        // manual bind to livedata, see https://github.com/icerockdev/moko-mvvm
+        viewModel.state.data().addObserver { [weak self] itemsObject in
+            guard let items = itemsObject as? [UITableViewCellUnitProtocol] else { return }
+            
+            self?.dataSource.units = items
+            self?.tableView.reloadData()
+        }
+        
+        refreshControl = UIRefreshControl()
+        tableView.refreshControl = refreshControl
+        refreshControl.addTarget(self, action: #selector(onRefresh), for: .valueChanged)
+    }
+    
+    @IBAction func onRetryPressed() {
+        viewModel.onRetryPressed()
+    }
+    
+    @objc func onRefresh() {
+        viewModel.onRefresh { [weak self] in
+            self?.refreshControl.endRefreshing()
+        }
+    }
+}
+```
+И перепривяжем в `MainStoryboard` `NewsViewController` к `GifListViewController`:
+![GifListViewController](assets/giphy-2-4.png)
+
+### Замена стартового экрана
+Чтобы приложение запускалось сразу с экрана гифок, нужно указать у `Navigation Controller` `rootViewController` связь с `GifListViewController`:
+![rootViewController](assets/giphy-2-5.png)
+
+### Удаление лишних файлов
+Теперь можно удалить все лишнее:
+- `ios-app/src/units/NewsTableViewCell.swift`
+- `ios-app/src/units/NewsTableViewCell.xib`
+- `ios-app/src/view/ConfigViewController.swift`
+- `ios-app/src/view/NewsViewController.swift`
+
+### Запуск
+Теперь можно запустить приложение на iOS и увидеть список Gif.
