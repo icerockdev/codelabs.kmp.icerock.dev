@@ -330,7 +330,7 @@ class MainActivity : AppCompatActivity() {
 After this change we can run `android-app` and check that the logging works through `println` and through Android’s `Log`.
 
 ## iOS app realization
-If you remember, IDE didn’t recognize `iosMain/kotlin` as a directory with the source code. That because we have initialized two targets - `iosArm64` и `iosX64`. The source code of these targets is expected in `iosArm64/kotlin` и `iosX64/kotlin` correspondingly. So we have to either duplicate the code or generalize it somehow. We recommend to use symlinks in `iosMain`. This approach will help us avoid the source code duplication and provide all-around correct integration with IDE.
+If you remember, IDE didn’t recognize `iosMain/kotlin` as a directory with the source code. That because we have initialized two targets - `iosArm64Main` и `iosX64Main`. The source code of these targets is expected in `iosArm64Main/kotlin` и `iosX64Main/kotlin` correspondingly. So we have to either duplicate the code or generalize it somehow. We recommend to use symlinks in `iosMain`. This approach will help us avoid the source code duplication and provide all-around correct integration with IDE.
 
 Let’s create symlinks `mpp-library/src/iosArm64Main` and `mpp-library/src/iosX64Main` as follows:
 
@@ -342,7 +342,7 @@ ln -s iosMain iosX64Main
 
 [git changes](https://github.com/icerockdev/mobile-multiplatform-education/commit/58f5caa489700bcf2a4bdbaab5723f420f00d275)
 
-Now we can run `Gradle Sync` and notice that `iosX64Main/kotlin` and `iosArm64/kotlin` have become the directories with the source code.
+Now we can run `Gradle Sync` and notice that `iosX64Main/kotlin` and `iosArm64Main/kotlin` have become the directories with the source code.
 Let’s add the iOS-specific code for iOS, using the platform API. To do this, we can create a file in IDE through any of the created directries-symlinks (`iosX64Main`,`iosArm64Main`) - they link to the same place.
 
 Create `mpp-library/src/iosMain/kotlin/IosHelloWorld.kt`:

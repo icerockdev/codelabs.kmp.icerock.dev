@@ -293,14 +293,14 @@ object AndroidHelloWorld {
       </google-codelab-step>
     
       <google-codelab-step label="iOS app realization" duration="0">
-        <p>If you remember, IDE didn&#39;t recognize <code>iosMain/kotlin</code> as a directory with the source code. That because we have initialized two targets - <code>iosArm64</code> и <code>iosX64</code>. The source code of these targets is expected in <code>iosArm64/kotlin</code> и <code>iosX64/kotlin</code> correspondingly. So we have to either duplicate the code or generalize it somehow. We recommend to use symlinks in <code>iosMain</code>. This approach will help us avoid the source code duplication and provide all-around correct integration with IDE.</p>
+        <p>If you remember, IDE didn&#39;t recognize <code>iosMain/kotlin</code> as a directory with the source code. That because we have initialized two targets - <code>iosArm64Main</code> и <code>iosX64Main</code>. The source code of these targets is expected in <code>iosArm64Main/kotlin</code> и <code>iosX64Main/kotlin</code> correspondingly. So we have to either duplicate the code or generalize it somehow. We recommend to use symlinks in <code>iosMain</code>. This approach will help us avoid the source code duplication and provide all-around correct integration with IDE.</p>
 <p>Let&#39;s create symlinks <code>mpp-library/src/iosArm64Main</code> and <code>mpp-library/src/iosX64Main</code> as follows:</p>
 <pre><code>cd mpp-library/src
 ln -s iosMain iosArm64Main
 ln -s iosMain iosX64Main
 </code></pre>
 <p><a href="https://github.com/icerockdev/mobile-multiplatform-education/commit/58f5caa489700bcf2a4bdbaab5723f420f00d275" target="_blank">git changes</a></p>
-<p>Now we can run <code>Gradle Sync</code> and notice that <code>iosX64Main/kotlin</code> and <code>iosArm64/kotlin</code> have become the directories with the source code.<br>Let&#39;s add the iOS-specific code for iOS, using the platform API. To do this, we can create a file in IDE through any of the created directries-symlinks (<code>iosX64Main</code>,<code>iosArm64Main</code>) - they link to the same place.</p>
+<p>Now we can run <code>Gradle Sync</code> and notice that <code>iosX64Main/kotlin</code> and <code>iosArm64Main/kotlin</code> have become the directories with the source code.<br>Let&#39;s add the iOS-specific code for iOS, using the platform API. To do this, we can create a file in IDE through any of the created directries-symlinks (<code>iosX64Main</code>,<code>iosArm64Main</code>) - they link to the same place.</p>
 <p>Create <code>mpp-library/src/iosMain/kotlin/IosHelloWorld.kt</code>:</p>
 <pre><code>import platform.Foundation.NSLog
 
