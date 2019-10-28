@@ -3,12 +3,12 @@
   "format": "html",
   "prefix": "https://storage.googleapis.com",
   "mainga": "UA-49880327-14",
-  "updated": "2019-10-21T14:58:57+03:00",
+  "updated": "2019-10-28T20:11:03+07:00",
   "id": "kmp-mobile-from-zero",
   "duration": 50,
-  "title": "Добавление к существующим Android, iOS проектам общей библиотеки",
-  "summary": "Создание multiplatform модуля для нативных Android, iOS приложений",
-  "source": "lesson1.md",
+  "title": "Append Shared library to Android, iOS projects",
+  "summary": "Creation multiplatform module for native Android, iOS application",
+  "source": "lesson1-en.md",
   "theme": "",
   "status": [
     "published"

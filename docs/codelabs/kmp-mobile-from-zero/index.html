@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
   <meta name="theme-color" content="#4F7DC9">
   <meta charset="UTF-8">
-  <title>Добавление к существующим Android, iOS проектам общей библиотеки</title>
+  <title>Append Shared library to Android, iOS projects</title>
   <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
   <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
   <link rel="stylesheet" href="https://storage.googleapis.com/codelab-elements/codelab-elements.css">
@@ -23,20 +23,20 @@
   <google-codelab-analytics gaid="UA-49880327-14"></google-codelab-analytics>
   <google-codelab codelab-gaid="UA-81805223-5"
                   id="kmp-mobile-from-zero"
-                  title="Добавление к существующим Android, iOS проектам общей библиотеки"
+                  title="Append Shared library to Android, iOS projects"
                   environment="web"
                   feedback-link="https://github.com/icerockdev/kmp-codelabs/issues">
     
-      <google-codelab-step label="Вводная" duration="5">
-        <p>В этом уроке мы сделаем из двух стандартных android и ios проектов мультиплатформенный проект с общей библиотекой на Kotlin Multiplatform.</p>
-<p>Для работы потребуется:</p>
+      <google-codelab-step label="Set up Kotlin Multiplatform Project" duration="5">
+        <p>We are going to turn two standard projects (Android and iOS) into a multiplatform project with a shared library on Kotlin Multiplatform.</p>
+<p>We will need:</p>
 <ul>
 <li>Android Studio 3.4.0+;</li>
 <li>Xcode 10.3+;</li>
 <li>Xcode Command Line Tools (<code>xcode-select --install</code>);</li>
 <li><a href="https://cocoapods.org/" target="_blank">CocoaPods</a> (<code>sudo gem install cocoapods</code>).</li>
 </ul>
-<p>Для начала потребуются 2 проекта - Android и iOS созданные из шаблонов Android Studio и Xcode. Проекты нужно расположить в одну директорию, чтобы получилось так:</p>
+<p>To start, we&#39;ll need an Android project created from an Android Studio template and an iOS project created from an Xcode template. Put both projects in the same directory:</p>
 <pre><code>├── android-app
 │   ├── build.gradle
 │   ├── proguard-rules.pro
@@ -115,27 +115,29 @@
 │           └── contents.xcworkspacedata
 └── settings.gradle
 </code></pre>
-<p>Для этого создаем Android проект, после чего модуль <code>app</code> переименуем в <code>android-app</code> (не забывая изменить имя модуля в <code>settings.gradle</code>) и создаем iOS проект <code>ios-app</code> в корень android проекта.</p>
-<p>Для удобства можно просто скачать начальное состояние <a href="https://github.com/icerockdev/mobile-multiplatform-education/releases/tag/lesson-1-start" target="_blank">архивом</a>.</p>
+<p>To do this, we create an Android project and rename the <code>app</code> module into <code>android-app</code> (remember to change the name of the module in <code>settings.gradle</code> too). Now, let&#39;s create an iOS project <code>ios-app</code> in the root directory of the Android project.</p>
+<p>Alternatively, <a href="https://github.com/icerockdev/mobile-multiplatform-education/releases/tag/lesson-1-start" target="_blank">download</a> this archive with the ready setup.</p>
 
 
       </google-codelab-step>
     
-      <google-codelab-step label="Создание модуля общей библиотеки" duration="15">
-        <p>Для добавления общей библиотеки нужно добавить новый gradle модуль (android и mpp библиотеки управляются системой сборки <a href="https://gradle.org/" target="_blank">gradle</a>). Для создания модуля нужно:<br><br>Создаем директорию <code>mpp-library</code> (так будет называться наш gradle модуль) рядом с приложениями, чтобы получилось:</p>
+      <google-codelab-step label="Create a shared library module" duration="15">
+        <p>To create a shared library we need to add a new gradle module (Android and mpp libraries are managed by build system <a href="https://gradle.org/" target="_blank">gradle</a>). To create the module:</p>
+<p>Create an <code>mpp-library</code> directory (the name of our new gradle module) next to the apps to get:</p>
 <pre><code>├── android-app
 ├── ios-app
 └── mpp-library
 </code></pre>
-<p>Создаем <code>mpp-library/build.gradle</code> в нем будет располагаться конфигурация мультиплатформенного модуля. Содержимое файла для начала будет:</p>
+<p>Create <code>mpp-library/build.gradle</code>. It will hold the multiplatform module configs. To begin with, the file will contain:</p>
 <pre><code>apply plugin: &#39;com.android.library&#39;
 apply plugin: &#39;org.jetbrains.kotlin.multiplatform&#39;
 </code></pre>
-<p>В <code>settings.gradle</code> добавляем подключение нового модуля:</p>
+<p>Now let&#39;s include the new module in <code>settings.gradle</code>:</p>
 <pre><code>include &#39;:mpp-library&#39;
 </code></pre>
 <p><a href="https://github.com/icerockdev/mobile-multiplatform-education/commit/10b28e5f668f406ed4c4eb28f4240a14a01d8c58" target="_blank">git changes</a></p>
-<p>После сделанных изменений можно запустить <code>Gradle Sync</code> и убедиться что модуль подключился, но не может сконфигурироваться, так как для Android библиотеки не хватает данных. Во первых не указаны версии Android SDK. Проставим их:<br><br>В <code>mpp-library/build.gradle</code>:</p>
+<p>After applying these changes you can run <code>Gradle Sync</code> and make sure that the module has connected, but can&#39;t be configured because the Android library is missing some data. First, we haven&#39;t specified Android SDK versions. Let&#39;s do this:</p>
+<p>In <code>mpp-library/build.gradle</code>:</p>
 <pre><code>android {
     compileSdkVersion 28
 
@@ -146,14 +148,15 @@ apply plugin: &#39;org.jetbrains.kotlin.multiplatform&#39;
 }
 </code></pre>
 <p><a href="https://github.com/icerockdev/mobile-multiplatform-education/commit/b3ef95a5335548fb0b5d20f8a7f8bb6ac3bd4bb1" target="_blank">git changes</a></p>
-<p>Теперь <code>Gradle Sync</code> будет сообщать о ошибке чтения <code>AndroidManifest</code> - этот файл должен присутствовать в любом Android модуле.<br>Создаем <code>mpp-library/src/main/AndroidManifest.xml</code> с содержимым:</p>
+<p>This time <code>Gradle Sync</code> will show that it&#39;s unable to read <code>AndroidManifest</code>. This file is essential for any Android module.</p>
+<p>Let&#39;s create <code>mpp-library/src/main/AndroidManifest.xml</code> with the following contents:</p>
 <pre><code>&lt;?xml version=&#34;1.0&#34; encoding=&#34;utf-8&#34;?&gt;
 &lt;manifest package=&#34;com.icerockdev.library&#34; /&gt; 
 </code></pre>
 <p><a href="https://github.com/icerockdev/mobile-multiplatform-education/commit/638b2cbc5cad2cfc10a53a72ec4b7d94c701aa15" target="_blank">git changes</a></p>
-<p>После сделанных действий <code>Gradle Sync</code> успешно выполнится.</p>
-<h2 is-upgraded>Настройка мобильных таргетов</h2>
-<p>Добавляем в <code>mpp-library/build.gradle</code>:</p>
+<p>Now <code>Gradle Sync</code> will run successfullу.</p>
+<h2 is-upgraded>Setup mobile targets</h2>
+<p>Add the following to <code>mpp-library/build.gradle</code>:</p>
 <pre><code>kotlin {
     targets {
         android()
@@ -163,18 +166,18 @@ apply plugin: &#39;org.jetbrains.kotlin.multiplatform&#39;
 }
 </code></pre>
 <p><a href="https://github.com/icerockdev/mobile-multiplatform-education/commit/2cd19fe01677f4b47fadcab8e99a701643b13273" target="_blank">git changes</a></p>
-<p>Создаем директории:</p>
+<p>Create these directories:</p>
 <ul>
 <li><code>mpp-library/src/commonMain/kotlin/</code></li>
 <li><code>mpp-library/src/androidMain/kotlin/</code></li>
 <li><code>mpp-library/src/iosMain/kotlin/</code></li>
 </ul>
 <p><a href="https://github.com/icerockdev/mobile-multiplatform-education/commit/7ea6d9b919dacf64ef16ebbe4ac48c9f51da8b5a" target="_blank">git changes</a></p>
-<p>После этого можем выполнить <code>Gradle Sync</code> и увидим что директории <code>commonMain/kotlin</code> и <code>androidMain/kotlin</code> посветились как директории с исходным кодом. Но <code>iosMain/kotlin</code> не подсветился так, к этому вернемся чуть дальше. Сначала сделаем чтобы все относящееся к Android находилось в <code>androidMain</code>.</p>
-<h2 is-upgraded>Конфигурирование Android таргета</h2>
-<p>Переносим <code>AndroidManifest.xml</code> в <code>androidMain</code>:<br><code>mpp-library/src/main/AndroidManifest.xml</code> → <code>mpp-library/src/androidMain/AndroidManifest.xml</code><br><a href="https://github.com/icerockdev/mobile-multiplatform-education/commit/67cf5b1a3743f1701f5a1c6577bacdb24d8f625b" target="_blank">git changes</a></p>
-<p>Но после переноса можно увидеть что <code>Gradle Sync</code> опять не находит <code>AndroidManifest</code>. Это связано с тем что Android gradle plugin ничего не знает про kotlin multiplatform плагин. Чтобы корректно перенести все связанное с Android в <code>androidMain</code> требуется добавить специальную конфигурацию.</p>
-<p>Добавляем в <code>mpp-library/build.gradle</code>:</p>
+<p>Now we can run <code>Gradle Sync</code> and see that the directories <code>commonMain/kotlin</code> and <code>androidMain/kotlin</code> are highlighted as the source code directories unlike the <code>iosMain/kotlin</code> directory, but we&#39;ll talk about it later. For now let&#39;s make sure that everything Android-related is in <code>androidMain</code>.</p>
+<h2 is-upgraded>Configure Android target</h2>
+<p>Move <code>AndroidManifest.xml</code> to <code>androidMain</code>:<br><code>mpp-library/src/main/AndroidManifest.xml</code> → <code>mpp-library/src/androidMain/AndroidManifest.xml</code><br><a href="https://github.com/icerockdev/mobile-multiplatform-education/commit/67cf5b1a3743f1701f5a1c6577bacdb24d8f625b" target="_blank">git changes</a></p>
+<p>However, after this change you&#39;ll notice that <code>Gradle Sync</code> is once again unable to read <code>AndroidManifest</code>. The reason is that the Android gradle plugin is not aware of the Kotlin Multiplatform plugin. To accurately move everything Android-related to <code>androidMain</code>, we need to add a special configuration.</p>
+<p>Add to <code>mpp-library/build.gradle</code>:</p>
 <pre><code>android {
     //...
 
@@ -201,13 +204,13 @@ apply plugin: &#39;org.jetbrains.kotlin.multiplatform&#39;
 }
 </code></pre>
 <p><a href="https://github.com/icerockdev/mobile-multiplatform-education/commit/24949ced80a8905e7bcfd2cee4c8b0617aaa519f" target="_blank">git changes</a></p>
-<p>Теперь <code>Gradle Sync</code> успешно выполняется.</p>
+<p>Now <code>Gradle Sync</code> runs successfully.</p>
 
 
       </google-codelab-step>
     
-      <google-codelab-step label="Пишем common код" duration="5">
-        <p>Создаем <code>mpp-library/src/commonMain/kotlin/HelloWorld.kt</code> с содержимым:</p>
+      <google-codelab-step label="Write common code" duration="5">
+        <p>We create <code>mpp-library/src/commonMain/kotlin/HelloWorld.kt</code> with the following contents:</p>
 <pre><code>object HelloWorld {
     fun print() {
         println(&#34;hello common world&#34;)
@@ -215,7 +218,8 @@ apply plugin: &#39;org.jetbrains.kotlin.multiplatform&#39;
 }
 </code></pre>
 <p><a href="https://github.com/icerockdev/mobile-multiplatform-education/commit/9b174df4fb66d9448d5ebd29930c027ea7f29b09" target="_blank">git changes</a></p>
-<p>Но IDE сообщит что Kotlin не сконфигурирован. Это связано с тем, что для общего кода нужно еще подключить kotlin stdlib.<br><br>В <code>mpp-library/build.gradle</code>:</p>
+<p>However, IDE will notify you that Kotlin has not been configured. That&#39;s because we need to hook up the kotlin stdlib library to the common (aka shared) code.</p>
+<p>In <code>mpp-library/build.gradle</code>:</p>
 <pre><code>kotlin {
     // ...
 
@@ -229,20 +233,20 @@ apply plugin: &#39;org.jetbrains.kotlin.multiplatform&#39;
 }
 </code></pre>
 <p><a href="https://github.com/icerockdev/mobile-multiplatform-education/commit/748ed37ffe9b9f29ff992b609fe87f4b803ad746" target="_blank">git changes</a></p>
-<p>Теперь IDE корректно распознает kotlin код и мы можем писать common код на чистом kotlin.</p>
+<p>Now IDE recognizes the Kotlin code, and we can write common code natively in Kotlin.</p>
 
 
       </google-codelab-step>
     
-      <google-codelab-step label="Реализация примера в Android приложении" duration="15">
-        <p>Сначала нужно подключить к <code>android-app</code> нашу общую библиотеку. Это делается так как и с любым другим kotlin/java модулем.<br><br>Добавляем в <code>android-app/build.gradle</code>:</p>
+      <google-codelab-step label="Android app realization" duration="15">
+        <p>First, we need to hook up our shared library to <code>android-app</code>. We do it the same way as with any other Kotlin or Java module.<br>Add to <code>android-app/build.gradle</code>:</p>
 <pre><code>dependencies {
     // ...
 
     implementation project(&#34;:mpp-library&#34;)
 }
 </code></pre>
-<p>Далее вызовем нашу функцию <code>print</code> на главном экране.<br><br>Добавляем в <code>android-app/src/main/java/com/icerockdev/android_app/MainActivity.kt</code>:</p>
+<p>Then call our <code>print</code> function on the main screen.<br>Add to <code>android-app/src/main/java/com/icerockdev/android_app/MainActivity.kt</code>:</p>
 <pre><code>class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {	
         // ...
@@ -252,7 +256,7 @@ apply plugin: &#39;org.jetbrains.kotlin.multiplatform&#39;
 }
 </code></pre>
 <p><a href="https://github.com/icerockdev/mobile-multiplatform-education/commit/0d23cb4c657a097803f285bd4806df9247b0ab94" target="_blank">git changes</a></p>
-<p>Далее при <code>Gradle Sync</code> IDE сообщит что версия sdk в <code>android-app</code> ниже чем версия sdk в <code>mpp-library</code> - поднимем ее, чтобы мы могли подключить общую библиотеку (либо нужно понизить в общей библиотеке).<br><br>Изменяем в <code>android-app/build.gradle</code> минимальную версию androidSdk для совместимости с <code>mpp-library</code>:</p>
+<p>Then, on <code>Gradle Sync</code> IDE will notify you that the SDK version in <code>android-app</code> is lower than the SDK version in <code>mpp-library</code> - let&#39;s upgrade it so that we can connect the shared library (otherwise, downgrade the SDK version in the shared library).<br>In <code>android-app/build.gradle</code> change the minimal version of the Android SDK to make it compatible with <code>mpp-library</code>:</p>
 <pre><code>android {
     // ...
     minSdkVersion 21
@@ -260,9 +264,10 @@ apply plugin: &#39;org.jetbrains.kotlin.multiplatform&#39;
 }
 </code></pre>
 <p><a href="https://github.com/icerockdev/mobile-multiplatform-education/commit/44813bfff5fb00badb0b77a1805e89fbcee6681c" target="_blank">git changes</a></p>
-<p>После этого можем запустить <code>android-app</code> на эмуляторе и убедиться что в консоль (logcat) вывелось сообщение.</p>
-<h2 is-upgraded>Добавляем Android specific код</h2>
-<p>Предположим что мы хотим использовать какой-то platform-specific api. Для этого мы можем добавить в общей библиотеке код для платформы.<br><br>Создаем <code>mpp-library/src/androidMain/kotlin/AndroidHelloWorld.kt</code> с содержимым:</p>
+<p>After these changes we can run <code>android-app</code> on the emulator and make sure that the logcat console displays a message.</p>
+<h2 is-upgraded>Add Android-specific code</h2>
+<p>Suppose, we want to use a platform-specific API. To do this, we add the platform-specific code in the shared library.</p>
+<p>Create <code>mpp-library/src/androidMain/kotlin/AndroidHelloWorld.kt</code> with the following contents:</p>
 <pre><code>import android.util.Log
 
 object AndroidHelloWorld {
@@ -271,8 +276,8 @@ object AndroidHelloWorld {
     }
 }
 </code></pre>
-<p>Это позволит нам в Android версии общей библиотеки видеть еще один класс - <code>AndroidHelloWorld</code> и внутри платформенного кода мы можем использовать любой функционал платформы (в нашем случае использовали <code>android.util.Log</code>). Остается вызвать и эту функцию в приложении.</p>
-<p>Добавляем в <code>android-app/src/main/java/com/icerockdev/android_app/MainActivity.kt</code>:</p>
+<p>This allows us to see another class (<code>AndroidHelloWorld</code>) in the Android version of the shared library, and we can use any platform functionality inside this platform-specific code (<code>android.util.Log</code> in our example). Now we just need to call this function in the app too.</p>
+<p>Add in <code>android-app/src/main/java/com/icerockdev/android_app/MainActivity.kt</code>:</p>
 <pre><code>class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {	
         // ...
@@ -282,22 +287,21 @@ object AndroidHelloWorld {
 }
 </code></pre>
 <p><a href="https://github.com/icerockdev/mobile-multiplatform-education/commit/5f52ed8e241d960bd27c70a7880ab9f544ececc1" target="_blank">git changes</a></p>
-<p>После изменения можно запустить <code>android-app</code> чтобы убедиться что работает и логирование через <code>println</code> и через андроидный <code>Log</code>.</p>
+<p>After this change we can run <code>android-app</code> and check that the logging works through <code>println</code> and through Android&#39;s <code>Log</code>.</p>
 
 
       </google-codelab-step>
     
-      <google-codelab-step label="Реализация примера в iOS приложении" duration="0">
-        <p>Ранее мы увидели что <code>iosMain/kotlin</code> не распознается IDE как директория с исходным кодом. Это связано с тем, что у нас инициализированы два таргета - <code>iosArm64</code> и <code>iosX64</code>. Исходный код этих таргетов ожидается в <code>iosArm64/kotlin</code> и <code>iosX64/kotlin</code> соответственно. Из-за этого выбор либо дублировать код, либо использовать какой либо вариант обобщения. Рекомендуемый нами вариант - использовать symlink&#39;и на <code>iosMain</code>. Это позволит не дублировать исходный код и иметь корректную во всех отношениях интеграцию IDE.</p>
-<p>Создаем symlink&#39;и <code>mpp-library/src/iosArm64Main</code> и <code>mpp-library/src/iosX64Main</code>, для этого делаем:</p>
+      <google-codelab-step label="iOS app realization" duration="0">
+        <p>If you remember, IDE didn&#39;t recognize <code>iosMain/kotlin</code> as a directory with the source code. That because we have initialized two targets - <code>iosArm64</code> и <code>iosX64</code>. The source code of these targets is expected in <code>iosArm64/kotlin</code> и <code>iosX64/kotlin</code> correspondingly. So we have to either duplicate the code or generalize it somehow. We recommend to use symlinks in <code>iosMain</code>. This approach will help us avoid the source code duplication and provide all-around correct integration with IDE.</p>
+<p>Let&#39;s create symlinks <code>mpp-library/src/iosArm64Main</code> and <code>mpp-library/src/iosX64Main</code> as follows:</p>
 <pre><code>cd mpp-library/src
 ln -s iosMain iosArm64Main
 ln -s iosMain iosX64Main
 </code></pre>
 <p><a href="https://github.com/icerockdev/mobile-multiplatform-education/commit/58f5caa489700bcf2a4bdbaab5723f420f00d275" target="_blank">git changes</a></p>
-<p>После этого можем запустить <code>Gradle Sync</code> и увидеть что <code>iosX64Main/kotlin</code> и <code>iosArm64/kotlin</code> являются директориями с исходным кодом.</p>
-<p>Теперь добавим ios-specific код для iOS, с использованием платформенного API. Для этого мы можем создать файл в IDE через любую из наших директорий-symlink&#39;ов (<code>iosX64Main</code>,<code>iosArm64Main</code>) - они все равно ведут в одно и то же место.</p>
-<p>Создаем <code>mpp-library/src/iosMain/kotlin/IosHelloWorld.kt</code>:</p>
+<p>Now we can run <code>Gradle Sync</code> and notice that <code>iosX64Main/kotlin</code> and <code>iosArm64/kotlin</code> have become the directories with the source code.<br>Let&#39;s add the iOS-specific code for iOS, using the platform API. To do this, we can create a file in IDE through any of the created directries-symlinks (<code>iosX64Main</code>,<code>iosArm64Main</code>) - they link to the same place.</p>
+<p>Create <code>mpp-library/src/iosMain/kotlin/IosHelloWorld.kt</code>:</p>
 <pre><code>import platform.Foundation.NSLog
 
 object IosHelloWorld {
@@ -307,9 +311,7 @@ object IosHelloWorld {
 }
 </code></pre>
 <p><a href="https://github.com/icerockdev/mobile-multiplatform-education/commit/43504c8598d4ccbf9ddd530e818e8c2481167986" target="_blank">git changes</a></p>
-<p>Можно увидеть что IDE корректно распознает платформенные API ios, имеет автоимпорт, автокомплит и навигацию к определению.</p>
-<p>Теперь нужно собрать <code>framework</code> который мы сможем подключить к iOS приложению. Но для компиляции <code>framework</code>‘а нужно дополнить конфигурацию проекта.</p>
-<p>В <code>mpp-library/build.gradle</code> заменим <code>iosArm64()</code> и <code>iosX64()</code> на вызов с блоком конфигурации:</p>
+<p>Now IDE correctly recognizes iOS platform APIs, has auto-import, autocomplete, and navigation to the definition.<br>We now can compile the <code>framework</code> that we will connect to the iOS app. But for <code>framework</code> compilation we need to complete project configuration first.<br>In <code>mpp-library/build.gradle</code> replace <code>iosArm64()</code> and <code>iosX64()</code> with a call to the configuration block:</p>
 <pre><code>kotlin {
     targets {
         // ...
@@ -326,14 +328,15 @@ object IosHelloWorld {
 }
 </code></pre>
 <p><a href="https://github.com/icerockdev/mobile-multiplatform-education/commit/01406cfaf1ea087372cdafdcd29a73f5eff535df" target="_blank">git changes</a></p>
-<p>После этого  можем вызвать <code>Gradle Task:mpp-library:linkMultiPlatformLibraryDebugFrameworkIosX64</code> для компиляции <code>framework</code>‘а для симулятора. По итогу мы получим в директории <code>build/bin/iosX64/MultiPlatformLibraryDebugFramework/</code> наш скомпилированный <code>framework</code>. И его нужно подключить к iOS приложению.</p>
-<h2 is-upgraded>Интегрируем framework в iOS приложение</h2>
-<p>Открываем через Xcode <code>ios-app/ios-app.xcodeproj</code> и добавляем фреймворк к проекту. Для этого:<br><br>Добавляем сам фреймворк в проект.<br><img alt="step1" src="img/80ffb64d80cb5195.png"><img alt="step2" src="img/941a2428124ff3d5.png"></p>
-<p>В итоге должны увидеть фреймворк следующим образом:<br><img alt="step3" src="img/65f5183373cf78f7.png"></p>
-<p>После этого нужно добавить его в embed frameworks. После добавления появится дублирование в прилинкованных, нужно удалить один из прилинкованных, чтобы получилось как на скриншоте:<br><img alt="step4" src="img/67526249743af313.png"></p>
-<p>И последнее - нужно добавить директорию где лежит фреймворк в доступные для поиска (директория <code>./../mpp-library/build/bin/iosX64/MultiPlatformLibraryDebugFramework</code>). Это делается через <code>Build Settings</code> таргета приложения.<br><img alt="step5" src="img/bc03ba447d770495.png"></p>
+<p>After this change we can call <code>Gradle Task:mpp-library:linkMultiPlatformLibraryDebugFrameworkIosX64</code> to compile <code>framework</code> for the simulator. As a result, we will get our compiled <code>framework</code> in the directory <code>build/bin/iosX64/MultiPlatformLibraryDebugFramework/</code>. We now need to connect it to the iOS app.</p>
+<h2 is-upgraded>Integrate framework into iOS app</h2>
+<p>Open <code>ios-app/ios-app.xcodeproj</code> in Xcode and add framework to the project. To do this:<br>Add the framework to the project.</p>
+<p class="image-container"><img alt="step1" src="img/80ffb64d80cb5195.png"><img alt="step2" src="img/941a2428124ff3d5.png"></p>
+<p>As a result, the framework should appear here:<br><img alt="step3" src="img/65f5183373cf78f7.png"></p>
+<p>Now we need to add the framework to embed frameworks. Once that&#39;s done, there will be duplicates in the linked frameworks. Delete one of them to get this:<br><img alt="step4" src="img/67526249743af313.png"></p>
+<p>The last thing is to add the directory with the framework (<code>./../mpp-library/build/bin/iosX64/MultiPlatformLibraryDebugFramework</code>)to the search paths. We can do this in <code>Build Settings</code> of the target app.<br><img alt="step5" src="img/bc03ba447d770495.png"></p>
 <p><a href="https://github.com/icerockdev/mobile-multiplatform-education/commit/8b4f83e18537d429dd18b2e9421649e34b762d48" target="_blank">git changes</a></p>
-<p>Теперь можем обновить код экрана, добавив следующее в <code>ios-app/ios-app/ViewController.swift</code>:</p>
+<p>Now we can update the view code by adding the following in <code>ios-app/ios-app/ViewController.swift</code>:</p>
 <pre><code>import UIKit
 import MultiPlatformLibrary
 
@@ -347,21 +350,20 @@ class ViewController: UIViewController {
 }
 </code></pre>
 <p><a href="https://github.com/icerockdev/mobile-multiplatform-education/commit/a9ab47904c0c13e9602f4c9f74a391a5efb3d05b" target="_blank">git changes</a></p>
-<p>После этого можем запустить iOS приложение в симуляторе (не на девайсе! у нас собран фреймворк для симулятора, и настройки пока захардкожены для фреймворка симулятора).</p>
-<p>При запуске увидим что работают оба способа логирования и они тоже по разному выглядят в результате, как и в случае Android.</p>
+<p>After this we can launch the iOS app in the simulator (not on device! We&#39;ve compiled the framework for the simulator, and the settings are hard coded accordingly for now).<br>After launching the app we see that both logging variants are working and that they look different, just as with Android.</p>
 
 
       </google-codelab-step>
     
-      <google-codelab-step label="Подключаем общую библиотеку через CocoaPods" duration="10">
-        <p>Для более простой и привычной (для iOS разработчика) интеграции общей библиотеки в приложение можно использовать менеджер зависимостей CocoaPods. Он избавит нас от необходимости прописывать множество настроек в проекте и пересборки фреймворка отделно через <code>Android Studio</code>.</p>
-<p>Принцип интеграции CocoaPods следующий - мы сделаем локальный pod, внутри которого содержится embed framework (как раз скомпилированный из Kotlin) и сам pod будет иметь только один этап сборки - скрипт с вызовом <code>gradle</code> задачи на сборку фреймворка.<br><br>Из-за особенности CocoaPods нужно чтобы фреймворк был всегда в одном и том же предсказуемом месте, у себя в конфигурации мы этим местом сделаем <code>build/cocoapods/framework/MultiPlatformLibrary.framework</code>.</p>
-<h2 is-upgraded>Настраиваем компиляцию framework в единую директорию</h2>
-<p>В <code>mpp-library/build.gradle</code> добавляем:<br>В начале файла:</p>
+      <google-codelab-step label="Connect shared library via CocoaPods" duration="10">
+        <p>We can use the dependency manager from CocoaPods to integrate the shared library into the app in the most simple and convenient (for iOS developers) way. The dependency manager will help us avoid configuring numerous project settings and a separate framework compilation through <code>Android Studio</code>.</p>
+<p>Here&#39;s how CocoaPods integration works. We create a local pod that contains an embed framework (already compiled from Kotlin), and the pod itself will participate only in one phase of compilation — via a script with the call to a <code>gradle</code> task to compile the framework.<br>CocoaPods dictates that the framework should always be in the same place. In our configuration it&#39;s going to be in <code>build/cocoapods/framework/MultiPlatformLibrary.framework</code>.</p>
+<h2 is-upgraded>Setup framework compilation into a single directory</h2>
+<p>Add in <code>mpp-library/build.gradle</code>:<br>At the beginning:</p>
 <pre><code>import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink
 </code></pre>
-<p>В конце файла:</p>
+<p>At the end:</p>
 <pre><code>tasks.toList().forEach { task -&gt;
     if(!(task instanceof KotlinNativeLink)) return
     def framework = task.binary
@@ -378,8 +380,8 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink
     syncFramework.dependsOn(linkTask)
 } 
 </code></pre>
-<h2 is-upgraded>Настраиваем local CocoaPod содержащий наш Framework</h2>
-<p>Создаем <code>mpp-library/MultiPlatformLibrary.podspec</code>:</p>
+<h2 is-upgraded>Setup local CocoaPod containing Framework</h2>
+<p>Create <code>mpp-library/MultiPlatformLibrary.podspec</code>:</p>
 <pre><code>Pod::Spec.new do |spec|
     spec.name                     = &#39;MultiPlatformLibrary&#39;
     spec.version                  = &#39;0.1.0&#39;
@@ -415,8 +417,8 @@ MPP_PROJECT_ROOT=&#34;$SRCROOT/../../mpp-library&#34;
     ]
 end
 </code></pre>
-<h2 is-upgraded>Подключаем наш local CocoaPod к проекту</h2>
-<p>Создаем <code>ios-app/Podfile</code>:</p>
+<h2 is-upgraded>Connect our local CocoaPod to the project</h2>
+<p>Create <code>ios-app/Podfile</code>:</p>
 <pre><code># ignore all warnings from all pods
 inhibit_all_warnings!
 
@@ -433,12 +435,11 @@ target &#39;ios-app&#39; do
   pod &#39;MultiPlatformLibrary&#39;, :path =&gt; &#39;../mpp-library&#39;
 end
 </code></pre>
-<p>В настройках проекта убираем ранее прописанную настройку <code>FRAMEWORK_SEARCH_PATHS</code> (для этого надо нажать <code>backspace</code> чтобы значение было удалено, а не редактировать значение оставив пустую строку).<br><img alt="step6" src="img/4892ce13451094f2.png"></p>
-<p>Вызываем <code>pod install</code> в директории <code>ios-app</code> (заранее нужно установить <a href="https://cocoapods.org" target="_blank">cocoapods</a>).</p>
+<p>Remove previously added <code>FRAMEWORK_SEARCH_PATHS</code> in the project settings. To do this, press <code>backspace</code> and remove the value altogether instead of editing the field by leaving it empty.<br><img alt="step6" src="img/4892ce13451094f2.png"></p>
+<p>Call <code>pod install</code> in the directory <code>ios-app</code> (<a href="https://cocoapods.org" target="_blank">cocoapods</a> need to be installed prior to this).</p>
 <p><a href="https://github.com/icerockdev/mobile-multiplatform-education/commit/1d6150d9b4ba98743fb0252ad9e40aee00141d1b" target="_blank">git changes</a></p>
-<p>После успешного <code>pod install</code> у нас получается прямая интеграция Xcode с фреймворком (включая автоматическую пересборку фреймворка при пересборке Xcode проекта). После установки pod&#39;ов следует закрыть текущий Xcode проект и открыть теперь <code>ios-app/ios-app.xcworkspace</code>.</p>
-<p>После этого можем запускать iOS приложение и увидеть что все работает.</p>
-<p>(!) Возможно что при сборке через Xcode <code>gradle</code> не сможет выполниться сообщив что отсутствует <code>java</code>. В таком случае нужно установить <a href="https://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html" target="_blank">java development kit</a>. При запуске <code>gradle</code> через <code>Android Studio</code> используется встроенный в дистрибутив <code>Android Studio</code> вариант openjdk, поэтому там все работает из коробки.</p>
+<p>After successful <code>pod install</code> we get direct integration between Xcode and the framework (including automatic recompilation of the framework when recompiling the Xcode project). After installing the pods you should close the current Xcode project and open <code>ios-app/ios-app.xcworkspace</code>.<br>Now we can launch the iOS app on a device and see that it works correctly.</p>
+<p>(!) It&#39;s possible that when building through Xcode <code>gradle</code> won&#39;t run successfully and notify you that <code>java</code> is missing. In this case you should install <a href="https://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html" target="_blank">java development kit</a>. When <code>gradle</code> runs through the <code>Android Studio</code>, it uses and openjdk variant from the <code>Android Studio</code>&#39;s built-in distributive. So everything works out-of-the-box for the Android project.</p>
 
 
       </google-codelab-step>
