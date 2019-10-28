@@ -1,4 +1,4 @@
-summary: Создание приложения на базе moko-template
+summary: Creation an application based on moko-template
 id: giphy-app-1
 categories: multiplatform
 environments: moko-template
@@ -7,59 +7,61 @@ Feedback Link: https://github.com/icerockdev/kmp-codelabs/issues
 Analytics Account: UA-81805223-5
 Author: Aleksey Mikhailov <am@icerock.dev>
 
-# GiphyApp #1 - Создание приложения на базе moko-template
-## Вводная
+# GiphyApp #1 - Creation an application based on moko-template
+## Intro
 Duration: 5
 
-В этом руководстве будет описано создание небольшого приложения под Android и iOS с технологией [Kotlin Multiplatform](https://kotlinlang.org/docs/reference/multiplatform.html) основываясь на шаблоне [moko-template](https://github.com/icerockdev/moko-template). 
+In this lesson we will cover developing small application for iOS and Android using [Kotlin Multiplatform](https://kotlinlang.org/docs/reference/multiplatform.html) based on [moko-template](https://github.com/icerockdev/moko-template).
 
-### Инструменты
-Для работы потребуется:
-- Android Studio 3.4.0+ (**не 3.5.1 так как там [баг, ломающий mpp](https://youtrack.jetbrains.com/issue/KT-34143)**);
+### Tools
+We will need: 
+- Android Studio 3.4.0+ (**do not use 3.5.1 version, cause there is a [bug is breaking MPP project](https://youtrack.jetbrains.com/issue/KT-34143)**);
 - Xcode 10.3+;
 - Xcode Command Line Tools (`xcode-select --install`);
 - [CocoaPods](https://cocoapods.org/) (`sudo gem install cocoapods`);
 - [JDK](https://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html) - требуется для запуска `gradle` из `Xcode build phase`.
 
-### Финальный результат
-В результате выполнения всех руководств серии `GiphyApp` будет получено приложение просмотра гифок с использованием [GIPHY API](https://developers.giphy.com/docs/api). Интерфейс приложения будет полностью нативный, проигрывание Gif будет сделано нативными библиотеками [glide](https://github.com/bumptech/glide) для Android и [SwiftyGif](https://github.com/kirualex/SwiftyGif) для iOS. 
+### The Result
+As the result of `GiphyApp` lessons you will get an application to view gif files using [GIPHY API](https://developers.giphy.com/docs/api). 
+UI of this application will be completely native, player of gif files will make using native libraries [glide](https://github.com/bumptech/glide) for Android and [SwiftyGif](https://github.com/kirualex/SwiftyGif) for iOS.
 
 |android app|ios app|
 |---|---|
 |![giphy-android-app](assets/giphy-android-app.webp)|![giphy-ios-app](assets/giphy-ios-app.webp)|
 
-Готовый код проекта доступен на [github](https://github.com/Alex009/giphy-mobile).
+Final code is on [github](https://github.com/Alex009/giphy-mobile) repository.
 
-## Создание проекта из moko-template
+## Create the project based on moko-template
 Duration: 5
 
-Для создания проекта будет использован шаблон [moko-template](https://github.com/icerockdev/moko-template). 
+For creation we will use project template from [moko-template](https://github.com/icerockdev/moko-template). 
 
 Positive
-: Шаблон имеет настроенную конфигурацию сборки Android и iOS приложений с общей библиотекой, что позволяет не тратить время на интеграцию сборки общей библиотеки под iOS с iOS проектом, на конфигурирование Kotlin Multiplatform модулей и зависимостей (используя [mobile-multiplatform-gradle-plugin](https://github.com/icerockdev/mobile-multiplatform-gradle-plugin) конфигурация значительно упрощена). Так же шаблон имеет несколько фич-примеров.
+: The project template already has preconfigured builds of iOS and Andoroid application with shared library and you will save the time to integrate shared library to iOS project on iOS platform, to configure Kotlin Multiplatform modules and dependencies (using [mobile-multiplatform-gradle-plugin](https://github.com/icerockdev/mobile-multiplatform-gradle-plugin) you can make configuraion is simplier). 
+The project template has a sample of several features as well as. 
 
 ### Use this template
-Чтобы использовать шаблон нужно перейти на [GitHub репозиторий шаблона moko-template](https://github.com/icerockdev/moko-template) и нажать зеленую кнопку `Use this template`. Этим действием мы создадим новый репозиторий с контентом, соответствующим последнему коммиту из `master` ветки `moko-template`.
+To use this template you have to go on [GitHub репозиторий шаблона moko-template](https://github.com/icerockdev/moko-template) and press a green button `Use this template`. As the result, you create a new repository according to the last commit of  `master` branch of `moko-template` project.
 
-После успешного создания нового репозитория склонируем репозиторий себе - `git clone <git url of repo>`.
+After succefull creation you should clone this rep:  `git clone <git url of repo>`.
 
-## Тестовая сборка
+## Test build
 Duration: 5
 
-Чтобы убедиться, что стартовое состояние корректно работает - запустим оба приложения. Для этого нужно:
-- Android - открываем через Android Studio корневую директорию репозитория, после завершения `Gradle Sync` можно запустить модуль `android-app` как обычное приложение;
-- iOS - устанавливаем CocoaPods проекта - в директории `ios-app` запускаем `pod install`, а после завершения открываем `ios-app/ios-app.xcworkspace` и жмем `Run` для запуска приложения.
+To be sure that start state is correct, will run the both applications. To do this: 
+- on Android: open root repository directory in Android Studio, wait while `Gradle Sync` will finish, and run `android-app` as regular application. 
+- on iOS: install project's CocoaPods (in directory `ios-app` run a command `pod install`, and after this open `ios-app/ios-app.xcworkspace` in Xcode and press `Run` for running application. 
 
 Positive
-: Время сборки Kotlin/Native части продолжительное (сборка запускается автоматически при `pod install` для корректной интеграции в проект, а так же при сборке iOS проекта).
+: Building of Kotlin/Native can take a time (it will start automatically on doing `pod install` as well as building iOS project). 
 
-## Настройки идентификации приложения
+## Setting up an application identifiers 
 Duration: 10
 
-Настройки индентификации приложения вносятся полностью так же, как и в обычных Android и iOS приложениях.
+You can set an appllication identifiers like you do in regular Android and iOS application: 
 
-### Изменение Appliсation Id
-Android - в файле `android-app/build.gradle.kts` изменить:
+### Change Appliсation Id
+Android - in file `android-app/build.gradle.kts` need to change:
 ```kotlin
 android {
     ...
@@ -72,23 +74,25 @@ android {
     }
 }
 ```
-iOS - в Xcode в настройках проекта указать `Bundle Identifier` как на скриншоте:  
+iOS - you have to set `Bundle Identifier` in the project's setting in Xcode like on the screenshot below:  
 ![Xcode bundle identifier](assets/giphy-1-1.png)
 
-### Изменение имени приложения
-Android - в файле `android-app/src/main/res/values/strings.xml` изменить:
+### Change an application name 
+Android - in file `android-app/src/main/res/values/strings.xml` change:
 ```xml
 <resources>
     <string name="app_name">Giphy App</string>
     ...
 </resources>
 ```
-iOS - в Xcode в настройках проекта указать `Display name` как на скриншоте:
+iOS - you have to set `Display name` in the project's setting in Xcode like on the screenshot below:  
 ![Xcode display name](assets/giphy-1-2.png)
 
-### Изменение иконки
-Ресурсы иконки можно скачать [по ссылке](assets/giphy-1-icons.zip).  
-Для замены Android иконок нужно перенести содержимое из директории `android` архива в `android-app/src/main/res`. После этого нужно указать иконку в `android-app/src/main/AndroidManifest.xml`:
+### Change an application icon
+You can download the icon's resources [here](assets/giphy-1-icons.zip).  
+
+To change Android icons you have to move content of `android` directory of this archive in `android-app/src/main/res` directory. After this, you need to set this icon on `android-app/src/main/AndroidManifest.xml`:
+
 ```xml
 <manifest>
     <application
@@ -98,13 +102,14 @@ iOS - в Xcode в настройках проекта указать `Display na
     </application>
 </manifest>
 ```
-Для замены на iOS требуется заменить директорию `ios-app/src/Assets.xcassets/AppIcon.appiconset` на версию из архива.
+To change icons on iOS you have to replace `ios-app/src/Assets.xcassets/AppIcon.appiconset` directory by the archive's version. 
 
-### Изменение загрузочного экрана
-Загрузочный экран есть на iOS и меняется он через Xcode в файле `ios-app/src/Resources/LaunchScreen.storyboard`. Для примера просто заменим текст, как на скриншоте:
+### Change launch screen 
+There is a launch screen on iOS and to replace it you have to modify `ios-app/src/Resources/LaunchScreen.storyboard` file. For example, let's just change a text like on screenshot: 
+
 ![change launch screen](assets/giphy-1-3.png)
 
-## Дальнейшие шаги
+## Next steps 
 Duration: 3
 
-В следующем руководстве [GiphyApp #2](https://codelabs.kmp.icerock.dev/codelabs/giphy-app-2) разобрана реализация списка Gif.
+On the next lesson [GiphyApp #2](https://codelabs.kmp.icerock.dev/codelabs/giphy-app-2) we will create a Gif list. 
