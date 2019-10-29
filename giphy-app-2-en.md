@@ -1,4 +1,4 @@
-summary: Реализация списка Gif
+summary: Gif list development 
 id: giphy-app-2
 categories: multiplatform
 environments: moko-template
@@ -7,37 +7,40 @@ Feedback Link: https://github.com/icerockdev/kmp-codelabs/issues
 Analytics Account: UA-81805223-5
 Author: Aleksey Mikhailov <am@icerock.dev>
 
-# GiphyApp #2 - Реализация списка Gif
-## Вводная
+# GiphyApp #2 - Development list of Gifs
+## Intro
 
-Данное руководство является продолжением в серии GiphyApp, перед началом требуется выполнить [GiphyApp #1](https://codelabs.kmp.icerock.dev/codelabs/giphy-app-1).
+This manual is the second part in GiphyApp series, before you start we would recommend to do [GiphyApp #1](https://codelabs.kmp.icerock.dev/codelabs/giphy-app-1).
 
-Готовый код проекта доступен на [github](https://github.com/Alex009/giphy-mobile).
+The result of this lession is available on [github](https://github.com/Alex009/giphy-mobile).
 
-## Создание логики списка Gif в общей библиотеке
+## Implement common logic of Gif list in shared library
 Duration: 30
 
-Нужно чтобы приложение получало список Gif с сервиса GIPHY. В шаблоне сделан пример получения списка новостей с newsapi, реализовано это с использованием [moko-network](https://github.com/icerockdev/moko-network), который генерирует сетевые сущности и API классы из OpenAPI спецификации.
+App should get list of Gifs from GIPHY service. There is an example with getting list of news from newsapi in the project template (using [moko-network](https://github.com/icerockdev/moko-network) with generating network entites and API classes from OpenAPI specification). 
 
-Имея OpenAPI спецификацию от GIPHY взятую с [apis.guru](https://apis.guru/browse-apis/) можно заменить получение новостей на получение Gif. 
+We can get OpenAPI spec of GIPHY from [apis.guru](https://apis.guru/browse-apis/) and can replace getting news by getting Gif. 
 
 Positive
 : Фича списка уже присутствует в шаблоне, поэтому логику не придется реализовывать. Для большего понимания как устроена фича следует ознакомиться с [схемой модуля](https://github.com/icerockdev/moko-template#list-module-scheme) и посмотреть код в `mpp-library:feature:list`.
 
-### Замена OpenAPI спецификации
-Заменим содержимое файла `mpp-library/domain/src/openapi.yml` содержимым из [OpenAPI спецификации сервиса GIPHY](assets/giphy-openapi.yml). После этого можно вызвать `Gradle Sync` и по завершению мы увидим что появились ошибки в коде, который работал с `newsapi`. Нужно обновить этот код под новую API.
+: Feature List is already in the project template and you have not to implement any additional logic. You can see [scheme of module](https://github.com/icerockdev/moko-template#list-module-scheme) and look into `mpp-library:feature:list` for detail information about it.
+
+### Replace OpenAPI spec
+
+Replace file `mpp-library/domain/src/openapi.yml` by the content from [OpenAPI spec of GIPHY service](assets/giphy-openapi.yml). After it please do `Gradle Sync` and as the result you will see some errors in the `newsapi` code. Let's update code by new API. 
 
 Positive
-: Сгенерированные файлы находятся по пути `mpp-library/domain/build/generate-resources/main/src/main/kotlin`
+: You can find generated files here `mpp-library/domain/build/generate-resources/main/src/main/kotlin`
 
-### Замена новостей на гифки в domain модуле
-После замены OpenAPI спецификации в `domain` модуле требуется обновить следующие классы:
-- `News` – он должен быть заменен на `Gif`;
-- `NewsRepository` – поправить под `GifRepository`;
-- `DomainFactory` – добавить `gifRepository` и предоставить ему нужные зависимости.
+### Replace news by gifs in domain module
+You have to update the following classes after replacing OpenAPI spec in `domain` module:
+- `News` should be replaced by `Gif`;
+- `NewsRepository` – should be replaced by `GifRepository`;
+- `DomainFactory` – add `gifRepository` and set necessary dependencies.
 
 #### News -> Gif
-`News` преобразуем в следующий класс:
+Let's modify `News` class to the following one:
 ```kotlin
 @Parcelize
 data class Gif(
@@ -46,9 +49,10 @@ data class Gif(
     val sourceUrl: String
 ) : Parcelable
 ```
-Наша доменная сущность содержит `id` гифки, нужный для корректного определения элемента в списке и корректных анимаций на UI, а также два варианта URL - полноразмерный вариант и превью.
+This domain entity contains gif's `id` and two URL (full and preview variant). `id` is used for correct identifying element in a list and in UI animations.
 
-К классу `Gif` добавим преобразование из сетевой сущности `dev.icerock.moko.network.generated.models.Gif` в доменную. Для этого добавим дополнительный конструктор:
+Let's transform network entity `dev.icerock.moko.network.generated.models.Gif` to domain entity. To do this add one more construct method:
+
 ```kotlin
 @Parcelize
 data class Gif(
@@ -62,10 +66,10 @@ data class Gif(
     )
 }
 ```
-В конструкторе происходит маппинг полей из сетевой сущности в доменную, что позволяет уменьшить количество необходимых изменений при изменении API. Само приложение становится независимым от деталей реализации API.
+Above there is a field mapping from network entity to domain entity - it will reduce the number of edits if API has been changed.  The application doesn't depend on API implementation.  
 
 #### NewsRepository -> GifRepository
-`NewsRepository` превратим в `GifRepository` с следующим контентом:
+Let's change `NewsRepository` to `GifRepository` with the following content:
 ```kotlin
 class GifRepository internal constructor(
     private val gifsApi: GifsApi
@@ -81,7 +85,9 @@ class GifRepository internal constructor(
     }
 }
 ```
-В данном репозитории нам достаточно получить `GifsApi` (генерируется `moko-network`) и вызвать метод API `searchGifs`, где на данный момент используем только поисковой запрос, остальные аргументы оставив по умолчанию.
+
+In this class you have to get `GifsApi` (generated by `moko-network`) and call a method API `searchGifs`, where we use just `query` string, but other arguments are by default. 
+
 Сетевые сущности сразу преобразуем в доменные, которые можем выдать наружу модуля (сетевые сущности генерируются с модификатором `internal`).
 
 #### DomainFactory
