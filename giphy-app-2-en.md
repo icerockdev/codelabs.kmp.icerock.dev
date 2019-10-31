@@ -354,8 +354,8 @@ fun ImageView.bindGif(gifUrl: String?) {
 ```
 This allows us to set `gifUrl` for `ImageView` from layout. Moreover on loading there will be progress bar and on error it will be error icon. 
 
-### Create a Gif list View
-All that's left to do a view showing data from our common code. 
+### Create a Gif list screen 
+All that's left to do a screen showing data from our common code. 
 Create `android-app/src/main/res/layout/activity_gif_list.xml` with the content:
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
@@ -458,7 +458,7 @@ We've got `ListViewModel<Gif>` from `gifsFactory` factory and it will be inserte
 
 Also we define `setOnRefreshListener` in code for proper execution `SwipeRefreshLayout` and call `viewModel.onRefresh` that report in lambda when update will be finished and we can turn off the updating animation. 
 
-### Replace startup screen 
+### Replace a startup screen 
 Let's set up  `GifListActivity` as a launch screen. To do it let's add `GifListActivity` in `android-app/src/main/AndroidManifest.xml` file and remove others (we don't need it any more). 
 ```xml
 <application ...>
@@ -529,9 +529,9 @@ AppComponent.factory = SharedFactory(
 
 ### GifListUnitsFactory implementation
 
-Интерфейс `SharedFactoryGifsUnitsFactory` требует, чтобы мы создали `UnitItem` из `id` и `gifUrl`. Сам интерфейс `UnitItem` относится к библиотеке [moko-units](https://github.com/icerockdev/moko-units) и реализация требует создания xib с интерфейсом ячейки и специального класса ячейки.
+`SharedFactory.GifsUnitsFactory` interface requires to create `UnitItem` from `id` and `gifUrl` variables. `UnitItem` is a part of [moko-units](https://github.com/icerockdev/moko-units) and implementation requires to create xib with cell interface and specific cell class. 
 
-Создадим `ios-app/src/units/GifTableViewCell.swift` с содержимым:
+Create `ios-app/src/units/GifTableViewCell.swift` with the content:
 ```swift
 import MultiPlatformLibraryUnits
 import SwiftyGif
@@ -578,15 +578,18 @@ extension GifTableViewCell: Reusable {
     }
 }
 ```
-И нужно создать `ios-app/src/units/GifTableViewCell.xib` с версткой ячейки.
-Итоговый результат выглядит так:
+Then create  `ios-app/src/units/GifTableViewCell.xib` with a cell layout. 
+
+The result looks like this: 
 ![GifTableViewCell.xib](assets/giphy-2-1.png)
-У самой `UITableViewCell` нужно указать класс `GifTableViewCell`:
+
+We have to set `GifTableViewCell` class in `UITableViewCell` cell: 
 ![GifTableViewCell class](assets/giphy-2-2.png)
-А так же указать идентификатор для переиспользования:
+
+And set an identifier for reuse: 
 ![reuseIdentifier](assets/giphy-2-3.png)
 
-Теперь в `GifListUnitsFactory` можно написать реализацию создания `UnitItem`:
+Now we can implement `UnitItem` creation in `GifListUnitsFactory`:
 ```swift
 class GifsListUnitsFactory: SharedFactoryGifsUnitsFactory {
     func createGifTile(id: Int64, gifUrl: String) -> UnitItem {
@@ -601,10 +604,10 @@ class GifsListUnitsFactory: SharedFactoryGifsUnitsFactory {
 }
 ```
 
-### Создание экрана списка Gif
-Остается только создать экран, который будет отображать данные из нашей общей логики.
+### Create a Gif list screen 
+All that's left to do a screen showing data from our common code. 
 
-Создадим `ios-app/src/view/GifListViewController.swift` с содержимым:
+Create `ios-app/src/view/GifListViewController.swift` with the content:
 ```swift
 import MultiPlatformLibraryMvvm
 import MultiPlatformLibraryUnits
@@ -663,19 +666,20 @@ class GifListViewController: UIViewController {
     }
 }
 ```
-И перепривяжем в `MainStoryboard` `NewsViewController` к `GifListViewController`:
+And let's bind `NewsViewController` to `GifListViewController` in `MainStoryboard`: 
 ![GifListViewController](assets/giphy-2-4.png)
 
-### Замена стартового экрана
-Чтобы приложение запускалось сразу с экрана гифок, нужно указать у `Navigation Controller` `rootViewController` связь с `GifListViewController`:
+### Replace a startup screen 
+To launch the application from gif screen we have to link `rootViewController` with `GifListViewController` in `Navigation Controller`: 
+
 ![rootViewController](assets/giphy-2-5.png)
 
-### Удаление лишних файлов
-Теперь можно удалить все лишнее:
+### Remove unnecessary files
+Now we can delete all unnnecessary files from project:
 - `ios-app/src/units/NewsTableViewCell.swift`
 - `ios-app/src/units/NewsTableViewCell.xib`
 - `ios-app/src/view/ConfigViewController.swift`
 - `ios-app/src/view/NewsViewController.swift`
 
-### Запуск
-Теперь можно запустить приложение на iOS и увидеть список Gif.
+### Run 
+Now you can run the application on iOS and see a list of Gif. 
