@@ -3,12 +3,12 @@
   "format": "html",
   "prefix": "https://storage.googleapis.com",
   "mainga": "UA-49880327-14",
-  "updated": "2019-10-22T16:43:58+07:00",
+  "updated": "2019-11-01T14:15:56+07:00",
   "id": "giphy-app-2",
   "duration": 90,
-  "title": "GiphyApp #2 - Реализация списка Gif",
-  "summary": "Реализация списка Gif",
-  "source": "giphy-app-2.md",
+  "title": "GiphyApp #2 - Development list of Gifs",
+  "summary": "Gif list development",
+  "source": "giphy-app-2-en.md",
   "theme": "",
   "status": [
     "published"

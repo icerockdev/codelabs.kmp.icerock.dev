@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
   <meta name="theme-color" content="#4F7DC9">
   <meta charset="UTF-8">
-  <title>GiphyApp #2 - Реализация списка Gif</title>
+  <title>GiphyApp #2 - Development list of Gifs</title>
   <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
   <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
   <link rel="stylesheet" href="https://storage.googleapis.com/codelab-elements/codelab-elements.css">
@@ -23,35 +23,36 @@
   <google-codelab-analytics gaid="UA-49880327-14"></google-codelab-analytics>
   <google-codelab codelab-gaid="UA-81805223-5"
                   id="giphy-app-2"
-                  title="GiphyApp #2 - Реализация списка Gif"
+                  title="GiphyApp #2 - Development list of Gifs"
                   environment="web"
                   feedback-link="https://github.com/icerockdev/kmp-codelabs/issues">
     
-      <google-codelab-step label="Вводная" duration="0">
-        <p>Данное руководство является продолжением в серии GiphyApp, перед началом требуется выполнить <a href="https://codelabs.kmp.icerock.dev/codelabs/giphy-app-1" target="_blank">GiphyApp #1</a>.</p>
-<p>Готовый код проекта доступен на <a href="https://github.com/Alex009/giphy-mobile" target="_blank">github</a>.</p>
+      <google-codelab-step label="Intro" duration="0">
+        <p>This manual is the second part in GiphyApp series, before you start we would recommend to do <a href="https://codelabs.kmp.icerock.dev/codelabs/giphy-app-1" target="_blank">GiphyApp #1</a>.</p>
+<p>The result of this lession is available on <a href="https://github.com/Alex009/giphy-mobile" target="_blank">github</a>.</p>
 
 
       </google-codelab-step>
     
-      <google-codelab-step label="Создание логики списка Gif в общей библиотеке" duration="30">
-        <p>Нужно чтобы приложение получало список Gif с сервиса GIPHY. В шаблоне сделан пример получения списка новостей с newsapi, реализовано это с использованием <a href="https://github.com/icerockdev/moko-network" target="_blank">moko-network</a>, который генерирует сетевые сущности и API классы из OpenAPI спецификации.</p>
-<p>Имея OpenAPI спецификацию от GIPHY взятую с <a href="https://apis.guru/browse-apis/" target="_blank">apis.guru</a> можно заменить получение новостей на получение Gif.</p>
+      <google-codelab-step label="Implement common logic of Gif list in shared library" duration="30">
+        <p>App should get list of Gifs from GIPHY service. There is an example with getting list of news from newsapi in the project template (using <a href="https://github.com/icerockdev/moko-network" target="_blank">moko-network</a> with generating network entites and API classes from OpenAPI specification).</p>
+<p>We can get OpenAPI spec of GIPHY from <a href="https://apis.guru/browse-apis/" target="_blank">apis.guru</a> and can replace getting news by getting Gif.</p>
 <aside class="special"><p>Фича списка уже присутствует в шаблоне, поэтому логику не придется реализовывать. Для большего понимания как устроена фича следует ознакомиться с <a href="https://github.com/icerockdev/moko-template#list-module-scheme" target="_blank">схемой модуля</a> и посмотреть код в <code>mpp-library:feature:list</code>.</p>
 </aside>
-<h2 is-upgraded>Замена OpenAPI спецификации</h2>
-<p>Заменим содержимое файла <code>mpp-library/domain/src/openapi.yml</code> содержимым из <a href="assets/giphy-openapi.yml" target="_blank">OpenAPI спецификации сервиса GIPHY</a>. После этого можно вызвать <code>Gradle Sync</code> и по завершению мы увидим что появились ошибки в коде, который работал с <code>newsapi</code>. Нужно обновить этот код под новую API.</p>
-<aside class="special"><p>Сгенерированные файлы находятся по пути <code>mpp-library/domain/build/generate-resources/main/src/main/kotlin</code></p>
+<p>Feature List is already in the project template and you have not to implement any additional logic. You can see <a href="https://github.com/icerockdev/moko-template#list-module-scheme" target="_blank">scheme of module</a> and look into <code>mpp-library:feature:list</code> for detail information about it.</p>
+<h2 is-upgraded>Replace OpenAPI spec</h2>
+<p>Replace file <code>mpp-library/domain/src/openapi.yml</code> by the content from <a href="assets/giphy-openapi.yml" target="_blank">OpenAPI spec of GIPHY service</a>. After it please do <code>Gradle Sync</code> and as the result you will see some errors in the <code>newsapi</code> code. Let&#39;s update code by new API.</p>
+<aside class="special"><p>You can find generated files here <code>mpp-library/domain/build/generate-resources/main/src/main/kotlin</code></p>
 </aside>
-<h2 is-upgraded>Замена новостей на гифки в domain модуле</h2>
-<p>После замены OpenAPI спецификации в <code>domain</code> модуле требуется обновить следующие классы:</p>
+<h2 is-upgraded>Replace news by gifs in domain module</h2>
+<p>You have to update the following classes after replacing OpenAPI spec in <code>domain</code> module:</p>
 <ul>
-<li><code>News</code> – он должен быть заменен на <code>Gif</code>;</li>
-<li><code>NewsRepository</code> – поправить под <code>GifRepository</code>;</li>
-<li><code>DomainFactory</code> – добавить <code>gifRepository</code> и предоставить ему нужные зависимости.</li>
+<li><code>News</code> should be replaced by <code>Gif</code>;</li>
+<li><code>NewsRepository</code> – should be replaced by <code>GifRepository</code>;</li>
+<li><code>DomainFactory</code> – add <code>gifRepository</code> and set necessary dependencies.</li>
 </ul>
 <h3 is-upgraded>News -&gt; Gif</h3>
-<p><code>News</code> преобразуем в следующий класс:</p>
+<p>Let&#39;s modify <code>News</code> class to the following one:</p>
 <pre><code>@Parcelize
 data class Gif(
     val id: Int,
@@ -59,8 +60,8 @@ data class Gif(
     val sourceUrl: String
 ) : Parcelable
 </code></pre>
-<p>Наша доменная сущность содержит <code>id</code> гифки, нужный для корректного определения элемента в списке и корректных анимаций на UI, а также два варианта URL - полноразмерный вариант и превью.</p>
-<p>К классу <code>Gif</code> добавим преобразование из сетевой сущности <code>dev.icerock.moko.network.generated.models.Gif</code> в доменную. Для этого добавим дополнительный конструктор:</p>
+<p>This domain entity contains gif&#39;s <code>id</code> and two URL (full and preview variant). <code>id</code> is used for correct identifying element in a list and in UI animations.</p>
+<p>Let&#39;s transform network entity <code>dev.icerock.moko.network.generated.models.Gif</code> to domain entity. To do this add one more construct method:</p>
 <pre><code>@Parcelize
 data class Gif(
     ...
@@ -73,9 +74,9 @@ data class Gif(
     )
 }
 </code></pre>
-<p>В конструкторе происходит маппинг полей из сетевой сущности в доменную, что позволяет уменьшить количество необходимых изменений при изменении API. Само приложение становится независимым от деталей реализации API.</p>
+<p>Above there is a field mapping from network entity to domain entity - it will reduce the number of edits if API has been changed.  The application doesn&#39;t depend on API implementation.</p>
 <h3 is-upgraded>NewsRepository -&gt; GifRepository</h3>
-<p><code>NewsRepository</code> превратим в <code>GifRepository</code> с следующим контентом:</p>
+<p>Let&#39;s change <code>NewsRepository</code> to <code>GifRepository</code> with the following content:</p>
 <pre><code>class GifRepository internal constructor(
     private val gifsApi: GifsApi
 ) {
@@ -90,9 +91,10 @@ data class Gif(
     }
 }
 </code></pre>
-<p>В данном репозитории нам достаточно получить <code>GifsApi</code> (генерируется <code>moko-network</code>) и вызвать метод API <code>searchGifs</code>, где на данный момент используем только поисковой запрос, остальные аргументы оставив по умолчанию.<br>Сетевые сущности сразу преобразуем в доменные, которые можем выдать наружу модуля (сетевые сущности генерируются с модификатором <code>internal</code>).</p>
+<p>In this class you have to get <code>GifsApi</code> object (generated by <code>moko-network</code>) and call a method API <code>searchGifs</code>, where we use just <code>query</code> string, but other arguments are by default.</p>
+<p>Network entities we have to modify in domain entities, what can be public (network entites generated with <code>internal</code> modifier only).</p>
 <h3 is-upgraded>DomainFactory</h3>
-<p>В <code>DomainFactory</code> нужно заменить создание <code>newsApi</code> и <code>newsRepository</code>, заменим их на следующий код:</p>
+<p>In <code>DomainFactory</code> we have to replace creation <code>newsApi</code> and <code>newsRepository</code> by the following code:</p>
 <pre><code>private val gifsApi: GifsApi by lazy {
     GifsApi(
         basePath = baseUrl,
@@ -107,10 +109,15 @@ val gifRepository: GifRepository by lazy {
     )
 }
 </code></pre>
-<p><code>GifsApi</code> это сгенерированный класс, для создания требуется <code>baseUrl</code> (адрес сервера с которым работаем, передается он через фабрику с нативного уровня, для возможности конфигурирования разных окружений сборки на обеих платформах), <code>httpClient</code> (клиент для работы с сервером, от библиотеки <a href="https://github.com/ktorio/ktor/" target="_blank">ktor-client</a>), <code>json</code> (сериализатор Json от библиотеки <a href="https://github.com/Kotlin/kotlinx.serialization" target="_blank">kotlinx.serialization</a>).  API доступно только внутри модуля, предоставляется как зависимость в репозитории.</p>
-<p><code>GifRepository</code> доступен вне модуля, для создания требуется только <code>gifsApi</code>.</p>
-<p>Инициализация делается <code>lazy</code>, это означает что и API и репозиторий являются синглтонами (объекты живы пока жива фабрика, а ее держит <code>SharedFactory</code>, которая жива на все время жизни приложения).</p>
-<p>Также для работы с GIPHY API требуется передавать Api Key. Для этого можем использовать <code>TokenFeature</code> для <code>ktor</code>. Она уже подключена, ее нужно только переконфигурировать в следующее:</p>
+<p><code>GifsApi</code> - it&#39;s a generated class, for creation you need a several parameters:</p>
+<ul>
+<li><code>baseUrl</code> – server url, it will come from factory of native layer. It needed for set up different envoiroment configuration.</li>
+<li><code>httpClient</code> - http client object for work with server  (from <a href="https://github.com/ktorio/ktor/" target="_blank">ktor-client</a>)</li>
+<li><code>json</code> - JSON serialization object (from <a href="https://github.com/Kotlin/kotlinx.serialization" target="_blank">kotlinx.serialization</a>)</li>
+</ul>
+<p><code>GifRepository</code> is available outside of module, you can create it using <code>gifsApi</code> object only.</p>
+<p>There is a <code>lazy</code> initialization – API and repository are Singleton objects (objects are alive while the factory is alive and  the factory is created <code>SharedFactory</code> exists during life cycle of an application).</p>
+<p>Also we need to send Api Key for work with GIPHY API. To do this we can use <code>TokenFeature</code> for <code>ktor</code>. It was already connected, we just have to configure it:</p>
 <pre><code>install(TokenFeature) {
     tokenHeaderName = &#34;api_key&#34;
     tokenProvider = object : TokenFeature.TokenProvider {
@@ -118,11 +125,11 @@ val gifRepository: GifRepository by lazy {
     }
 }
 </code></pre>
-<p>В данной реализации к каждому запросу, который посылается через <code>httpClient</code> будет добавлен хидер <code>api_key: o5tAxORWRXRxxgIvRthxWnsjEbA3vkjV</code> (сам ключ от тестового приложения, если у вас он уперся в лимиты - можете создать свой в <a href="https://developers.giphy.com/dashboard/" target="_blank">разделе управления GIPHY</a>).</p>
-<h2 is-upgraded>Обновление связи domain и feature:list в SharedFactory</h2>
-<p>В <code>SharedFactory</code> требуется изменить интерфейс создания элементов списка - <code>NewsUnitsFactory</code>, а также заменить синглтон <code>newsFactory</code> на <code>gifsFactory</code> с конфигурацией под <code>Gif</code>.</p>
+<p>Every query comes throught <code>httpClient</code> will be append by header <code>api_key: o5tAxORWRXRxxgIvRthxWnsjEbA3vkjV</code> in this case (this is a sample app key, you can create a your one in <a href="https://developers.giphy.com/dashboard/" target="_blank">GIPHY admin area</a> if you are  exceed the limit).</p>
+<h2 is-upgraded>Update connection between <code>domain</code> and <code>feature:list</code> from SharedFactory</h2>
+<p>In <code>SharedFactory</code> we have to change interface of units list factory, <code>NewsUnitsFactory</code>, and replace singleton <code>newsFactory</code> by <code>gifsFactory</code> with <code>Gif</code> configuration.</p>
 <h3 is-upgraded>NewsUnitsFactory -&gt; GifsUnitsFactory</h3>
-<p>Интерфейс создания элементов списка должен быть заменен на:</p>
+<p>Interface of units list factory should be replaced by:</p>
 <pre><code>interface GifsUnitsFactory {
     fun createGifTile(
         id: Long,
@@ -130,9 +137,9 @@ val gifRepository: GifRepository by lazy {
     ): UnitItem
 }
 </code></pre>
-<p>То есть из общей логики будет выдаваться <code>id</code> для корректного определения diff&#39;а списка с анимированием обновления и <code>gifUrl</code> в котором будет url для вывода анимации на UI.</p>
+<p>То есть из общей логики будет выдаваться <code>id</code> для корректного определения diff&#39;а списка с анимированием обновления и <code>gifUrl</code> в котором будет url для вывода анимации на UI.<br>So, there will be <code>id</code> (for proper diff list calculation for UI animation ) and <code>gifUrl</code> (this is url for animation output) from shared code.</p>
 <h3 is-upgraded>newsFactory -&gt; gifsFactory</h3>
-<p>Фабрика для фичи списка заменяется на следующую:</p>
+<p>List Factory should be replaced by the following code:</p>
 <pre><code>val gifsFactory: ListFactory&lt;Gif&gt; = ListFactory(
     listSource = object : ListSource&lt;Gif&gt; {
         override suspend fun getList(): List&lt;Gif&gt; {
@@ -152,8 +159,8 @@ val gifRepository: GifRepository by lazy {
     }
 )
 </code></pre>
-<p>В фабрике указывается источник данных - <code>listSource</code> в котором мы вызываем <code>gifRepository</code> из модуля <code>domain</code>. Пока что <code>query</code> зафиксирован в значении <code>test</code>, что будет изменено в будущих уроках. Также указывается <code>strings</code> - строки локализации, которые внедряются в модуль <code>feature:list</code> (данному модулю требуется только строка &#34;неизвестная ошибка&#34;). Последнее что требуется модулю - <code>unitsFactory</code>, но сам модуль работает с фабрикой имеющей 1 метод - <code>createTile(data: Gif)</code>, а для нативных сторон лучше иметь более конкретный метод создания элемента списка, чтобы каждое поле влияющее на UI определялось из общей логики. Поэтому делается вызов в <code>gifsUnitsFactory.createGifTile</code>.</p>
-<p>Последнее что нужно сделать - обновить конструктор <code>SharedLibrary</code> до следующего:</p>
+<p>In code above there is a data source <code>listSource</code> and we call <code>gifRepository</code> from <code>domain</code> module there. Temporary <code>query</code> is set up as <code>test</code> value, but we will change it in next lessons.<br>Also there is a parameter <code>strings</code>, localization strings, will be implemented in <code>feature:list</code> module (this module requires only one string &#34;unknown error&#34;).<br>The last required parameter is <code>unitsFactory</code>, but the module works with 1 method factory, <code>createTile(data: Gif)</code>, and for native platforms it will be better to use a specific list factory (so every UI-related field was defined from common code). That&#39;s why we use <code>gifsUnitsFactory.createGifTile</code>.</p>
+<p>The last thing to do - replace <code>SharedLibrary</code> constructor by the following code:</p>
 <pre><code>class SharedFactory(
     settings: Settings,
     antilog: Antilog,
@@ -161,15 +168,15 @@ val gifRepository: GifRepository by lazy {
     gifsUnitsFactory: GifsUnitsFactory
 )
 </code></pre>
-<p>То есть нужно чтобы нативки передали реализацию <code>GifsUnitsFactory</code>.</p>
+<p>So native platforms will return <code>GifsUnitsFactory</code> object.</p>
 
 
       </google-codelab-step>
     
-      <google-codelab-step label="Реализация списка Gif на Android" duration="30">
-        <h2 is-upgraded>Указание URL сервера</h2>
-<p>Адрес сервера, с которым мы работаем работаем, внедряется с уровня приложения в общую библиотеку, чтобы не тратить время на пересборку общей библиотеки когда просто сменили сервер с которым работаем.</p>
-<p>В текущей конфигурации из шаблона проекта есть только одно окружение и url сервера один. Он задается в <code>android-app/build.gradle.kts</code> - заменим его:</p>
+      <google-codelab-step label="Implement Gif list on Android" duration="30">
+        <h2 is-upgraded>Set server URL</h2>
+<p>There is a working server URL will be passed from application layer to the common code library so we avoid rebuilding when server url had changed.</p>
+<p>In our current configuration there is only one environment and only one server url. It set up in <code>android-app/build.gradle.kts</code>, let&#39;s replace it:</p>
 <pre><code>android {
     ...
     defaultConfig {
@@ -180,15 +187,15 @@ val gifRepository: GifRepository by lazy {
     }
 }
 </code></pre>
-<h2 is-upgraded>Подключение нужных зависимостей</h2>
-<p>Для реализации отображения gif нам потребуется библиотека <a href="https://github.com/bumptech/glide" target="_blank">glide</a> и для выставления соотношения сторон элементов списка 2:1 <a href="https://developer.android.com/training/constraint-layout" target="_blank">constraintLayout</a>.</p>
-<p><code>constraintLayout</code> уже объявлен в зависимостях шаблона, нужно только подключить его к <code>android-app</code>, для этого добавим в <code>android-app/build.gradle.kts</code>:</p>
+<h2 is-upgraded>Dependencies Injection</h2>
+<p>We have to use <a href="https://github.com/bumptech/glide" target="_blank">glide</a> library for gif rendering and we use <a href="https://developer.android.com/training/constraint-layout" target="_blank">constraintLayout</a> library for setting aspect ratio 2:1 of list&#39;s unit.</p>
+<p><code>constraintLayout</code> is already declared in project dependencies and we just need to include it on <code>android-app</code>, let&#39;s add it in <code>android-app/build.gradle.kts</code>:</p>
 <pre><code>dependencies {
     ...
     implementation(Deps.Libs.Android.constraintLayout.name)
 }
 </code></pre>
-<p>А <code>glide</code> требуется добавить в объявление зависимостей. Для этого в <code>buildSrc/src/main/kotlin/Versions.kt</code>  добавляем:</p>
+<p>A <code>glide</code> has to be appended in dependencies injection script in <code>buildSrc/src/main/kotlin/Versions.kt</code>:</p>
 <pre><code>object Versions {
     ...
     object Libs {
@@ -200,7 +207,7 @@ val gifRepository: GifRepository by lazy {
     }
 }
 </code></pre>
-<p>А в <code>buildSrc/src/main/kotlin/Deps.kt</code>:</p>
+<p>And in <code>buildSrc/src/main/kotlin/Deps.kt</code>:</p>
 <pre><code>object Deps {
     ...
     object Libs {
@@ -212,21 +219,21 @@ val gifRepository: GifRepository by lazy {
             )
         }
 </code></pre>
-<p>После этого можно добавить в <code>android-app/build.gradle.kts</code> подключение зависимости:</p>
+<p>After this we can add in <code>android-app/build.gradle.kts</code> the following code:</p>
 <pre><code>dependencies {
     ...
     implementation(Deps.Libs.Android.glide.name)
 }
 </code></pre>
-<h2 is-upgraded>Инициализация SharedFactory</h2>
-<p>Для создания <code>SharedFactory</code> теперь требуется <code>gifsUnitsFactory</code> вместо <code>newsUnitsFactory</code>. Чтобы предоставить эту зависимость преобразуем класс <code>NewsUnitsFactory</code> в следующий:</p>
+<h2 is-upgraded>SharedFactory Initialization</h2>
+<p>To create <code>SharedFactory</code> you have to replace <code>newsUnitsFactory</code> by <code>gifsUnitsFactory</code>. To create this dependency let&#39;s modify <code>NewsUnitsFactory</code> class to the following:</p>
 <pre><code>class GifListUnitsFactory : SharedFactory.GifsUnitsFactory {
     override fun createGifTile(id: Long, gifUrl: String): UnitItem {
         TODO()
     }
 }
 </code></pre>
-<p>А в <code>SharedFactory</code> будем передавать его:</p>
+<p>And we should use it in <code>SharedFactory</code>:</p>
 <pre><code>AppComponent.factory = SharedFactory(
     baseUrl = BuildConfig.BASE_URL,
     settings = AndroidSettings(getSharedPreferences(&#34;app&#34;, Context.MODE_PRIVATE)),
@@ -234,9 +241,9 @@ val gifRepository: GifRepository by lazy {
     gifsUnitsFactory = GifListUnitsFactory()
 )
 </code></pre>
-<h2 is-upgraded>Реализация GifListUnitsFactory</h2>
-<p>Интерфейс <code>SharedFactory.GifsUnitsFactory</code> требует, чтобы мы создали <code>UnitItem</code> из <code>id</code> и <code>gifUrl</code>. Сам интерфейс <code>UnitItem</code> относится к библиотеке <a href="https://github.com/icerockdev/moko-units" target="_blank">moko-units</a> и реализации можно генерировать из DataBinding layout&#39;ов.</p>
-<p>Создадим <code>android-app/src/main/res/layout/tile_gif.xml</code> с содержимым:</p>
+<h2 is-upgraded>GifListUnitsFactory Implementation</h2>
+<p><code>SharedFactory.GifsUnitsFactory</code> interface requires to create <code>UnitItem</code> from <code>id</code> and <code>gifUrl</code> variables. <code>UnitItem</code> is a part of <a href="https://github.com/icerockdev/moko-units" target="_blank">moko-units</a> and you can generate implementation from a DataBinding layout.</p>
+<p>Let&#39;s create <code>android-app/src/main/res/layout/tile_gif.xml</code> with the following content:</p>
 <pre><code>&lt;?xml version=&#34;1.0&#34; encoding=&#34;utf-8&#34;?&gt;
 &lt;layout xmlns:android=&#34;http://schemas.android.com/apk/res/android&#34;
     xmlns:app=&#34;http://schemas.android.com/apk/res-auto&#34;
@@ -267,7 +274,7 @@ val gifRepository: GifRepository by lazy {
     &lt;/androidx.constraintlayout.widget.ConstraintLayout&gt;
 &lt;/layout&gt;
 </code></pre>
-<p>И после этого запустим <code>Gradle Sync</code> – после этого автоматически будет сгенерирован класс <code>TileGif</code>, который мы и используем в <code>GifListUnitsFactory</code>:</p>
+<p>And run <code>Gradle Sync</code> after this – <code>TileGif</code> class will be generated automatically and we will use it in <code>GifListUnitsFactory</code> class.</p>
 <pre><code>class GifListUnitsFactory : SharedFactory.GifsUnitsFactory {
     override fun createGifTile(id: Long, gifUrl: String): UnitItem {
         return TileGif().apply {
@@ -278,6 +285,7 @@ val gifRepository: GifRepository by lazy {
 }
 </code></pre>
 <p>В самом layout&#39;е мы использовали нестандартный Binding Adapter - <code>app:gifUrl</code>. Нужно его реализовать, для этого создадим файл <code>android-app/src/main/java/org/example/app/BindingAdapters.kt</code> с содержимым:</p>
+<p>In the layout we use non-standart Binding Adapter - <code>app:gifUrl</code>. We should implement it. To do this let&#39;s create <code>android-app/src/main/java/org/example/app/BindingAdapters.kt</code> file with the following code:</p>
 <pre><code>package org.example.app
 
 import android.widget.ImageView
@@ -305,9 +313,9 @@ fun ImageView.bindGif(gifUrl: String?) {
         .into(this)
 }
 </code></pre>
-<p>Это добавит нам возможность задавать <code>gifUrl</code> для <code>ImageView</code> из layout&#39;а. Причем на время загрузки будет отображаться прогресс бар, а при ошибке отобразится иконка ошибки.</p>
-<h2 is-upgraded>Создание экрана списка Gif</h2>
-<p>Остается только создать экран, который будет отображать данные из нашей общей логики.<br>Создадим <code>android-app/src/main/res/layout/activity_gif_list.xml</code> с содержимым:</p>
+<p>This allows us to set <code>gifUrl</code> for <code>ImageView</code> from layout. Moreover on loading there will be progress bar and on error it will be error icon.</p>
+<h2 is-upgraded>Create a Gif list screen</h2>
+<p>All that&#39;s left to do a screen showing data from our common code.<br>Create <code>android-app/src/main/res/layout/activity_gif_list.xml</code> with the content:</p>
 <pre><code>&lt;?xml version=&#34;1.0&#34; encoding=&#34;utf-8&#34;?&gt;
 &lt;layout xmlns:android=&#34;http://schemas.android.com/apk/res/android&#34;
     xmlns:app=&#34;http://schemas.android.com/apk/res-auto&#34;&gt;
@@ -378,8 +386,8 @@ fun ImageView.bindGif(gifUrl: String?) {
     &lt;/FrameLayout&gt;
 &lt;/layout&gt;
 </code></pre>
-<p>Layout использует Data Binding и отображает одно из 4 состояний полученное от <code>ListViewModel</code>. В состоянии данных отображается <code>SwipeRefreshLayout</code> с <code>RecyclerView</code> внутри, а <code>RecyclerView</code> использует <code>LinearLayoutManager</code> и <code>UnitsRecyclerViewAdapter</code> для отрисовки <code>UnitItem</code>‘ов полученных из <code>UnitsFactory</code>.</p>
-<p>Теперь создадим <code>android-app/src/main/java/org/example/app/view/GifListActivity.kt</code> с содержимым:</p>
+<p>Layout uses Data Binding and show 1 of the 4 states got from <code>ListViewModel</code>. There is <code>SwipeRefreshLayout</code> with <code>RecyclerView</code> inside in data state, and <code>RecyclerView</code> uses  <code>LinearLayoutManager</code> and <code>UnitsRecyclerViewAdapter</code> for rendering <code>UnitItem</code> objectes that got from <code>UnitsFactory</code>.</p>
+<p>Let&#39;s create <code>android-app/src/main/java/org/example/app/view/GifListActivity.kt</code> with the content:</p>
 <pre><code>class GifListActivity : MvvmActivity&lt;ActivityGifListBinding, ListViewModel&lt;Gif&gt;&gt;() {
     override val layoutId: Int = R.layout.activity_gif_list
     override val viewModelClass = ListViewModel::class.java as Class&lt;ListViewModel&lt;Gif&gt;&gt;
@@ -401,9 +409,10 @@ fun ImageView.bindGif(gifUrl: String?) {
 }
 </code></pre>
 <p>Мы получаем из фабрики <code>gifsFactory</code> нашу <code>ListViewModel&lt;Gif&gt;</code> и она будет выставлена в поле <code>viewModel</code> в layout&#39;е <code>activity_gif_list</code>.</p>
-<p>Также для корректной работы <code>SwipeRefreshLayout</code> кодом задаем <code>setOnRefreshListener</code> и вызываем <code>viewModel.onRefresh</code>, который сообщит в лямбду что обновление завершено и мы сможем выключить анимацию обновления.</p>
-<h2 is-upgraded>Замена стартового экрана</h2>
-<p>Сделаем чтобы запускалось приложение сразу с <code>GifListActivity</code>. Для этого в <code>android-app/src/main/AndroidManifest.xml</code> добавим <code>GifListActivity</code>, а другие уберем (они нам не нужны):</p>
+<p>We&#39;ve got <code>ListViewModel&lt;Gif&gt;</code> from <code>gifsFactory</code> factory and it will be inserted in <code>viewModel</code> field from <code>activity_gif_list</code> layout.</p>
+<p>Also we define <code>setOnRefreshListener</code> in code for proper execution <code>SwipeRefreshLayout</code> and call <code>viewModel.onRefresh</code> that report in lambda when update will be finished and we can turn off the updating animation.</p>
+<h2 is-upgraded>Replace a startup screen</h2>
+<p>Let&#39;s set up  <code>GifListActivity</code> as a launch screen. To do it let&#39;s add <code>GifListActivity</code> in <code>android-app/src/main/AndroidManifest.xml</code> file and remove others (we don&#39;t need it any more).</p>
 <pre><code>&lt;application ...&gt;
 
     &lt;activity android:name=&#34;.view.GifListActivity&#34; &gt;
@@ -414,46 +423,46 @@ fun ImageView.bindGif(gifUrl: String?) {
     &lt;/activity&gt;
 &lt;/application&gt;
 </code></pre>
-<h2 is-upgraded>Удаление лишних классов</h2>
-<p>Теперь можно удалить все лишние файлы из примера:</p>
+<h2 is-upgraded>Remove unnecessary classes</h2>
+<p>Now we can delete all unnnecessary files from project template:</p>
 <ul>
 <li><code>android-app/src/main/java/org/example/app/view/ConfigActivity.kt</code></li>
 <li><code>android-app/src/main/java/org/example/app/view/NewsActivity.kt</code></li>
 <li><code>android-app/src/main/res/layout/activity_news.xml</code></li>
 <li><code>android-app/src/main/res/layout/tile_news.xml</code></li>
 </ul>
-<h2 is-upgraded>Запуск</h2>
-<p>Теперь можно запустить приложение на Android и увидеть список Gif.</p>
+<h2 is-upgraded>Run</h2>
+<p>You can run the application on Android and see list of Gifs.</p>
 
 
       </google-codelab-step>
     
-      <google-codelab-step label="Реализация списка Gif на iOS" duration="30">
-        <h2 is-upgraded>Указание URL сервера</h2>
-<p>Так же как и на android, адрес сервера, с которым работаем, внедряется с уровня приложения в общую библиотеку, чтобы не тратить время на пересборку общей библиотеки когда просто сменили сервер с которым работаем. Настройка на iOS делается в <code>ios-app/src/AppDelegate.swift</code>:</p>
+      <google-codelab-step label="Implement Gif list on iOS" duration="30">
+        <h2 is-upgraded>Set server URL</h2>
+<p>As well as on Android, a working server URL will be passed from application layer to the common code library so we avoid rebuilding common library when server url had changed.<br>This setting can be set in <code>ios-app/src/AppDelegate.swift</code> file:</p>
 <pre><code>AppComponent.factory = SharedFactory(
     ...
     baseUrl: &#34;https://api.giphy.com/v1/&#34;,
     ...
 )
 </code></pre>
-<h2 is-upgraded>Подключение зависимостей</h2>
-<p>Для отображения gif нам потребуется <a href="https://github.com/kirualex/SwiftyGif" target="_blank">SwiftyGif</a>, для его подключения нужно добавить в <code>ios-app/Podfile</code> зависимость:</p>
+<h2 is-upgraded>Dependencies Injections</h2>
+<p>We have to use <a href="https://github.com/kirualex/SwiftyGif" target="_blank">SwiftyGif</a> for showing gif files. To include it we have to inject <code>ios-app/Podfile</code> dependency:</p>
 <pre><code>target &#39;ios-app&#39; do
   ...
   pod &#39;SwiftyGif&#39;, &#39;5.1.1&#39;
 end
 </code></pre>
-<p>и после этого выполнить команду <code>pod install</code> в директории <code>ios-app</code>.</p>
-<h2 is-upgraded>Инициализация SharedFactory</h2>
-<p>Для создания <code>SharedFactory</code> теперь требуется <code>gifsUnitsFactory</code> вместо <code>newsUnitsFactory</code>. Чтобы предоставить эту зависимость преобразуем класс <code>NewsUnitsFactory</code> в следующий:</p>
+<p>and after this we can run a <code>pod install</code> command in <code>ios-app</code> directory.</p>
+<h2 is-upgraded>SharedFactory Initialization</h2>
+<p>We have to use <code>gifsUnitsFactory</code> instead of <code>newsUnitsFactory</code> to create <code>SharedFactory</code>. To do this let&#39;s modify <code>NewsUnitsFactory</code> class in following code:</p>
 <pre><code>class GifsListUnitsFactory: SharedFactoryGifsUnitsFactory {
     func createGifTile(id: Int64, gifUrl: String) -&gt; UnitItem {
         // TODO
     }
 }
 </code></pre>
-<p>А в <code>SharedFactory</code> будем передавать его:</p>
+<p>And will pass it in <code>SharedFactory</code>:</p>
 <pre><code>AppComponent.factory = SharedFactory(
     settings: AppleSettings(delegate: UserDefaults.standard),
     antilog: DebugAntilog(defaultTag: &#34;MPP&#34;),
@@ -461,9 +470,9 @@ end
     gifsUnitsFactory: GifsListUnitsFactory()
 )
 </code></pre>
-<h2 is-upgraded>Реализация GifListUnitsFactory</h2>
-<p>Интерфейс <code>SharedFactoryGifsUnitsFactory</code> требует, чтобы мы создали <code>UnitItem</code> из <code>id</code> и <code>gifUrl</code>. Сам интерфейс <code>UnitItem</code> относится к библиотеке <a href="https://github.com/icerockdev/moko-units" target="_blank">moko-units</a> и реализация требует создания xib с интерфейсом ячейки и специального класса ячейки.</p>
-<p>Создадим <code>ios-app/src/units/GifTableViewCell.swift</code> с содержимым:</p>
+<h2 is-upgraded>GifListUnitsFactory implementation</h2>
+<p><code>SharedFactory.GifsUnitsFactory</code> interface requires to create <code>UnitItem</code> from <code>id</code> and <code>gifUrl</code> variables. <code>UnitItem</code> is a part of <a href="https://github.com/icerockdev/moko-units" target="_blank">moko-units</a> and implementation requires to create xib with cell interface and specific cell class.</p>
+<p>Create <code>ios-app/src/units/GifTableViewCell.swift</code> with the content:</p>
 <pre><code>import MultiPlatformLibraryUnits
 import SwiftyGif
 
@@ -509,8 +518,11 @@ extension GifTableViewCell: Reusable {
     }
 }
 </code></pre>
-<p>И нужно создать <code>ios-app/src/units/GifTableViewCell.xib</code> с версткой ячейки.<br>Итоговый результат выглядит так:<br><img alt="GifTableViewCell.xib" src="img/a4ee2e09883d41f3.png"><br>У самой <code>UITableViewCell</code> нужно указать класс <code>GifTableViewCell</code>:<br><img alt="GifTableViewCell class" src="img/4429da9e6fdf71b3.png"><br>А так же указать идентификатор для переиспользования:<br><img alt="reuseIdentifier" src="img/112c487032ed7d82.png"></p>
-<p>Теперь в <code>GifListUnitsFactory</code> можно написать реализацию создания <code>UnitItem</code>:</p>
+<p>Then create  <code>ios-app/src/units/GifTableViewCell.xib</code> with a cell layout.</p>
+<p>The result looks like this:<br><img alt="GifTableViewCell.xib" src="img/a4ee2e09883d41f3.png"></p>
+<p>We have to set <code>GifTableViewCell</code> class in <code>UITableViewCell</code> cell:<br><img alt="GifTableViewCell class" src="img/4429da9e6fdf71b3.png"></p>
+<p>And set an identifier for reuse:<br><img alt="reuseIdentifier" src="img/112c487032ed7d82.png"></p>
+<p>Now we can implement <code>UnitItem</code> creation in <code>GifListUnitsFactory</code>:</p>
 <pre><code>class GifsListUnitsFactory: SharedFactoryGifsUnitsFactory {
     func createGifTile(id: Int64, gifUrl: String) -&gt; UnitItem {
         return UITableViewCellUnit&lt;GifTableViewCell&gt;(
@@ -523,9 +535,9 @@ extension GifTableViewCell: Reusable {
     }
 }
 </code></pre>
-<h2 is-upgraded>Создание экрана списка Gif</h2>
-<p>Остается только создать экран, который будет отображать данные из нашей общей логики.</p>
-<p>Создадим <code>ios-app/src/view/GifListViewController.swift</code> с содержимым:</p>
+<h2 is-upgraded>Create a Gif list screen</h2>
+<p>All that&#39;s left to do a screen showing data from our common code.</p>
+<p>Create <code>ios-app/src/view/GifListViewController.swift</code> with the content:</p>
 <pre><code>import MultiPlatformLibraryMvvm
 import MultiPlatformLibraryUnits
 
@@ -583,19 +595,20 @@ class GifListViewController: UIViewController {
     }
 }
 </code></pre>
-<p>И перепривяжем в <code>MainStoryboardNewsViewController</code> к <code>GifListViewController</code>:<br><img alt="GifListViewController" src="img/1b6b1e990381b545.png"></p>
-<h2 is-upgraded>Замена стартового экрана</h2>
-<p>Чтобы приложение запускалось сразу с экрана гифок, нужно указать у <code>Navigation ControllerrootViewController</code> связь с <code>GifListViewController</code>:<br><img alt="rootViewController" src="img/1ac2074c9b893105.png"></p>
-<h2 is-upgraded>Удаление лишних файлов</h2>
-<p>Теперь можно удалить все лишнее:</p>
+<p>And let&#39;s bind <code>NewsViewController</code> to <code>GifListViewController</code> in <code>MainStoryboard</code>:<br><img alt="GifListViewController" src="img/1b6b1e990381b545.png"></p>
+<h2 is-upgraded>Replace a startup screen</h2>
+<p>To launch the application from gif screen we have to link <code>rootViewController</code> with <code>GifListViewController</code> in <code>Navigation Controller</code>:</p>
+<p class="image-container"><img alt="rootViewController" src="img/1ac2074c9b893105.png"></p>
+<h2 is-upgraded>Remove unnecessary files</h2>
+<p>Now we can delete all unnnecessary files from project:</p>
 <ul>
 <li><code>ios-app/src/units/NewsTableViewCell.swift</code></li>
 <li><code>ios-app/src/units/NewsTableViewCell.xib</code></li>
 <li><code>ios-app/src/view/ConfigViewController.swift</code></li>
 <li><code>ios-app/src/view/NewsViewController.swift</code></li>
 </ul>
-<h2 is-upgraded>Запуск</h2>
-<p>Теперь можно запустить приложение на iOS и увидеть список Gif.</p>
+<h2 is-upgraded>Run</h2>
+<p>Now you can run the application on iOS and see a list of Gif.</p>
 
 
       </google-codelab-step>
