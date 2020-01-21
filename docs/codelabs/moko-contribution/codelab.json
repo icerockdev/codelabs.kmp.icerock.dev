@@ -1,0 +1,25 @@
+{
+  "environment": "web",
+  "format": "html",
+  "prefix": "https://storage.googleapis.com",
+  "mainga": "UA-49880327-14",
+  "updated": "2020-01-21T18:47:13+07:00",
+  "id": "moko-contribution",
+  "duration": 27,
+  "title": "MOKO contribution guide",
+  "summary": "Как вносить изменения в moko библиотеки самостоятельно",
+  "source": "moko-contribution.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "moko"
+  ],
+  "tags": [
+    "kotlin-mobile-mpp"
+  ],
+  "feedback": "https://github.com/icerockdev/kmp-codelabs/issues",
+  "ga": "UA-81805223-5",
+  "url": "moko-contribution"
+}

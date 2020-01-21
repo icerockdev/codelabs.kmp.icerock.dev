@@ -1,0 +1,148 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>MOKO contribution guide</title>
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://storage.googleapis.com/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <google-codelab-analytics gaid="UA-49880327-14"></google-codelab-analytics>
+  <google-codelab codelab-gaid="UA-81805223-5"
+                  id="moko-contribution"
+                  title="MOKO contribution guide"
+                  environment="web"
+                  feedback-link="https://github.com/icerockdev/kmp-codelabs/issues">
+    
+      <google-codelab-step label="Вводная" duration="2">
+        <p>В этом уроке разобрано как можно использовать в своих проектах moko библиотеки и вносить в них изменения.</p>
+<p>Для работы потребуется:</p>
+<ul>
+<li>Android Studio 3.4.0+;</li>
+<li>Xcode 10.3+;</li>
+<li>Xcode Command Line Tools (<code>xcode-select --install</code>);</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Готовим свой проект" duration="5">
+        <p>Для начала склонируем какой-либо проект с moko библиотеками. Например - <a href="https://github.com/icerockdev/moko-template" target="_blank">moko-template</a>. Его не требуется донастраивать, можно просто склонировать и сразу запускать.</p>
+<p><code>git clone https://github.com/icerockdev/moko-template.git</code></p>
+<p>Далее убедимся что проект корректно компилируется.</p>
+<ul>
+<li>Android - открываем Android Studio и после завершения gradle sync запускаем приложение (Run);</li>
+<li>iOS - вызываем <code>pod install</code> в дирректории <code>ios-app</code>, а после завершения открываем <code>ios-app.xcworkspace</code> и жмем Run.</li>
+</ul>
+<p>После этого определяем какую библиотеку будем модифицировать. Для примера выберем <code>moko-mvvm</code> и в качестве цели модификации выберем &#34;добавить в LiveData вывод в лог информацию о добавлении нового observable и о удалении&#34;. Так как в приложении уже есть использование вьюмоделей и лайвдат - мы сможем легко проверить реализацию.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Вносим изменения в библиотеку" duration="10">
+        <p>Для внесения изменений в библиотеку потребуется:</p>
+<ol type="1">
+<li>Создать fork <a href="https://github.com/icerockdev/moko-mvvm" target="_blank">moko-mvvm</a>;</li>
+<li>Склонировать себе данный fork;</li>
+<li>Открыть склонированный проект.</li>
+</ol>
+<p>После открытия проекта через <code>Android Studio</code> внесем нужные изменения в библиотеку.<br>Для этого в модуле <code>mvvm</code> нужно будет внести изменения для android и iOS реализаций LiveData:</p>
+<h2 is-upgraded>Android</h2>
+<p>Находим файл <code>src/androidMain/kotlin/dev/icerock/moko/mvvm/livedata/LiveData.kt</code>.<br>Обновляем код:</p>
+<pre><code>    actual fun addObserver(observer: (T) -&gt; Unit) {
+        println(&#34;livedata $this addObserver $observer&#34;)
+
+        val archObserver = Observer&lt;T&gt; { value -&gt;
+            if (value is T) observer(value)
+        }
+        observers[observer] = archObserver
+
+        archLiveData.observeForever(archObserver)
+    }
+
+    actual fun removeObserver(observer: (T) -&gt; Unit) {
+        println(&#34;livedata $this removeObserver $observer&#34;)
+
+        val archObserver = observers.remove(observer) ?: return
+        archLiveData.removeObserver(archObserver)
+    }
+</code></pre>
+<h2 is-upgraded>iOS</h2>
+<p>Находим файл <code>src/iosMain/kotlin/dev/icerock/moko/mvvm/livedata/LiveData.kt</code>.<br>Обновляем код:</p>
+<pre><code>    actual fun addObserver(observer: (T) -&gt; Unit) {
+        println(&#34;livedata $this addObserver $observer&#34;)
+
+        observer(value)
+        observers.add(observer)
+    }
+
+    actual fun removeObserver(observer: (T) -&gt; Unit) {
+        println(&#34;livedata $this removeObserver $observer&#34;)
+
+        observers.remove(observer)
+    }
+</code></pre>
+<h2 is-upgraded>Публикация изменений для использования в других проектах</h2>
+<p>Теперь, когда изменения в библиотеку внесены, нужно опубликовать эти изменения. Для проверки корректности мы можем опубликовать изменения локально, в <code>mavenLocal</code>. Для этого нужно вызвать gradle task <code>:mvvm:publishToMavenLocal</code>. Подсказка о том как развернуть локально moko библиотеку указана в <a href="https://github.com/icerockdev/moko-mvvm#set-up-locally" target="_blank">разделе Set Up Locally в README</a>.</p>
+<p>После успешного завершения задачи мы можем использовать опубликованную версию библиотеки в других проектах на данном локальном хосте.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Подключаем измененную библиотеку к проекту" duration="5">
+        <p>Для подключения библиотеки из локального maven нужно внести изменения в конфигурацию проекта:<br>root build.gradle.kts</p>
+<pre><code>allprojects {
+    repositories {
+        mavenLocal() // &lt;-- добавляем эту строку, она означает что сначала нужно искать зависимости в локальном репозитории
+        
+        google()
+        jcenter()
+
+        maven { url = uri(&#34;https://kotlin.bintray.com/kotlin&#34;) }
+        maven { url = uri(&#34;https://kotlin.bintray.com/kotlinx&#34;) }
+        maven { url = uri(&#34;https://dl.bintray.com/icerockdev/moko&#34;) }
+        maven { url = uri(&#34;https://kotlin.bintray.com/ktor&#34;) }
+        maven { url = uri(&#34;https://dl.bintray.com/aakira/maven&#34;) }
+    }
+
+    // workaround for https://youtrack.jetbrains.com/issue/KT-27170
+    configurations.create(&#34;compileClasspath&#34;)
+}
+</code></pre>
+<p>После добавления <code>mavenLocal</code> репозитория можно выполнять компиляцию проекта и мы увидим что теперь в логи пишутся сообщения, добавленные нами в <code>moko-mvvm</code>.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Публикация в общий доступ" duration="5">
+        <ul>
+<li>Так как публикация выполнена локально, то изменения будут доступны только при сборка на данном хосте;</li>
+<li>После того как изменения будут проверены локально их нужно закоммитить в свой fork библиотеки и создать pull request в оригинальный moko-репозиторий;</li>
+<li>После принятия реквеста нужно дождаться выхода новой версии moko библиотеки и применить эту версию в своем проекте.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://storage.googleapis.com/codelab-elements/native-shim.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/prettify.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/codelab-elements.js"></script>
+
+</body>
+</html>
