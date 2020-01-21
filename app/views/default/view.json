@@ -3,7 +3,8 @@
   "description": "Обучение разработки мобильных приложений Android, iOS с общим кодом через Kotlin Multiplatform",
   "tags": [],
   "categories": [
-    "multiplatform"
+    "multiplatform",
+    "moko"
   ],
   "exclude": [
     "^lang-.*"
