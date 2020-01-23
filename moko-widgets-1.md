@@ -31,7 +31,9 @@ Duration: 5
 
 При запуске приложения мы должны увидеть надпись `Hello world` по центру экрана.
 
-![android-app](assets/moko-widgets-1-android.png) ![ios-app](assets/moko-widgets-1-ios.png)
+|android app|ios app|
+|---|---|
+|![android-app](assets/moko-widgets-1-android.png)|![ios-app](assets/moko-widgets-1-ios.png)|
 
 ## Знакомимся с начальным кодом
 Duration: 10
@@ -224,4 +226,6 @@ class App : BaseApplication() {
 
 Теперь можно запустить приложение и убедиться что экран выглядит так, как ожидалось:
 
-![android-app](assets/moko-widgets-1-android-end.png) ![ios-app](assets/moko-widgets-1-ios-end.png)
+|android app|ios app|
+|---|---|
+|![android-app](assets/moko-widgets-1-android-end.png)|![ios-app](assets/moko-widgets-1-ios-end.png)|
