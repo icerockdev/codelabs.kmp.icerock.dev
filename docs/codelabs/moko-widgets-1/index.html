@@ -1,0 +1,238 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Hello MOKO Widgets</title>
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://storage.googleapis.com/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <google-codelab-analytics gaid="UA-49880327-14"></google-codelab-analytics>
+  <google-codelab codelab-gaid="UA-81805223-5"
+                  id="moko-widgets-1"
+                  title="Hello MOKO Widgets"
+                  environment="web"
+                  feedback-link="https://github.com/icerockdev/kmp-codelabs/issues">
+    
+      <google-codelab-step label="Вводная" duration="2">
+        <p>В этом уроке будет сделано небольшое приложение полностью из общего кода, используя <a href="https://github.com/icerockdev/moko-widgets/" target="_blank">moko-widgets</a>.</p>
+<p>Для работы потребуется:</p>
+<ul>
+<li>Android Studio 3.4.0+;</li>
+<li>Xcode 10.3+;</li>
+<li>Xcode Command Line Tools (<code>xcode-select --install</code>);</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Готовим свой проект" duration="5">
+        <p>Для начала создадим новый проект на основе шаблона <a href="https://github.com/Alex009/moko-widgets-template" target="_blank">moko-widgets-template</a>. Для этого на странице шаблона нужно нажать &#34;Use this template&#34;, ввести данные своего нового репозитория (например можно назвать <code>moko-widgets-education</code>).</p>
+<p>Далее нужно склонировать проект себе локально.</p>
+<p>Далее убедимся что проект корректно компилируется.</p>
+<ul>
+<li>Android - открываем Android Studio и после завершения gradle sync запускаем приложение (Run);</li>
+<li>iOS - вызываем <code>pod install</code> в дирректории <code>ios-app</code>, а после завершения открываем <code>ios-app.xcworkspace</code> и жмем Run.</li>
+</ul>
+<p>При запуске приложения мы должны увидеть надпись <code>Hello world</code> по центру экрана.</p>
+<p class="image-container"><img alt="android-app" src="img/1658c9381004497e.png"><img alt="ios-app" src="img/fb800bbf14e24157.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Знакомимся с начальным кодом" duration="10">
+        <h2 is-upgraded>Common</h2>
+<p><code>mpp-library/src/commonMain/kotlin/org/example/mpp/App.kt</code>:</p>
+<pre><code>class App : BaseApplication() {
+    override fun setup(): ScreenDesc&lt;Args.Empty&gt; {
+        val theme = Theme()
+
+        return registerScreen(MainScreen::class) {
+            MainScreen(theme)
+        }
+    }
+}
+</code></pre>
+<p>Главный класс приложения - <code>App</code>, находится в общем коде и является точкой инициализации приложения на обеих платформах. В методе <code>setup</code> должна производиться регистрация всех экранов приложения (метод <code>registerScreen</code>) и в результате выполнения метода должен быть возвращен стартовый экран (с которого будет запускаться приложение). Тип <code>Args.Empty</code> означает, что стартовый экран должен быть без входящих данных (для его открытия ничего передавать не надо).</p>
+<p><code>mpp-library/src/commonMain/kotlin/org/example/mpp/MainScreen.kt</code>:</p>
+<pre><code>class MainScreen(
+    private val theme: Theme
+) : WidgetScreen&lt;Args.Empty&gt;() {
+    override fun createContentWidget() = with(theme) {
+        container(size = WidgetSize.AsParent) {
+            center {
+                text(
+                    size = WidgetSize.WrapContent,
+                    text = const(MR.strings.hello_world.desc() as StringDesc)
+                )
+            }
+        }
+    }
+}
+</code></pre>
+<p>Пример экрана с надписью по середине.</p>
+<h2 is-upgraded>Android</h2>
+<p><code>android-app/src/main/java/org/example/app/MainApplication.kt</code>:</p>
+<pre><code>class MainApplication : Application() {
+    override fun onCreate() {
+        super.onCreate()
+
+        mppApplication = App().apply {
+            setup()
+        }
+    }
+
+    companion object {
+        lateinit var mppApplication: App
+    }
+}
+</code></pre>
+<p>Главный класс Android приложения, инициализирует MPP приложение вызовом <code>setup</code>.</p>
+<p><code>android-app/src/main/java/org/example/app/MainActivity.kt</code>:</p>
+<pre><code>class MainActivity : HostActivity() {
+    override val application: BaseApplication
+        get() {
+            return MainApplication.mppApplication
+        }
+}
+</code></pre>
+<p>Главный (и единственный) экран Android приложения, внутри себя <code>HostActivity</code> создает фрагмент из <code>rootScreen</code> от MPP приложения и добавляет как контент.<br>Чтобы каждый <code>Screen</code> мог иметь конструктор у <code>HostActivity</code> назначается <code>fragmentFactory</code>, которая использует для создания фрагментов данные указанные при регистрации экранов в MPP приложении.</p>
+<h2 is-upgraded>iOS</h2>
+<p><code>ios-app/src/AppDelegate.swift</code>:</p>
+<pre><code>@UIApplicationMain
+class AppDelegate: NSObject, UIApplicationDelegate {
+    
+    var window: UIWindow?
+    
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -&gt; Bool {
+        let app = App()
+        app.setup()
+
+        let screen = app.rootScreen.instantiate()
+        let rootViewController = screen.viewController
+
+        window = UIWindow(frame: UIScreen.main.bounds)
+        window?.rootViewController = rootViewController
+        window?.makeKeyAndVisible()
+
+        return true
+    }
+}
+</code></pre>
+<p>Делегат iOS приложения, инициализирует MPP приложение через вызов <code>setup</code> и создает <code>UIViewController</code> от стартового экрана MPP приложения.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Реализуем экран авторизации" duration="20">
+        <p>Создадим новый класс <code>LoginScreen</code>:</p>
+<pre><code>class LoginScreen : WidgetScreen&lt;Args.Empty&gt;() {
+    override fun createContentWidget(): Widget&lt;WidgetSize.Const&lt;SizeSpec.AsParent, SizeSpec.AsParent&gt;&gt; {
+        TODO(&#34;not implemented&#34;) //To change body of created functions use File | Settings | File Templates.
+    }
+}
+</code></pre>
+<p>Наследуем класс от <code>WidgetScreen</code>, это означает что содержимое экрана будет создаваться виджетами. У экрана указываем generic тип <code>Args.Empty</code>, который означает, что для открытия экрана не требуется передачи никаких данных.<br>Результат функции <code>createContentWidget</code>, которую мы должны реализовать, подсказывает что виджет должен быть размеров на весь экран (ширина и высота <code>AsParent</code>).</p>
+<p>Для создания виджетов нам потребуется экземпляр <code>Theme</code>, добавим его передачу в аргумент и создадим корневой виджет - <code>constraint</code>, который позволяет свободно располагать внутри него элементы.</p>
+<pre><code>class LoginScreen(
+    private val theme: Theme
+) : WidgetScreen&lt;Args.Empty&gt;() {
+
+    override fun createContentWidget() = with(theme) {
+        constraint(size = WidgetSize.AsParent) {
+            // here will be widgets
+            
+            constraints { 
+                // here will be constraints
+            }
+        }
+    }
+}
+</code></pre>
+<p>Создавая корневой виджет <code>constraint</code> мы указываем его размер, такой, который требует экран - <code>WidgetSize.AsParent</code> (по размеру родителя, то есть экрана в данном случае).<br>Виджет <code>constraint</code> конфигурируется блоком, внутри которого можно добавлять дочерние виджеты, а возвращаемый результат должен быть блоком настройки зависимостей (<code>constraints</code>) между этими виджетами.</p>
+<p>Далее добавим на экран поле ввода имени и кнопку &#34;войти&#34;.</p>
+<pre><code>class LoginScreen(
+    private val theme: Theme
+) : WidgetScreen&lt;Args.Empty&gt;() {
+
+    override fun createContentWidget() = with(theme) {
+        constraint(size = WidgetSize.AsParent) {
+            val nameInput = +input(
+                size = WidgetSize.WidthAsParentHeightWrapContent,
+                id = Ids.Name,
+                label = const(&#34;Name&#34;),
+                field = FormField(initialValue = &#34;&#34;, validation = liveBlock { null })
+            )
+
+            val submitButton = +button(
+                size = WidgetSize.WidthAsParentHeightWrapContent,
+                content = ButtonWidget.Content.Text(Value.data(&#34;Submit&#34;.desc()))
+            ) {
+                println(&#34;submit pressed&#34;)
+            }
+
+            constraints {
+                nameInput centerYToCenterY root
+                nameInput leftRightToLeftRight root offset 16
+
+                submitButton bottomToBottom root.safeArea offset 16
+                submitButton leftRightToLeftRight root offset 16
+            }
+        }
+    }
+
+    object Ids {
+        object Name : InputWidget.Id
+    }
+}
+</code></pre>
+<p>В пределах лямбды настройки <code>constraint</code> виджета доступен оператор <code>+</code>, который используется для добавления виджета в <code>constraint</code> и получения объекта, который можно использовать для настройки зависиомстей в блоке <code>constraints</code> - <code>ConstraintItem</code>.<br>В блоке <code>constraints</code> мы настроили:</p>
+<ul>
+<li>поле ввода имени расположено по центру вертикально и привязано к горизонтальным границам экрана, с отступом в 16 точек (dp на android, points на iOS);</li>
+<li>кнопка расположена снизу, привязанная к Safe Area с отступом в 16 точек и к горизонтальным границам с тем же отступом.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Тестируем" duration="10">
+        <p>Чтобы увидеть в приложении новый экран, нужно сделать чтобы на него происходил переход. Для простоты сделаем что экран авторизации открывается сразу, как стартовый:</p>
+<pre><code>class App : BaseApplication() {
+    override fun setup(): ScreenDesc&lt;Args.Empty&gt; {
+        val theme = Theme()
+
+        return registerScreen(LoginScreen::class) {
+            LoginScreen(theme)
+        }
+    }
+}
+</code></pre>
+<p>При чем для создания экрана <code>LoginScreen</code> требовался инстанс <code>Theme</code>. О том как его можно использовать будет в будущих уроках.</p>
+<p>Теперь можно запустить приложение и убедиться что экран выглядит так, как ожидалось:</p>
+<p class="image-container"><img alt="android-app" src="img/9fcb723cb319c8bc.png"><img alt="ios-app" src="img/35e157c9148e2dab.png"></p>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://storage.googleapis.com/codelab-elements/native-shim.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/prettify.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/codelab-elements.js"></script>
+
+</body>
+</html>
