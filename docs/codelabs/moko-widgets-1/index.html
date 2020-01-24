@@ -39,8 +39,8 @@
 
       </google-codelab-step>
     
-      <google-codelab-step label="Готовим свой проект" duration="5">
-        <p>Для начала создадим новый проект на основе шаблона <a href="https://github.com/Alex009/moko-widgets-template" target="_blank">moko-widgets-template</a>. Для этого на странице шаблона нужно нажать &#34;Use this template&#34;, ввести данные своего нового репозитория (например можно назвать <code>moko-widgets-education</code>).</p>
+      <google-codelab-step label="Готовим свой проект" duration="10">
+        <p>Для начала создадим новый проект на основе шаблона <a href="https://github.com/icerockdev/moko-widgets-template" target="_blank">moko-widgets-template</a>. Для этого на странице шаблона нужно нажать &#34;Use this template&#34;, ввести данные своего нового репозитория (например можно назвать <code>moko-widgets-education</code>).</p>
 <p>Далее нужно склонировать проект себе локально.</p>
 <p>Далее убедимся что проект корректно компилируется.</p>
 <ul>
@@ -58,7 +58,7 @@
 
       </google-codelab-step>
     
-      <google-codelab-step label="Знакомимся с начальным кодом" duration="10">
+      <google-codelab-step label="Знакомимся с начальным кодом" duration="5">
         <h2 is-upgraded>Common</h2>
 <p><code>mpp-library/src/commonMain/kotlin/org/example/mpp/App.kt</code>:</p>
 <pre><code>class App : BaseApplication() {
@@ -142,7 +142,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 
       </google-codelab-step>
     
-      <google-codelab-step label="Реализуем экран авторизации" duration="20">
+      <google-codelab-step label="Реализуем экран авторизации" duration="10">
         <p>Создадим новый класс <code>LoginScreen</code>:</p>
 <pre><code>class LoginScreen : WidgetScreen&lt;Args.Empty&gt;() {
     override fun createContentWidget(): Widget&lt;WidgetSize.Const&lt;SizeSpec.AsParent, SizeSpec.AsParent&gt;&gt; {
@@ -152,6 +152,8 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 </code></pre>
 <p>Наследуем класс от <code>WidgetScreen</code>, это означает что содержимое экрана будет создаваться виджетами. У экрана указываем generic тип <code>Args.Empty</code>, который означает, что для открытия экрана не требуется передачи никаких данных.<br>Результат функции <code>createContentWidget</code>, которую мы должны реализовать, подсказывает что виджет должен быть размеров на весь экран (ширина и высота <code>AsParent</code>).</p>
 <p>Для создания виджетов нам потребуется экземпляр <code>Theme</code>, добавим его передачу в аргумент и создадим корневой виджет - <code>constraint</code>, который позволяет свободно располагать внутри него элементы.</p>
+<aside class="special"><p><code>Theme</code> содержит в себе информацию о <code>ViewFactory</code>, которые должны быть использованы для разных типов виджетов и имеет функции для создания виджетов (например <code>constraint</code>). Если не использовать <code>Theme</code>, то придется создавать виджеты передвая <code>ViewFactory</code> вручную, что не удобно и уменьшает возможности стилизации.</p>
+</aside>
 <pre><code>class LoginScreen(
     private val theme: Theme
 ) : WidgetScreen&lt;Args.Empty&gt;() {

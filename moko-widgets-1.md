@@ -19,9 +19,9 @@ Duration: 2
 - Xcode Command Line Tools (`xcode-select --install`);
 
 ## Готовим свой проект
-Duration: 5
+Duration: 10
 
-Для начала создадим новый проект на основе шаблона [moko-widgets-template](https://github.com/Alex009/moko-widgets-template). Для этого на странице шаблона нужно нажать "Use this template", ввести данные своего нового репозитория (например можно назвать `moko-widgets-education`). 
+Для начала создадим новый проект на основе шаблона [moko-widgets-template](https://github.com/icerockdev/moko-widgets-template). Для этого на странице шаблона нужно нажать "Use this template", ввести данные своего нового репозитория (например можно назвать `moko-widgets-education`). 
 
 Далее нужно склонировать проект себе локально.
 
@@ -36,7 +36,7 @@ Duration: 5
 |![android-app](assets/moko-widgets-1-android.png)|![ios-app](assets/moko-widgets-1-ios.png)|
 
 ## Знакомимся с начальным кодом
-Duration: 10
+Duration: 5
 
 ### Common
 
@@ -132,7 +132,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 Делегат iOS приложения, инициализирует MPP приложение через вызов `setup` и создает `UIViewController` от стартового экрана MPP приложения.
 
 ## Реализуем экран авторизации
-Duration: 20
+Duration: 10
 
 Создадим новый класс `LoginScreen`:
 ```kotlin
@@ -146,6 +146,10 @@ class LoginScreen : WidgetScreen<Args.Empty>() {
 Результат функции `createContentWidget`, которую мы должны реализовать, подсказывает что виджет должен быть размеров на весь экран (ширина и высота `AsParent`).
 
 Для создания виджетов нам потребуется экземпляр `Theme`, добавим его передачу в аргумент и создадим корневой виджет - `constraint`, который позволяет свободно располагать внутри него элементы.
+
+Positive
+: `Theme` содержит в себе информацию о `ViewFactory`, которые должны быть использованы для разных типов виджетов и имеет функции для создания виджетов (например `constraint`). Если не использовать `Theme`, то придется создавать виджеты передвая `ViewFactory` вручную, что не удобно и уменьшает возможности стилизации.
+
 ```kotlin
 class LoginScreen(
     private val theme: Theme
