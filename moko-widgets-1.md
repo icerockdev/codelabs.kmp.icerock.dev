@@ -1,4 +1,4 @@
-summary: Знакомство с MOKO Widgets
+summary: MOKO Widgets #1 - hello world
 id: moko-widgets-1
 categories: moko
 environments: kotlin-mobile-mpp
@@ -7,7 +7,7 @@ Feedback Link: https://github.com/icerockdev/kmp-codelabs/issues
 Analytics Account: UA-81805223-5
 Author: Aleksey Mikhailov <am@icerock.dev>
 
-# Hello MOKO Widgets
+# MOKO Widgets #1 - hello world
 ## Вводная
 Duration: 2
 
