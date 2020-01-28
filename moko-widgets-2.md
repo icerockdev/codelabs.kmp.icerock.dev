@@ -19,7 +19,7 @@ Duration: 5
 |![android-app](assets/moko-widgets-1-android-end.png)|![ios-app](assets/moko-widgets-1-ios-end.png)|
 
 На этом уроке мы добавим навигацию между экранами. Схема переходов будет следующая:
-![navigation-scheme](assets/moko-widgets-2-navigation-sample.png)
+![navigation-scheme](assets/moko-widgets-2-navigation-sample.jpg)
 Будут разобраны переходы:
 - Обычный переход вперед;
 - Переход назад;
@@ -37,7 +37,7 @@ Duration: 2
 Duration: 2
 
 Согласно схеме экранов процесс авторизации состоит из 2 экранов, после чего переход выполняется на главную.
-![navigation-scheme](assets/moko-widgets-2-navigation-sample.png)
+![navigation-scheme](assets/moko-widgets-2-navigation-sample.jpg)
 
 ## Авторизация - экран ввода телефона
 Duration: 30
