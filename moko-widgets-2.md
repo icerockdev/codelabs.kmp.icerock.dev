@@ -14,6 +14,7 @@ Duration: 5
 Урок является продолжением [MOKO Widgets #1 - hello world](https://codelabs.kmp.icerock.dev/codelabs/moko-widgets-1/). Для выполнения данного урока нужно иметь проект, полученный в результате выполнения предыдущего урока.
 
 Результатом прошлого урока был экран входа с полем ввода имени и кнопкой отправки:
+
 |android app|ios app|
 |---|---|
 |![android-app](assets/moko-widgets-1-android-end.png)|![ios-app](assets/moko-widgets-1-ios-end.png)|
@@ -357,5 +358,13 @@ routeInputCode = rootNavigationRouter.createPushRoute(inputCodeScreen) {
 
 Аналогичным способом регистрируется и экран `InputCodeScreen` с переходом на главный экран через `createReplaceRoute`.
 
-## Тестируем
-Duration: 10
+## Авторизация - тестируем
+Duration: 5
+
+Теперь можно скомпилировать проект и увидеть рабочую навигацию процесса авторизации. 
+
+### Android
+![auth-android-1](assets/moko-widgets-2-auth-android-1.png)![auth-android-2](assets/moko-widgets-2-auth-android-2.png)![auth-android-3](assets/moko-widgets-2-auth-android-3.png)
+
+### iOS
+![auth-ios-1](assets/moko-widgets-2-auth-ios-1.png)![auth-ios-2](assets/moko-widgets-2-auth-ios-2.png)![auth-ios-3](assets/moko-widgets-2-auth-ios-3.png)
