@@ -364,7 +364,13 @@ Duration: 5
 Теперь можно скомпилировать проект и увидеть рабочую навигацию процесса авторизации. 
 
 ### Android
-![auth-android-1](assets/moko-widgets-2-auth-android-1.png)![auth-android-2](assets/moko-widgets-2-auth-android-2.png)![auth-android-3](assets/moko-widgets-2-auth-android-3.png)
+
+|input phone|input code|main|
+|---|---|---|
+|![auth-android-1](assets/moko-widgets-2-auth-android-1.png)|![auth-android-2](assets/moko-widgets-2-auth-android-2.png)|![auth-android-3](assets/moko-widgets-2-auth-android-3.png)|
 
 ### iOS
-![auth-ios-1](assets/moko-widgets-2-auth-ios-1.png)![auth-ios-2](assets/moko-widgets-2-auth-ios-2.png)![auth-ios-3](assets/moko-widgets-2-auth-ios-3.png)
+
+|input phone|input code|main|
+|---|---|---|
+|![auth-ios-1](assets/moko-widgets-2-auth-ios-1.png)|![auth-ios-2](assets/moko-widgets-2-auth-ios-2.png)|![auth-ios-3](assets/moko-widgets-2-auth-ios-3.png)|
