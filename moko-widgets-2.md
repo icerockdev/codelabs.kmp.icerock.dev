@@ -199,7 +199,7 @@ class InputCodeViewModel(
 ) : ViewModel(), EventsDispatcherOwner<InputCodeViewModel.EventsListener> {
 
     val codeField: FormField<String, StringDesc> = FormField(
-        initialValue = "",
+        initialValue = token,
         validation = liveBlock { null }
     )
 
@@ -213,6 +213,7 @@ class InputCodeViewModel(
 }
 ```
 В этой вьюмодели добавили аргумент в конструкторе вьюмодели - `token`, который должен передать нам предыдущий экран, а так же изменено имя поля (`codeField`) и роутинг не имеет аругментов (`routeMain`).
+Для наглядности выставляем `token` как начальное значение поля `codeField` - так мы увидим что данные успешно переданы.
 
 ### Реализуем экран
 ```kotlin
@@ -374,3 +375,8 @@ Duration: 5
 |input phone|input code|main|
 |---|---|---|
 |![auth-ios-1](assets/moko-widgets-2-auth-ios-1.png)|![auth-ios-2](assets/moko-widgets-2-auth-ios-2.png)|![auth-ios-3](assets/moko-widgets-2-auth-ios-3.png)|
+
+## Главный экран
+Duration: 10
+
+

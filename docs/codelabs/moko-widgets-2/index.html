@@ -194,7 +194,7 @@
 ) : ViewModel(), EventsDispatcherOwner&lt;InputCodeViewModel.EventsListener&gt; {
 
     val codeField: FormField&lt;String, StringDesc&gt; = FormField(
-        initialValue = &#34;&#34;,
+        initialValue = token,
         validation = liveBlock { null }
     )
 
@@ -207,7 +207,7 @@
     }
 }
 </code></pre>
-<p>В этой вьюмодели добавили аргумент в конструкторе вьюмодели - <code>token</code>, который должен передать нам предыдущий экран, а так же изменено имя поля (<code>codeField</code>) и роутинг не имеет аругментов (<code>routeMain</code>).</p>
+<p>В этой вьюмодели добавили аргумент в конструкторе вьюмодели - <code>token</code>, который должен передать нам предыдущий экран, а так же изменено имя поля (<code>codeField</code>) и роутинг не имеет аругментов (<code>routeMain</code>).<br>Для наглядности выставляем <code>token</code> как начальное значение поля <code>codeField</code> - так мы увидим что данные успешно переданы.</p>
 <h2 is-upgraded>Реализуем экран</h2>
 <pre><code>class InputCodeScreen(
     ...
@@ -346,20 +346,25 @@ class RootNavigationScreen(
 <h2 is-upgraded>Android</h2>
 <table>
 <tr></tr>
-<tr><td colspan="1" rowspan="1"><p class="image-container"><img alt="auth-android-1" src="img/78acfd571438713f.png"></p>
-</td><td colspan="1" rowspan="1"><p class="image-container"><img alt="auth-android-2" src="img/675bef796422102c.png"></p>
-</td><td colspan="1" rowspan="1"><p class="image-container"><img alt="auth-android-3" src="img/9ce8375496cd4bb3.png"></p>
+<tr><td colspan="1" rowspan="1"><p class="image-container"><img alt="auth-android-1" src="img/f8df91d82423b084.png"></p>
+</td><td colspan="1" rowspan="1"><p class="image-container"><img alt="auth-android-2" src="img/d08ceebf163fcb58.png"></p>
+</td><td colspan="1" rowspan="1"><p class="image-container"><img alt="auth-android-3" src="img/239af4a9c070abbe.png"></p>
 </td></tr>
 </table>
 <h2 is-upgraded>iOS</h2>
 <table>
 <tr></tr>
-<tr><td colspan="1" rowspan="1"><p class="image-container"><img alt="auth-ios-1" src="img/e007328930fc0db4.png"></p>
-</td><td colspan="1" rowspan="1"><p class="image-container"><img alt="auth-ios-2" src="img/1b3705a81ad7c9ac.png"></p>
-</td><td colspan="1" rowspan="1"><p class="image-container"><img alt="auth-ios-3" src="img/685ab1760797545.png"></p>
+<tr><td colspan="1" rowspan="1"><p class="image-container"><img alt="auth-ios-1" src="img/92031a5136dd4caf.png"></p>
+</td><td colspan="1" rowspan="1"><p class="image-container"><img alt="auth-ios-2" src="img/620f5a520c4b09e1.png"></p>
+</td><td colspan="1" rowspan="1"><p class="image-container"><img alt="auth-ios-3" src="img/7370305f5cdff3f4.png"></p>
 </td></tr>
 </table>
 
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Главный экран" duration="10">
+        
 
       </google-codelab-step>
     
