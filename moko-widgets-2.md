@@ -376,7 +376,575 @@ Duration: 5
 |---|---|---|
 |![auth-ios-1](assets/moko-widgets-2-auth-ios-1.png)|![auth-ios-2](assets/moko-widgets-2-auth-ios-2.png)|![auth-ios-3](assets/moko-widgets-2-auth-ios-3.png)|
 
-## Главный экран
-Duration: 10
+## Code of App
+Duration: 30
 
+### App.kt
+```
+package org.example.mpp
 
+import dev.icerock.moko.resources.desc.desc
+import dev.icerock.moko.widgets.core.Theme
+import dev.icerock.moko.widgets.screen.Args
+import dev.icerock.moko.widgets.screen.BaseApplication
+import dev.icerock.moko.widgets.screen.ScreenDesc
+import dev.icerock.moko.widgets.screen.TypedScreenDesc
+import dev.icerock.moko.widgets.screen.navigation.BottomNavigationItem
+import dev.icerock.moko.widgets.screen.navigation.BottomNavigationScreen
+import dev.icerock.moko.widgets.screen.navigation.NavigationBar
+import dev.icerock.moko.widgets.screen.navigation.NavigationItem
+import dev.icerock.moko.widgets.screen.navigation.NavigationScreen
+import dev.icerock.moko.widgets.screen.navigation.createPushResultRoute
+import dev.icerock.moko.widgets.screen.navigation.createPushRoute
+import dev.icerock.moko.widgets.screen.navigation.createReplaceRoute
+import dev.icerock.moko.widgets.screen.navigation.createRouter
+import org.example.mpp.auth.AuthFactory
+import org.example.mpp.auth.InputCodeScreen
+import org.example.mpp.auth.InputPhoneScreen
+import org.example.mpp.info.InfoScreen
+import org.example.mpp.profile.EditProfileScreen
+import org.example.mpp.profile.ProfileFactory
+import org.example.mpp.profile.ProfileScreen
+
+class App : BaseApplication() {
+    override fun setup(): ScreenDesc<Args.Empty> {
+        val theme = Theme()
+
+        val authFactory = AuthFactory(theme)
+        val profileFactory = ProfileFactory(theme)
+
+        return registerScreen(RootNavigationScreen::class) {
+            val rootNavigationRouter = createRouter()
+
+            val mainScreen = registerScreen(MainBottomNavigationScreen::class) {
+                val bottomNavigationRouter = createRouter()
+
+                val profileNavigationScreen = registerProfileTab(
+                    profileFactory = profileFactory,
+                    rootNavigationRouter = rootNavigationRouter
+                )
+
+                val infoScreen = registerScreen(InfoScreen::class) {
+                    InfoScreen(theme = theme, routeProfile = bottomNavigationRouter.createChangeTabRoute(2))
+                }
+
+                MainBottomNavigationScreen(
+                    router = bottomNavigationRouter
+                ) {
+                    tab(
+                        id = 1,
+                        title = "Info".desc(),
+                        icon = null,
+                        screenDesc = infoScreen
+                    )
+
+                    tab(
+                        id = 2,
+                        title = "Profile".desc(),
+                        icon = null,
+                        screenDesc = profileNavigationScreen
+                    )
+                }
+            }
+
+            val inputCodeScreen = registerScreen(InputCodeScreen::class) {
+                authFactory.createInputCodeScreen(
+                    routeMain = rootNavigationRouter.createReplaceRoute(mainScreen)
+                )
+            }
+
+            val inputPhoneScreen = registerScreen(InputPhoneScreen::class) {
+                authFactory.createInputPhoneScreen(
+                    routeInputCode = rootNavigationRouter.createPushRoute(inputCodeScreen) {
+                        InputCodeScreen.Arg(it)
+                    }
+                )
+            }
+
+            RootNavigationScreen(
+                initialScreen = inputPhoneScreen,
+                router = rootNavigationRouter
+            )
+        }
+    }
+
+    private fun registerProfileTab(
+        profileFactory: ProfileFactory,
+        rootNavigationRouter: NavigationScreen.Router
+    ): TypedScreenDesc<Args.Empty, ProfileNavigationScreen> {
+        return registerScreen(ProfileNavigationScreen::class) {
+            val navigationRouter = createRouter()
+
+            val profileEditScreen = registerScreen(EditProfileScreen::class) {
+                profileFactory.createEditProfileScreen(
+                    routeBack = navigationRouter.createPopRoute()
+                )
+            }
+
+            val profileScreen = registerScreen(ProfileScreen::class) {
+                profileFactory.createProfileScreen(
+                    routeEdit = navigationRouter.createPushResultRoute(profileEditScreen) { it.edited },
+                    routeLogout = rootNavigationRouter.createPopRoute()
+                )
+            }
+
+            ProfileNavigationScreen(
+                initialScreen = profileScreen,
+                router = navigationRouter
+            )
+        }
+    }
+}
+
+class RootNavigationScreen(
+    initialScreen: TypedScreenDesc<Args.Empty, InputPhoneScreen>,
+    router: Router
+) : NavigationScreen<InputPhoneScreen>(initialScreen, router)
+
+class MainBottomNavigationScreen(
+    router: Router,
+    builder: BottomNavigationItem.Builder.() -> Unit
+) : BottomNavigationScreen(router, builder), NavigationItem {
+    override val navigationBar: NavigationBar = NavigationBar.None
+}
+
+class ProfileNavigationScreen(
+    initialScreen: TypedScreenDesc<Args.Empty, ProfileScreen>,
+    router: Router
+) : NavigationScreen<ProfileScreen>(initialScreen, router)
+```
+
+### auth/AuthFactory.kt
+```kotlin
+package org.example.mpp.auth
+
+import dev.icerock.moko.widgets.core.Theme
+import dev.icerock.moko.widgets.screen.navigation.Route
+
+class AuthFactory(
+    private val theme: Theme
+) {
+    fun createInputPhoneScreen(routeInputCode: Route<String>): InputPhoneScreen {
+        return InputPhoneScreen(
+            theme = theme,
+            viewModelFactory = { InputPhoneViewModel(it) },
+            routeInputCode = routeInputCode
+        )
+    }
+
+    fun createInputCodeScreen(routeMain: Route<Unit>): InputCodeScreen {
+        return InputCodeScreen(
+            theme = theme,
+            viewModelFactory = { eventsDispatcher, token ->
+                InputCodeViewModel(eventsDispatcher, token)
+            },
+            routeMain = routeMain
+        )
+    }
+}
+```
+
+### auth/InputPhoneScreen.kt
+```kotlin
+package org.example.mpp.auth
+
+import dev.icerock.moko.fields.FormField
+import dev.icerock.moko.fields.liveBlock
+import dev.icerock.moko.mvvm.dispatcher.EventsDispatcher
+import dev.icerock.moko.mvvm.dispatcher.EventsDispatcherOwner
+import dev.icerock.moko.mvvm.viewmodel.ViewModel
+import dev.icerock.moko.resources.desc.StringDesc
+import dev.icerock.moko.resources.desc.desc
+import dev.icerock.moko.widgets.ButtonWidget
+import dev.icerock.moko.widgets.InputWidget
+import dev.icerock.moko.widgets.button
+import dev.icerock.moko.widgets.constraint
+import dev.icerock.moko.widgets.core.Theme
+import dev.icerock.moko.widgets.core.Value
+import dev.icerock.moko.widgets.input
+import dev.icerock.moko.widgets.screen.Args
+import dev.icerock.moko.widgets.screen.WidgetScreen
+import dev.icerock.moko.widgets.screen.getViewModel
+import dev.icerock.moko.widgets.screen.listen
+import dev.icerock.moko.widgets.screen.navigation.NavigationBar
+import dev.icerock.moko.widgets.screen.navigation.NavigationItem
+import dev.icerock.moko.widgets.screen.navigation.Route
+import dev.icerock.moko.widgets.style.view.WidgetSize
+
+class InputPhoneScreen(
+    private val theme: Theme,
+    private val viewModelFactory: (
+        EventsDispatcher<InputPhoneViewModel.EventsListener>
+    ) -> InputPhoneViewModel,
+    private val routeInputCode: Route<String>
+) : WidgetScreen<Args.Empty>(), InputPhoneViewModel.EventsListener, NavigationItem {
+
+    override val navigationBar: NavigationBar get() = NavigationBar.Normal("Input phone".desc())
+
+    override fun createContentWidget() = with(theme) {
+        val viewModel = getViewModel {
+            viewModelFactory(createEventsDispatcher())
+        }
+
+        viewModel.eventsDispatcher.listen(this@InputPhoneScreen, this@InputPhoneScreen)
+
+        constraint(size = WidgetSize.AsParent) {
+            val nameInput = +input(
+                size = WidgetSize.WidthAsParentHeightWrapContent,
+                id = Ids.Phone,
+                label = const("Phone"),
+                field = viewModel.phoneField
+            )
+
+            val submitButton = +button(
+                size = WidgetSize.WidthAsParentHeightWrapContent,
+                content = ButtonWidget.Content.Text(Value.data("Submit".desc())),
+                onTap = viewModel::onSubmitPressed
+            )
+
+            constraints {
+                nameInput centerYToCenterY root
+                nameInput leftRightToLeftRight root offset 16
+
+                submitButton bottomToBottom root.safeArea offset 16
+                submitButton leftRightToLeftRight root offset 16
+            }
+        }
+    }
+
+    object Ids {
+        object Phone : InputWidget.Id
+    }
+
+    override fun routeInputCode(token: String) {
+        routeInputCode.route(this, token)
+    }
+}
+
+class InputPhoneViewModel(
+    override val eventsDispatcher: EventsDispatcher<EventsListener>
+) : ViewModel(), EventsDispatcherOwner<InputPhoneViewModel.EventsListener> {
+
+    val phoneField: FormField<String, StringDesc> = FormField(
+        initialValue = "",
+        validation = liveBlock { null }
+    )
+
+    fun onSubmitPressed() {
+        val token = "token:" + phoneField.data.value
+        eventsDispatcher.dispatchEvent { routeInputCode(token) }
+    }
+
+    interface EventsListener {
+        fun routeInputCode(token: String)
+    }
+}
+```
+
+### auth/InputCodeScreen.kt
+```kotlin
+package org.example.mpp.auth
+
+import dev.icerock.moko.fields.FormField
+import dev.icerock.moko.fields.liveBlock
+import dev.icerock.moko.mvvm.dispatcher.EventsDispatcher
+import dev.icerock.moko.mvvm.dispatcher.EventsDispatcherOwner
+import dev.icerock.moko.mvvm.viewmodel.ViewModel
+import dev.icerock.moko.parcelize.Parcelable
+import dev.icerock.moko.parcelize.Parcelize
+import dev.icerock.moko.resources.desc.StringDesc
+import dev.icerock.moko.resources.desc.desc
+import dev.icerock.moko.widgets.ButtonWidget
+import dev.icerock.moko.widgets.InputWidget
+import dev.icerock.moko.widgets.button
+import dev.icerock.moko.widgets.constraint
+import dev.icerock.moko.widgets.core.Theme
+import dev.icerock.moko.widgets.core.Value
+import dev.icerock.moko.widgets.input
+import dev.icerock.moko.widgets.screen.Args
+import dev.icerock.moko.widgets.screen.WidgetScreen
+import dev.icerock.moko.widgets.screen.getArgument
+import dev.icerock.moko.widgets.screen.getViewModel
+import dev.icerock.moko.widgets.screen.listen
+import dev.icerock.moko.widgets.screen.navigation.NavigationBar
+import dev.icerock.moko.widgets.screen.navigation.NavigationItem
+import dev.icerock.moko.widgets.screen.navigation.Route
+import dev.icerock.moko.widgets.screen.navigation.route
+import dev.icerock.moko.widgets.style.view.WidgetSize
+
+class InputCodeScreen(
+    private val theme: Theme,
+    private val viewModelFactory: (
+        eventsDispatcher: EventsDispatcher<InputCodeViewModel.EventsListener>,
+        token: String
+    ) -> InputCodeViewModel,
+    private val routeMain: Route<Unit>
+) : WidgetScreen<Args.Parcel<InputCodeScreen.Arg>>(), InputCodeViewModel.EventsListener, NavigationItem {
+
+    override val navigationBar: NavigationBar get() = NavigationBar.Normal("Input code".desc())
+
+    override fun createContentWidget() = with(theme) {
+        val viewModel = getViewModel {
+            viewModelFactory(createEventsDispatcher(), getArgument().token)
+        }
+
+        viewModel.eventsDispatcher.listen(this@InputCodeScreen, this@InputCodeScreen)
+
+        constraint(size = WidgetSize.AsParent) {
+            val nameInput = +input(
+                size = WidgetSize.WidthAsParentHeightWrapContent,
+                id = Ids.Code,
+                label = const("Code"),
+                field = viewModel.codeField
+            )
+
+            val submitButton = +button(
+                size = WidgetSize.WidthAsParentHeightWrapContent,
+                content = ButtonWidget.Content.Text(Value.data("Submit".desc())),
+                onTap = viewModel::onSubmitPressed
+            )
+
+            constraints {
+                nameInput centerYToCenterY root
+                nameInput leftRightToLeftRight root offset 16
+
+                submitButton bottomToBottom root.safeArea offset 16
+                submitButton leftRightToLeftRight root offset 16
+            }
+        }
+    }
+
+    object Ids {
+        object Code : InputWidget.Id
+    }
+
+    override fun routeMain() {
+        routeMain.route(this)
+    }
+
+    @Parcelize
+    data class Arg(val token: String) : Parcelable
+}
+
+class InputCodeViewModel(
+    override val eventsDispatcher: EventsDispatcher<EventsListener>,
+    private val token: String
+) : ViewModel(), EventsDispatcherOwner<InputCodeViewModel.EventsListener> {
+
+    val codeField: FormField<String, StringDesc> = FormField(
+        initialValue = token,
+        validation = liveBlock { null }
+    )
+
+    fun onSubmitPressed() {
+        eventsDispatcher.dispatchEvent { routeMain() }
+    }
+
+    interface EventsListener {
+        fun routeMain()
+    }
+}
+```
+
+### info/InfoScreen.kt
+```kotlin
+package org.example.mpp.info
+
+import dev.icerock.moko.resources.desc.desc
+import dev.icerock.moko.widgets.ButtonWidget
+import dev.icerock.moko.widgets.button
+import dev.icerock.moko.widgets.constraint
+import dev.icerock.moko.widgets.core.Theme
+import dev.icerock.moko.widgets.core.Value
+import dev.icerock.moko.widgets.screen.Args
+import dev.icerock.moko.widgets.screen.WidgetScreen
+import dev.icerock.moko.widgets.screen.navigation.Route
+import dev.icerock.moko.widgets.screen.navigation.route
+import dev.icerock.moko.widgets.style.view.WidgetSize
+
+class InfoScreen(
+    private val theme: Theme,
+    private val routeProfile: Route<Unit>
+) : WidgetScreen<Args.Empty>() {
+
+    override fun createContentWidget() = with(theme) {
+        constraint(size = WidgetSize.AsParent) {
+            val submitButton = +button(
+                size = WidgetSize.WidthAsParentHeightWrapContent,
+                content = ButtonWidget.Content.Text(Value.data("Profile".desc()))
+            ) {
+                routeProfile.route(this@InfoScreen)
+            }
+
+            constraints {
+                submitButton centerYToCenterY root
+                submitButton centerXToCenterX root
+            }
+        }
+    }
+}
+```
+
+### profile/ProfileFactory.kt
+```kotlin
+package org.example.mpp.profile
+
+import dev.icerock.moko.widgets.core.Theme
+import dev.icerock.moko.widgets.screen.navigation.Route
+import dev.icerock.moko.widgets.screen.navigation.RouteWithResult
+
+class ProfileFactory(
+    private val theme: Theme
+) {
+    fun createProfileScreen(
+        routeEdit: RouteWithResult<Unit, Boolean>,
+        routeLogout: Route<Unit>
+    ): ProfileScreen {
+        return ProfileScreen(
+            theme = theme,
+            routeEdit = routeEdit,
+            routeLogout = routeLogout
+        )
+    }
+
+    fun createEditProfileScreen(
+        routeBack: Route<Unit>
+    ): EditProfileScreen {
+        return EditProfileScreen(
+            theme = theme,
+            routeBack = routeBack
+        )
+    }
+}
+```
+
+### profile/ProfileScreen.kt
+```kotlin
+package org.example.mpp.profile
+
+import dev.icerock.moko.resources.desc.desc
+import dev.icerock.moko.widgets.ButtonWidget
+import dev.icerock.moko.widgets.button
+import dev.icerock.moko.widgets.constraint
+import dev.icerock.moko.widgets.core.Theme
+import dev.icerock.moko.widgets.core.Value
+import dev.icerock.moko.widgets.screen.Args
+import dev.icerock.moko.widgets.screen.WidgetScreen
+import dev.icerock.moko.widgets.screen.navigation.NavigationBar
+import dev.icerock.moko.widgets.screen.navigation.NavigationItem
+import dev.icerock.moko.widgets.screen.navigation.Route
+import dev.icerock.moko.widgets.screen.navigation.RouteWithResult
+import dev.icerock.moko.widgets.screen.navigation.registerRouteHandler
+import dev.icerock.moko.widgets.screen.navigation.route
+import dev.icerock.moko.widgets.style.view.WidgetSize
+
+class ProfileScreen(
+    private val theme: Theme,
+    private val routeEdit: RouteWithResult<Unit, Boolean>,
+    private val routeLogout: Route<Unit>
+) : WidgetScreen<Args.Empty>(), NavigationItem {
+
+    override val navigationBar: NavigationBar get() = NavigationBar.Normal("Profile".desc())
+
+    private val editHandler by registerRouteHandler(code = 9, route = routeEdit) {
+        println("profile edited: $it")
+    }
+
+    override fun createContentWidget() = with(theme) {
+        constraint(size = WidgetSize.AsParent) {
+            val editButton = +button(
+                size = WidgetSize.WidthAsParentHeightWrapContent,
+                content = ButtonWidget.Content.Text(Value.data("Edit".desc()))
+            ) {
+                routeEdit.route(this@ProfileScreen, editHandler)
+            }
+
+            val logoutButton = +button(
+                size = WidgetSize.WidthAsParentHeightWrapContent,
+                content = ButtonWidget.Content.Text(Value.data("Logout".desc()))
+            ) {
+                routeLogout.route(this@ProfileScreen)
+            }
+
+            constraints {
+                editButton centerYToCenterY root
+                editButton centerXToCenterX root
+
+                logoutButton centerXToCenterX root
+                logoutButton topToBottom editButton
+            }
+        }
+    }
+}
+```
+
+### profile/EditProfileScreen.kt
+```kotlin
+package org.example.mpp.profile
+
+import dev.icerock.moko.parcelize.Parcelable
+import dev.icerock.moko.parcelize.Parcelize
+import dev.icerock.moko.resources.desc.desc
+import dev.icerock.moko.widgets.ButtonWidget
+import dev.icerock.moko.widgets.button
+import dev.icerock.moko.widgets.constraint
+import dev.icerock.moko.widgets.core.Theme
+import dev.icerock.moko.widgets.core.Value
+import dev.icerock.moko.widgets.screen.Args
+import dev.icerock.moko.widgets.screen.WidgetScreen
+import dev.icerock.moko.widgets.screen.navigation.NavigationBar
+import dev.icerock.moko.widgets.screen.navigation.NavigationItem
+import dev.icerock.moko.widgets.screen.navigation.Resultable
+import dev.icerock.moko.widgets.screen.navigation.Route
+import dev.icerock.moko.widgets.screen.navigation.route
+import dev.icerock.moko.widgets.style.view.WidgetSize
+
+class EditProfileScreen(
+    private val theme: Theme,
+    private val routeBack: Route<Unit>
+) : WidgetScreen<Args.Empty>(), Resultable<EditProfileScreen.Result>, NavigationItem {
+
+    override val navigationBar: NavigationBar get() = NavigationBar.Normal("Edit profile".desc())
+
+    override var screenResult: Result? = null
+
+    override fun createContentWidget() = with(theme) {
+        constraint(size = WidgetSize.AsParent) {
+            val close1Btn = +button(
+                size = WidgetSize.WidthAsParentHeightWrapContent,
+                content = ButtonWidget.Content.Text(
+                    Value.data(
+                        "Close not edited".desc()
+                    )
+                )
+            ) {
+                screenResult = Result(false)
+                routeBack.route(this@EditProfileScreen)
+            }
+
+            val close2Btn = +button(
+                size = WidgetSize.WidthAsParentHeightWrapContent,
+                content = ButtonWidget.Content.Text(
+                    Value.data(
+                        "Close edited".desc()
+                    )
+                )
+            ) {
+                screenResult = Result(true)
+                routeBack.route(this@EditProfileScreen)
+            }
+
+            constraints {
+                close1Btn centerYToCenterY root
+                close1Btn centerXToCenterX root
+
+                close2Btn centerXToCenterX root
+                close2Btn topToBottom close1Btn
+            }
+        }
+    }
+
+    @Parcelize
+    data class Result(val edited: Boolean) : Parcelable
+}
+```
