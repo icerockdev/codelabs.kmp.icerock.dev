@@ -108,7 +108,7 @@ Positive
 button {
   color: red;
   text-align: center;
-} 
+}
 ```  
 
 `mpp-library/src/commonMain/kotlin/org/example/mpp/App.kt`:
@@ -125,7 +125,7 @@ class App : BaseApplication() {
 - родительская тема (все настройки родительской темы унаследуются в новую);
 - лямбда настройки темы.
 
-Сейчс используем лямбду настройки:  
+Сейчас используем лямбду настройки:  
 `mpp-library/src/commonMain/kotlin/org/example/mpp/App.kt`:
 ```kotlin
 val Colors.orange get() = Color(0xff8a65FF)
@@ -178,7 +178,7 @@ Positive
 .myclass {
   color: red;
   text-align: center;
-} 
+}
 ```  
 
 Объявим в `App.kt` новую категорию кнопок. Назовем ее `SubmitButtonsCategory`:
@@ -291,7 +291,7 @@ Positive
 #myclass {
   color: red;
   text-align: center;
-} 
+}
 ```  
 
 Например сделаем чтобы лейбл поля ввода телефона был оранжевым. Так как все интерактивные элементы требуют указание Id (для сохранения состояния на Android), то у нас уже есть назначенный этому полю идентификатор и мы можем это использовать:  
