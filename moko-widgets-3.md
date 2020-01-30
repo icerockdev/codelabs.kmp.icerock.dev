@@ -111,6 +111,7 @@ button {
 } 
 ```
 
+
 `mpp-library/src/commonMain/kotlin/org/example/mpp/App.kt`:
 ```kotlin
 class App : BaseApplication() {
@@ -181,6 +182,7 @@ Positive
 ```
 
 
+
 ## Применение стилей к отдельному элементу
 Duration: 10
 
@@ -194,6 +196,8 @@ Positive
   text-align: center;
 } 
 ```
+
+
 
 ## Применение стилей к нижней навигации
 Duration: 10
