@@ -337,6 +337,16 @@ val profileFactory = ProfileFactory(profileTheme)
 ```
 Мы создали на основе темы `theme` новую тему, заменив в ней фабрику по умолчанию для кнопок. Теперь на экранах профиля (они создаются фабрикой `ProfileFactory`) будут кнопки с большим текстом.
 
+### Android
+|phone|code|
+|---|---|
+|![android-app](assets/moko-widgets-3-android-profile-1.png)|![android-app](assets/moko-widgets-3-android-profile-2.png)|
+
+### iOS
+|phone|code|
+|---|---|
+|![ios-app](assets/moko-widgets-3-ios-profile-1.png)|![ios-app](assets/moko-widgets-3-ios-profile-2.png)|
+
 ## Применение стилей к нижней навигации
 Duration: 10
 
@@ -352,3 +362,9 @@ class MainBottomNavigationScreen(
     }
 }
 ```
+
+И получим результат:
+
+|android app|ios app|
+|---|---|
+|![android-app](assets/moko-widgets-3-android-bottom.png)|![ios-app](assets/moko-widgets-3-ios-bottom.png)|
