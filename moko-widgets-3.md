@@ -109,8 +109,7 @@ button {
   color: red;
   text-align: center;
 } 
-```
-
+```  
 
 `mpp-library/src/commonMain/kotlin/org/example/mpp/App.kt`:
 ```kotlin
@@ -167,6 +166,7 @@ class App : BaseApplication() {
 |---|---|
 |![android-app](assets/moko-widgets-3-android-buttons.png)|![ios-app](assets/moko-widgets-3-ios-buttons.png)|
 
+
 ## Применение стилей к группе элементов
 Duration: 10
 
@@ -179,8 +179,7 @@ Positive
   color: red;
   text-align: center;
 } 
-```
-
+```  
 
 
 ## Применение стилей к отдельному элементу
@@ -195,8 +194,7 @@ Positive
   color: red;
   text-align: center;
 } 
-```
-
+```  
 
 
 ## Применение стилей к нижней навигации

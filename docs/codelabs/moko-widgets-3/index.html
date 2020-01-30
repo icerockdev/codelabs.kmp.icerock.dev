@@ -109,8 +109,17 @@
         <p>Следующий этап стилизации - оформление всех кнопок в соответствии дизайну. По дизайну требуется чтобы был фон кнопок оранжевого цвета, текст черный с размером шрифта 15.</p>
 <p>Для применения данных настроек нам нужно воспользоваться возможностями класса <code>Theme</code>. В нашем проекте уже есть создание объекта этого класса и он используется для дальнейшего создания всех виджетов. Сейчас нам нужно задать что в данной теме все кнопки будут создаваться с кастомным стилем.</p>
 <p>Оформление по умолчанию устанавливается через категорию <code>ButtonWidget.DefaultCategory</code> в <code>Theme</code>, его нам и нужно кастомизировать.</p>
-<aside class="special"><p>Если провести аналогию с <code>CSS</code>, то <code>DefaultCategory</code> это стиль наложенный на все элементы данного типа:<br><code>css<br>button {<br>color: red;<br>text-align: center;<br>} <br>mpp-library/src/commonMain/kotlin/org/example/mpp/App.kt</code>:<br><code>kotlin<br>class App : BaseApplication() {<br>override fun setup(): ScreenDesc&lt;Args.Empty&gt; {<br>    val theme = Theme()<br>    ...<br>}<br>}<br></code></p>
+<aside class="special"><p>Если провести аналогию с <code>CSS</code>, то <code>DefaultCategory</code> это стиль наложенный на все элементы данного типа:<br><code>css<br>button {<br>color: red;<br>text-align: center;<br>}</code> <br><br></p>
 </aside>
+<p><code>mpp-library/src/commonMain/kotlin/org/example/mpp/App.kt</code>:</p>
+<pre><code>class App : BaseApplication() {
+    override fun setup(): ScreenDesc&lt;Args.Empty&gt; {
+        val theme = Theme()
+
+        ...
+    }
+}
+</code></pre>
 <p>На данный момент объект создается без предедачи каких либо аргументов, но <code>Theme</code> может принимать 2 аргумента:</p>
 <ul>
 <li>родительская тема (все настройки родительской темы унаследуются в новую);</li>
@@ -163,7 +172,17 @@ class App : BaseApplication() {
     
       <google-codelab-step label="Применение стилей к группе элементов" duration="10">
         <p>Оформление группами реализуется через указание элементам отдельной <code>Category</code> и применение для этой <code>Category</code> своей фабрики в <code>Theme</code>.</p>
-<aside class="special"><p>Если провести аналогию с <code>CSS</code>, то <code>Category</code> это стиль наложенный на class:<br><code>css<br>.myclass {<br>color: red;<br>text-align: center;<br>}</code> <br><br>## Применение стилей к отдельному элементу<br>Duration: 10<br>Оформление группами реализуется через указание элементам определенного <code>Id</code> и применение для этого <code>Id</code> своей фабрики в <code>Theme</code>.<br>Positive<br>: Если провести аналогию с <code>CSS</code>, то <code>Id</code> это стиль наложенный на id:<br><code>css<br>#myclass {<br>color: red;<br>text-align: center;<br>} <br></code></p>
+<aside class="special"><p>Если провести аналогию с <code>CSS</code>, то <code>Category</code> это стиль наложенный на class:<br><code>css<br>.myclass {<br>color: red;<br>text-align: center;<br>}</code> <br><br></p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Применение стилей к отдельному элементу" duration="10">
+        <p>Оформление группами реализуется через указание элементам определенного <code>Id</code> и применение для этого <code>Id</code> своей фабрики в <code>Theme</code>.</p>
+<aside class="special"><p>Если провести аналогию с <code>CSS</code>, то <code>Id</code> это стиль наложенный на id:<br>&#34;`css</p>
+<p>myclass {</p>
+<p>color: red;<br>text-align: center;<br>}<br>&#34;`</p>
 </aside>
 
 
