@@ -181,9 +181,107 @@ Positive
 } 
 ```  
 
+Объявим в `App.kt` новую категорию кнопок. Назовем ее `SubmitButtonsCategory`:
+```kotlin
+object SubmitButtonsCategory: ButtonWidget.Category
+```
+
+Positive
+: За счет специального типизации через вложенный интерфейс `ButtonWidget.Category` мы можем использовать данную категорию только с кнопками и применять фабрики только кнопок.  
+
+Далее на экранах входа используем данную категорию. Чтобы не создавать прямую зависимость из пакета `auth` в `App` сделаем в `AuthFactory` специальное свойство:  
+`mpp-library/src/commonMain/kotlin/org/example/mpp/auth/AuthFactory.kt`:
+```kotlin
+class AuthFactory(
+    ...
+    private val submitButtons: ButtonWidget.Category
+) {
+    fun createInputPhoneScreen(routeInputCode: Route<String>): InputPhoneScreen {
+        return InputPhoneScreen(
+            ...
+            submitButtons = submitButtons
+        )
+    }
+
+    fun createInputCodeScreen(routeMain: Route<Unit>): InputCodeScreen {
+        return InputCodeScreen(
+            ...
+            submitButtons = submitButtons
+        )
+    }
+}
+```
+и в классах экранов `InputPhoneScreen`, `InputCodeScreen` добавим в конструктор данный аргумент, который применим к кнопке:  
+`mpp-library/src/commonMain/kotlin/org/example/mpp/auth/InputCodeScreen.kt`:
+```kotlin
+class InputCodeScreen(
+    ...
+    private val submitButtons: ButtonWidget.Category
+) : ... {
+    ...
+    
+    override fun createContentWidget() = with(theme) {
+        ...
+
+        constraint(size = WidgetSize.AsParent) {
+            ...
+
+            val submitButton = +button(
+                ...
+                category = submitButtons
+            )
+
+            ...
+        }
+    }
+}
+```
+Аналогично в `InputPhoneScreen`.
+
+Остается назначить данной категории другую фабрику:
+`mpp-library/src/commonMain/kotlin/org/example/mpp/App.kt`:
+```kotlin
+class App : BaseApplication() {
+    override fun setup(): ScreenDesc<Args.Empty> {
+        val theme = Theme() {
+            ...
+
+            factory[SubmitButtonsCategory] = SystemButtonViewFactory(
+                background = StateBackground(
+                    normal = Background(
+                        fill = Fill.Solid(color = Colors.black)
+                    ),
+                    pressed = Background(
+                        fill = Fill.Solid(color = Colors.black.copy(alpha = 0xAA))
+                    ),
+                    disabled = Background(
+                        fill = Fill.Solid(color = Colors.black.copy(alpha = 0xEE))
+                    )
+                ),
+                textStyle = TextStyle(color = Colors.white, size = 15)
+            )
+        }
+
+        val authFactory = AuthFactory(theme, submitButtons = SubmitButtonsCategory)
+        ...
+    }
+}
+```
+
+И в результате получаем кастомизированные кнопки только на двух экранах, остальные экраны используют вариант по умолчанию:
+
+### Android
+|phone|code|
+|---|---|
+|![android-app](assets/moko-widgets-3-android-category-1.png)|![android-app](assets/moko-widgets-3-android-category-2.png)|
+
+### iOS
+|phone|code|
+|---|---|
+|![ios-app](assets/moko-widgets-3-ios-category-1.png)|![ios-app](assets/moko-widgets-3-ios-category-2.png)|
 
 ## Применение стилей к отдельному элементу
-Duration: 10
+Duration: 5
 
 Оформление группами реализуется через указание элементам определенного `Id` и применение для этого `Id` своей фабрики в `Theme`.
 
@@ -196,8 +294,61 @@ Positive
 } 
 ```  
 
+Например сделаем чтобы лейбл поля ввода телефона был оранжевым. Так как все интерактивные элементы требуют указание Id (для сохранения состояния на Android), то у нас уже есть назначенный этому полю идентификатор и мы можем это использовать:  
+`mpp-library/src/commonMain/kotlin/org/example/mpp/App.kt`:
+```kotlin
+factory[InputPhoneScreen.Ids.Phone] = SystemInputViewFactory(
+    labelTextStyle = TextStyle(color = Colors.orangeDark)
+)
+```
+
+И получим результат:
+
+|android app|ios app|
+|---|---|
+|![android-app](assets/moko-widgets-3-android-id.png)|![ios-app](assets/moko-widgets-3-ios-id.png)|
+
+## Наследование тем
+Duration: 10
+
+`Theme` может быть унаследована от другой, взяв всю кастомизацию родителя и дополнив своей.
+Например мы хотим сделать чтобы кнопки на экране профиля все были визуально другие, мы можем сделать это через отдельную категорию и прокидывать ее через конструкторы, либо же сделать другую тему, которую дадим в экран профиля.
+
+```kotlin
+val profileTheme = Theme(parent = theme) {
+    factory[ButtonWidget.DefaultCategory] = SystemButtonViewFactory(
+        background = StateBackground(
+            normal = Background(
+                fill = Fill.Solid(color = Colors.orangeLight)
+            ),
+            pressed = Background(
+                fill = Fill.Solid(color = Colors.orange)
+            ),
+            disabled = Background(
+                fill = Fill.Solid(color = Colors.orangeDark)
+            )
+        ),
+        textStyle = TextStyle(color = Colors.black, size = 24)
+    )
+}
+
+...
+val profileFactory = ProfileFactory(profileTheme)
+```
+Мы создали на основе темы `theme` новую тему, заменив в ней фабрику по умолчанию для кнопок. Теперь на экранах профиля (они создаются фабрикой `ProfileFactory`) будут кнопки с большим текстом.
 
 ## Применение стилей к нижней навигации
 Duration: 10
 
-
+```kotlin
+class MainBottomNavigationScreen(
+    router: Router,
+    builder: BottomNavigationItem.Builder.() -> Unit
+) : BottomNavigationScreen(router, builder), NavigationItem {
+    override val navigationBar: NavigationBar = NavigationBar.None
+    
+    init {
+        bottomNavigationColor = Colors.orangeDark
+    }
+}
+```
