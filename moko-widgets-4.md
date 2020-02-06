@@ -308,16 +308,55 @@ Duration: 2
 
 Кнопка `GitHub` у нас уже есть, поэтому сразу переходим к реализации обработчика.
 
-### Реализация обработчика кнопки
-
 Negative
-: на данный момент moko-widgets не позволяет корректно привязать кастомный обработчик данных, раздел будет обновлен позже после обновления
-
-### Тестирование
-
-Negative
-: на данный момент moko-widgets не позволяет корректно привязать кастомный обработчик данных, раздел будет обновлен позже после обновления
+: на данный момент moko-widgets не позволяет корректно привязать кастомный обработчик данных, раздел будет обновлен позже после обновления [moko-widgets#4](https://github.com/icerockdev/moko-widgets/issues/4)
 
 ## Открытие системного экрана
 Duration: 2
 
+При интеграции нативного функционала типа "выбрать контакт из списка контактов телефона" так же может потребоваться показ экрана с обработкой результата.
+
+android:
+```kotlin
+Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI)
+
+startActivityForResult
+
+override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+    super.onActivityResult(requestCode, resultCode, data)
+    
+    if (requestCode == SELECT_CONTACT && resultCode == Activity.RESULT_OK) {
+        val contactUri = data?.data ?: return
+        val projection = arrayOf(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME,
+                ContactsContract.CommonDataKinds.Phone.NUMBER)
+        val cursor = requireContext().contentResolver.query(contactUri, projection,
+                null, null, null)
+
+        if (cursor != null && cursor.moveToFirst()) {
+            val nameIndex = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME)
+            val numberIndex = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)
+            val name = cursor.getString(nameIndex)
+            val number = cursor.getString(numberIndex)
+
+            // do something with name and phone
+        }
+        cursor?.close()
+    }
+}
+```
+
+ios:
+```swift
+let contactPicker = CNContactPickerViewController()
+contactPicker.delegate = self
+
+extension FriendsViewController: CNContactPickerDelegate {
+  func contactPicker(_ picker: CNContactPickerViewController,
+                     didSelect contacts: [CNContact]) {
+    // ...
+  }
+}
+```
+
+Negative
+: на данный момент moko-widgets не позволяет корректно привязать кастомный обработчик данных, раздел будет обновлен позже после обновления [moko-widgets#4](https://github.com/icerockdev/moko-widgets/issues/4)
