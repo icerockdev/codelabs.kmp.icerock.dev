@@ -316,6 +316,10 @@ Duration: 2
 
 При интеграции нативного функционала типа "выбрать контакт из списка контактов телефона" так же может потребоваться показ экрана с обработкой результата.
 
+Negative
+: на данный момент moko-widgets не позволяет корректно привязать кастомный обработчик данных, раздел будет обновлен позже после обновления [moko-widgets#4](https://github.com/icerockdev/moko-widgets/issues/4)
+
+will be used:
 android:
 ```kotlin
 Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI)
@@ -357,6 +361,3 @@ extension FriendsViewController: CNContactPickerDelegate {
   }
 }
 ```
-
-Negative
-: на данный момент moko-widgets не позволяет корректно привязать кастомный обработчик данных, раздел будет обновлен позже после обновления [moko-widgets#4](https://github.com/icerockdev/moko-widgets/issues/4)

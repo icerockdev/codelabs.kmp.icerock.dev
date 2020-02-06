@@ -294,7 +294,9 @@
     
       <google-codelab-step label="Открытие системного экрана" duration="2">
         <p>При интеграции нативного функционала типа &#34;выбрать контакт из списка контактов телефона&#34; так же может потребоваться показ экрана с обработкой результата.</p>
-<p>android:</p>
+<aside class="warning"><p>на данный момент moko-widgets не позволяет корректно привязать кастомный обработчик данных, раздел будет обновлен позже после обновления <a href="https://github.com/icerockdev/moko-widgets/issues/4" target="_blank">moko-widgets#4</a></p>
+</aside>
+<p>will be used:<br>android:</p>
 <pre><code>Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI)
 
 startActivityForResult
@@ -332,8 +334,6 @@ extension FriendsViewController: CNContactPickerDelegate {
   }
 }
 </code></pre>
-<aside class="warning"><p>на данный момент moko-widgets не позволяет корректно привязать кастомный обработчик данных, раздел будет обновлен позже после обновления <a href="https://github.com/icerockdev/moko-widgets/issues/4" target="_blank">moko-widgets#4</a></p>
-</aside>
 
 
       </google-codelab-step>
