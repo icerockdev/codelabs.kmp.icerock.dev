@@ -42,7 +42,83 @@
       </google-codelab-step>
     
       <google-codelab-step label="Открытие ссылки" duration="2">
-        
+        <p>Для примера добавим на экран ввода телефона кнопку <code>GitHub</code>, по нажатию на которую должен открыться гитхаб <code>moko-widgets</code>.</p>
+<h2 is-upgraded>Добавление кнопки</h2>
+<p>Чтобы это реализовать сначала добавим кнопку на экран:</p>
+<p><code>mpp-library/src/commonMain/kotlin/org/example/mpp/auth/InputPhoneScreen.kt</code>:</p>
+<pre><code>class InputPhoneScreen(
+    ...
+) : ... {
+    ...
+
+    override fun createContentWidget() = with(theme) {
+        ...
+
+        constraint(size = WidgetSize.AsParent) {
+            ...
+
+            val githubButton = +button(
+                size = WidgetSize.WrapContent,
+                content = ButtonWidget.Content.Text(Value.data(&#34;GitHub&#34;.desc())),
+                onTap = ::onGitHubPressed
+            )
+
+            constraints {
+                ...
+
+                githubButton centerXToCenterX root
+                githubButton topToTop root.safeArea offset 16
+            }
+        }
+    }
+
+    private fun onGitHubPressed() {
+        TODO()
+    }
+
+    ...
+}
+</code></pre>
+<h2 is-upgraded>Реализация обработчика кнопки</h2>
+<p>Теперь остается добавить реакцию на нажатие кнопки. Нам нужно открыть url в браузере.<br>На android для открытия URL нам нужен context (любой экран приложения по сути), а на iOS можем из любого места приложения вызвать нужный код. Чтобы действие было доступно из общего кода реализуем специальную <code>expect</code> экстеншен функцию к классу <code>Screen</code> (это даст нам  доступ до context на android).</p>
+<p><code>mpp-library/src/commonMain/kotlin/org/example/mpp/ScreenExt.kt</code>:</p>
+<pre><code>expect fun Screen&lt;*&gt;.openUrl(url: String)
+</code></pre>
+<p>Android - <code>mpp-library/src/androidMain/kotlin/org/example/mpp/ScreenExt.kt</code>:</p>
+<pre><code>actual fun Screen&lt;*&gt;.openUrl(url: String) {
+    val context = requireContext()
+    val openIntent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+    if (openIntent.resolveActivity(context.packageManager) != null) {
+        context.startActivity(openIntent)
+    }
+}
+</code></pre>
+<aside class="special"><p>так как <code>Screen</code> это <code>Fragment</code> на android, то <code>this</code> в этой функции имеет все возможности <code>Fragment</code> - включая и <code>requireContext()</code>.</p>
+</aside>
+<p>iOS - <code>mpp-library/src/iosMain/kotlin/org/example/mpp/ScreenExt.kt</code>:</p>
+<pre><code>actual fun Screen&lt;*&gt;.openUrl(url: String) {
+    UIApplication.sharedApplication.openURL(NSURL.URLWithString(url)!!)
+}
+</code></pre>
+<aside class="special"><p>для добавления <code>iosMain</code> в данном шаблоне доступно использование symlinks, подробнее было указано в <a href="https://codelabs.kmp.icerock.dev/codelabs/kmp-mobile-from-zero/index.html?index=..%2F..index#4" target="_blank">codelab</a>.</p>
+</aside>
+<p>Остается в обработчике кнопки вызвать наш новый метод:</p>
+<p><code>mpp-library/src/commonMain/kotlin/org/example/mpp/auth/InputPhoneScreen.kt</code>:</p>
+<pre><code>class InputPhoneScreen(
+    ...
+) : ... {
+    ...
+
+    private fun onGitHubPressed() {
+        openUrl(&#34;https://github.com/icerockdev/moko-widgets&#34;)
+    }
+
+    ...
+}
+</code></pre>
+<h2 is-upgraded>Тестирование</h2>
+<p>Теперь можно запустить приложение (как Android так и iOS) и убедиться что открытие ссылки полностью работает.</p>
+
 
       </google-codelab-step>
     
