@@ -109,7 +109,7 @@
         <p>Следующий этап стилизации - оформление всех кнопок в соответствии дизайну. По дизайну требуется чтобы был фон кнопок оранжевого цвета, текст черный с размером шрифта 15.</p>
 <p>Для применения данных настроек нам нужно воспользоваться возможностями класса <code>Theme</code>. В нашем проекте уже есть создание объекта этого класса и он используется для дальнейшего создания всех виджетов. Сейчас нам нужно задать что в данной теме все кнопки будут создаваться с кастомным стилем.</p>
 <p>Оформление по умолчанию устанавливается через категорию <code>ButtonWidget.DefaultCategory</code> в <code>Theme</code>, его нам и нужно кастомизировать.</p>
-<aside class="special"><p>Если провести аналогию с <code>CSS</code>, то <code>DefaultCategory</code> это стиль наложенный на все элементы данного типа:<br><code>css<br>button {<br>color: red;<br>text-align: center;<br>}</code> <br><br></p>
+<aside class="special"><p>Если провести аналогию с <code>CSS</code>, то <code>DefaultCategory</code> это стиль наложенный на все элементы данного типа:<br><code>css<br>button {<br>color: red;<br>text-align: center;<br>}</code><br><br></p>
 </aside>
 <p><code>mpp-library/src/commonMain/kotlin/org/example/mpp/App.kt</code>:</p>
 <pre><code>class App : BaseApplication() {
@@ -125,7 +125,7 @@
 <li>родительская тема (все настройки родительской темы унаследуются в новую);</li>
 <li>лямбда настройки темы.</li>
 </ul>
-<p>Сейчс используем лямбду настройки:<br><code>mpp-library/src/commonMain/kotlin/org/example/mpp/App.kt</code>:</p>
+<p>Сейчас используем лямбду настройки:<br><code>mpp-library/src/commonMain/kotlin/org/example/mpp/App.kt</code>:</p>
 <pre><code>val Colors.orange get() = Color(0xff8a65FF)
 val Colors.orangeLight get() = Color(0xffbb93FF)
 val Colors.orangeDark get() = Color(0xc75b39FF)
@@ -172,7 +172,7 @@ class App : BaseApplication() {
     
       <google-codelab-step label="Применение стилей к группе элементов" duration="10">
         <p>Оформление группами реализуется через указание элементам отдельной <code>Category</code> и применение для этой <code>Category</code> своей фабрики в <code>Theme</code>.</p>
-<aside class="special"><p>Если провести аналогию с <code>CSS</code>, то <code>Category</code> это стиль наложенный на class:<br><code>css<br>.myclass {<br>color: red;<br>text-align: center;<br>}</code> <br><br></p>
+<aside class="special"><p>Если провести аналогию с <code>CSS</code>, то <code>Category</code> это стиль наложенный на class:<br><code>css<br>.myclass {<br>color: red;<br>text-align: center;<br>}</code><br><br></p>
 </aside>
 <p>Объявим в <code>App.kt</code> новую категорию кнопок. Назовем ее <code>SubmitButtonsCategory</code>:</p>
 <pre><code>object SubmitButtonsCategory: ButtonWidget.Category

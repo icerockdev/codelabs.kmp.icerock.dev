@@ -3,12 +3,12 @@
   "format": "html",
   "prefix": "https://storage.googleapis.com",
   "mainga": "UA-49880327-14",
-  "updated": "2020-01-30T19:37:04+07:00",
-  "id": "moko-widgets-3",
-  "duration": 60,
-  "title": "MOKO Widgets #3 - styles",
-  "summary": "MOKO Widgets #3 - стилизация",
-  "source": "moko-widgets-3.md",
+  "updated": "2020-02-06T12:38:18+07:00",
+  "id": "moko-widgets-4",
+  "duration": 13,
+  "title": "MOKO Widgets #4 - screen actions",
+  "summary": "MOKO Widgets #4 - действия на экранах",
+  "source": "moko-widgets-4.md",
   "theme": "",
   "status": [
     "published"
@@ -21,5 +21,5 @@
   ],
   "feedback": "https://github.com/icerockdev/kmp-codelabs/issues",
   "ga": "UA-81805223-5",
-  "url": "moko-widgets-3"
+  "url": "moko-widgets-4"
 }
