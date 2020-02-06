@@ -41,7 +41,7 @@
 
       </google-codelab-step>
     
-      <google-codelab-step label="Открытие ссылки" duration="2">
+      <google-codelab-step label="Открытие ссылки" duration="15">
         <p>Для примера добавим на экран ввода телефона кнопку <code>GitHub</code>, по нажатию на которую должен открыться гитхаб <code>moko-widgets</code>.</p>
 <h2 is-upgraded>Добавление кнопки</h2>
 <p>Чтобы это реализовать сначала добавим кнопку на экран:</p>
@@ -122,8 +122,115 @@
 
       </google-codelab-step>
     
-      <google-codelab-step label="Показ сообщения" duration="2">
-        
+      <google-codelab-step label="Показ сообщения" duration="15">
+        <p>Для примера сделаем кнопку <code>About</code>, при нажатии на которую будет открываться диалог с информацией о приложении, с кнопкой <code>Close</code>.</p>
+<h2 is-upgraded>Добавление кнопки</h2>
+<p>Чтобы это реализовать сначала добавим кнопку на экран:</p>
+<p><code>mpp-library/src/commonMain/kotlin/org/example/mpp/auth/InputPhoneScreen.kt</code>:</p>
+<pre><code>class InputPhoneScreen(
+    ...
+) : ... {
+    ...
+
+    override fun createContentWidget() = with(theme) {
+        ...
+
+        constraint(size = WidgetSize.AsParent) {
+            ...
+
+            val aboutButton = +button(
+                size = WidgetSize.WrapContent,
+                content = ButtonWidget.Content.Text(Value.data(&#34;About&#34;.desc())),
+                onTap = ::onAboutPressed
+            )
+
+            constraints {
+                ...
+
+                githubButton rightToRight root offset 16 // изменим положение кнопки, чтобы вместить новую кнопку рядом
+                githubButton topToTop root.safeArea offset 16
+
+                aboutButton rightToLeft githubButton offset 8
+                aboutButton topToTop githubButton
+            }
+        }
+    }
+
+    private fun onAboutPressed() {
+        TODO()
+    }
+
+    ...
+}
+</code></pre>
+<h2 is-upgraded>Реализация обработчика кнопки</h2>
+<p>Теперь остается добавить реакцию на нажатие кнопки. Нам нужно открыть <a href="https://developer.android.com/reference/android/app/AlertDialog.html" target="_blank">AlertDialog</a> на android и <a href="https://developer.apple.com/documentation/uikit/uialertcontroller" target="_blank">UIAlertController</a> на iOS.<br>На android нам нужен <code>Context</code> (любой экран приложения по сути), а на iOS для отображения нужен <code>UIViewController</code>. Чтобы действие было доступно из общего кода реализуем специальную <code>expect</code> экстеншен функцию к классу <code>Screen</code> (это даст нам  доступ до <code>Context</code> на android и до <code>UIViewController</code>).</p>
+<p><code>mpp-library/src/commonMain/kotlin/org/example/mpp/ScreenExt.kt</code>:</p>
+<pre><code>expect fun Screen&lt;*&gt;.showMessage(title: StringDesc, message: StringDesc)
+</code></pre>
+<p>Android - <code>mpp-library/src/androidMain/kotlin/org/example/mpp/ScreenExt.kt</code>:</p>
+<pre><code>actual fun Screen&lt;*&gt;.showMessage(
+    title: StringDesc,
+    message: StringDesc
+) {
+    val context = requireContext()
+    AlertDialog.Builder(context)
+        .setTitle(title.toString(context))
+        .setMessage(message.toString(context))
+        .setPositiveButton(android.R.string.cancel) { _, _ -&gt; }
+        .setCancelable(true)
+        .create()
+        .show()
+}
+</code></pre>
+<p>iOS - <code>mpp-library/src/iosMain/kotlin/org/example/mpp/ScreenExt.kt</code>:</p>
+<pre><code>actual fun Screen&lt;*&gt;.showMessage(
+    title: StringDesc,
+    message: StringDesc
+) {
+    val alertController = UIAlertController.alertControllerWithTitle(
+        title = title.localized(),
+        message = message.localized(),
+        preferredStyle = UIAlertControllerStyleAlert
+    )
+    alertController.addAction(
+        UIAlertAction.actionWithTitle(
+            title = &#34;Cancel&#34;,
+            style = UIAlertActionStyleCancel,
+            handler = null
+        )
+    )
+    viewController.presentViewController(alertController, animated = true, completion = null)
+}
+</code></pre>
+<aside class="special"><p>у <code>Screen</code> в iOS доступен метод <code>viewController</code> для получения <code>UIViewController</code> созданного из <code>Screen</code> и выполнения любых операций над ним.</p>
+</aside>
+<p>Остается в обработчике кнопки вызвать наш новый метод:</p>
+<p><code>mpp-library/src/commonMain/kotlin/org/example/mpp/auth/InputPhoneScreen.kt</code>:</p>
+<pre><code>class InputPhoneScreen(
+    ...
+) : ... {
+    ...
+
+    private fun onAboutPressed() {
+        showMessage(
+            title = &#34;Hello world!&#34;.desc(),
+            message = &#34;Here message from common code ;)&#34;.desc()
+        )
+    }
+
+    ...
+}
+</code></pre>
+<h2 is-upgraded>Тестирование</h2>
+<p>Теперь можно запустить приложение (как Android так и iOS) и убедиться что диалог отображается.</p>
+<table>
+<tr></tr>
+<tr><td colspan="1" rowspan="1"><p class="image-container"><img alt="android-app" src="img/535f281696f51daf.png"></p>
+</td><td colspan="1" rowspan="1"><p class="image-container"><img alt="ios-app" src="img/82d9895e4a7f8058.png"></p>
+</td></tr>
+</table>
+
 
       </google-codelab-step>
     
