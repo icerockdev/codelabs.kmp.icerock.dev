@@ -21,6 +21,58 @@ Duration: 5
 - Показ диалога с обработкой ответа пользователя;
 - Открытие системного экрана с обработкой результата.
 
+## Показать toast
+Duration: 5
+
+Предположим что мы хотим при нажатии на кнопку Submit с пустым полем ввода выводить toast (всплывающее сообщение), вместо error label у поля.
+
+### Реализация логики
+Добавим проверку на пустоту в `InputPhoneViewModel`.
+
+`mpp-library/src/commonMain/kotlin/org/example/mpp/auth/InputPhoneScreen.kt`:
+```kotlin
+class InputPhoneViewModel(
+    ...
+) : ... {
+    ...
+
+    fun onSubmitPressed() {
+        val phone = phoneField.data.value
+        if(phone.isBlank()) {
+            eventsDispatcher.dispatchEvent { showError("it's cant be blank!".desc()) }
+            return
+        }
+        val token = "token:$phone"
+        eventsDispatcher.dispatchEvent { routeInputCode(token) }
+    }
+
+    interface EventsListener {
+        fun routeInputCode(token: String)
+        fun showError(error: StringDesc)
+    }
+}
+```
+Во первых мы добавили новый метод в `EventsListener`, а значит экран должен его поддерживать. А в обработчике нажатия на кнопку проверяем текст на пустоту, если он пустой - вызываем показ ошибки.
+
+### Реализациия экрана
+Метод показа `toast` встроен в moko-widgets начиная с релиза [0.1.0-dev-8](https://github.com/icerockdev/moko-widgets/releases/tag/release%2F0.1.0-dev-8).
+
+`mpp-library/src/commonMain/kotlin/org/example/mpp/auth/InputPhoneScreen.kt`:
+```kotlin
+class InputPhoneScreen(
+    ...
+) : ... {
+    ...
+
+    override fun showError(error: StringDesc) {
+        showToast(error)
+    }
+}
+```
+
+### Тестирование
+Теперь можно запустить приложение (как Android так и iOS) и убедиться что toast успешно показывается.
+
 ## Открытие ссылки
 Duration: 15
 
@@ -265,7 +317,6 @@ Negative
 
 Negative
 : на данный момент moko-widgets не позволяет корректно привязать кастомный обработчик данных, раздел будет обновлен позже после обновления
-
 
 ## Открытие системного экрана
 Duration: 2

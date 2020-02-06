@@ -41,6 +41,52 @@
 
       </google-codelab-step>
     
+      <google-codelab-step label="Показать toast" duration="5">
+        <p>Предположим что мы хотим при нажатии на кнопку Submit с пустым полем ввода выводить toast (всплывающее сообщение), вместо error label у поля.</p>
+<h2 is-upgraded>Реализация логики</h2>
+<p>Добавим проверку на пустоту в <code>InputPhoneViewModel</code>.</p>
+<p><code>mpp-library/src/commonMain/kotlin/org/example/mpp/auth/InputPhoneScreen.kt</code>:</p>
+<pre><code>class InputPhoneViewModel(
+    ...
+) : ... {
+    ...
+
+    fun onSubmitPressed() {
+        val phone = phoneField.data.value
+        if(phone.isBlank()) {
+            eventsDispatcher.dispatchEvent { showError(&#34;it&#39;s cant be blank!&#34;.desc()) }
+            return
+        }
+        val token = &#34;token:$phone&#34;
+        eventsDispatcher.dispatchEvent { routeInputCode(token) }
+    }
+
+    interface EventsListener {
+        fun routeInputCode(token: String)
+        fun showError(error: StringDesc)
+    }
+}
+</code></pre>
+<p>Во первых мы добавили новый метод в <code>EventsListener</code>, а значит экран должен его поддерживать. А в обработчике нажатия на кнопку проверяем текст на пустоту, если он пустой - вызываем показ ошибки.</p>
+<h2 is-upgraded>Реализациия экрана</h2>
+<p>Метод показа <code>toast</code> встроен в moko-widgets начиная с релиза <a href="https://github.com/icerockdev/moko-widgets/releases/tag/release%2F0.1.0-dev-8" target="_blank">0.1.0-dev-8</a>.</p>
+<p><code>mpp-library/src/commonMain/kotlin/org/example/mpp/auth/InputPhoneScreen.kt</code>:</p>
+<pre><code>class InputPhoneScreen(
+    ...
+) : ... {
+    ...
+
+    override fun showError(error: StringDesc) {
+        showToast(error)
+    }
+}
+</code></pre>
+<h2 is-upgraded>Тестирование</h2>
+<p>Теперь можно запустить приложение (как Android так и iOS) и убедиться что toast успешно показывается.</p>
+
+
+      </google-codelab-step>
+    
       <google-codelab-step label="Открытие ссылки" duration="15">
         <p>Для примера добавим на экран ввода телефона кнопку <code>GitHub</code>, по нажатию на которую должен открыться гитхаб <code>moko-widgets</code>.</p>
 <h2 is-upgraded>Добавление кнопки</h2>
