@@ -192,6 +192,9 @@ actual fun Screen<*>.showMessage(
 }
 ```
 
+Negative
+: В данной реализации сообщение пропадет при смене конфигурации (изменили язык в настройках телефона, или повернули экран или включили разделение экрана). В следующем примере будет разобран вариант с сохранением состояния.
+
 iOS - `mpp-library/src/iosMain/kotlin/org/example/mpp/ScreenExt.kt`:
 ```kotlin
 actual fun Screen<*>.showMessage(

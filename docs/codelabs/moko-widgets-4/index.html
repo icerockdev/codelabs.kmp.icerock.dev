@@ -183,6 +183,8 @@
         .show()
 }
 </code></pre>
+<aside class="warning"><p>В данной реализации сообщение пропадет при смене конфигурации (изменили язык в настройках телефона, или повернули экран или включили разделение экрана). В следующем примере будет разобран вариант с сохранением состояния.</p>
+</aside>
 <p>iOS - <code>mpp-library/src/iosMain/kotlin/org/example/mpp/ScreenExt.kt</code>:</p>
 <pre><code>actual fun Screen&lt;*&gt;.showMessage(
     title: StringDesc,
