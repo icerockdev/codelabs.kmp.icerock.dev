@@ -282,56 +282,325 @@
 
       </google-codelab-step>
     
-      <google-codelab-step label="Показ диалога с обработкой результата" duration="2">
+      <google-codelab-step label="Показ диалога с обработкой результата" duration="15">
         <p>Усложним пример с показом сообщения - теперь нам нужно показать диалог с вопросом &#34;Open github?&#34; при нажатии на кнопку <code>GitHub</code>. В диалоге должны быть варианты ответа <code>Yes</code> (открывает сайт) и <code>No</code> (просто закрывает диалог).</p>
 <p>Данная задача осложняется тем, что Android может независимо от работы приложения пересоздавать экран, а значит нужно предусмотреть восстановление диалога и привязку обработчиков нажатий.</p>
 <p>Кнопка <code>GitHub</code> у нас уже есть, поэтому сразу переходим к реализации обработчика.</p>
-<aside class="warning"><p>на данный момент moko-widgets не позволяет корректно привязать кастомный обработчик данных, раздел будет обновлен позже после обновления <a href="https://github.com/icerockdev/moko-widgets/issues/4" target="_blank">moko-widgets#4</a></p>
+<aside class="special"><p>Нужно провести обновление проекта до moko-widgets <code>0.1.0-dev-11</code>.</p>
 </aside>
+<h2 is-upgraded>Common code</h2>
+<p>Определим интерфейс работы с диалогом:</p>
+<pre><code>expect fun Screen&lt;*&gt;.showDialog(
+    dialogId: Int,
+    title: StringDesc,
+    message: StringDesc,
+    positiveButton: StringDesc?,
+    negativeButton: StringDesc?,
+    buttonsHandler: DialogButtonsHandler
+)
+
+expect class DialogButtonsHandler
+
+expect fun Screen&lt;*&gt;.registerDialogButtonsHandler(
+    onPositivePressed: (dialogId: Int) -&gt; Unit,
+    onNegativePressed: (dialogId: Int) -&gt; Unit
+): ReadOnlyProperty&lt;Screen&lt;*&gt;, DialogButtonsHandler&gt;
+</code></pre>
+<h2 is-upgraded>Android code</h2>
+<pre><code>class AlertDialogFragment : DialogFragment() {
+    var listener: Listener? = null
+
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        val context = requireContext()
+        val arg = arguments?.getParcelable&lt;Arg&gt;(ARG_KEY)!!
+
+        return AlertDialog.Builder(context)
+            .setTitle(arg.title)
+            .setMessage(arg.message)
+            .apply {
+                if (arg.positiveButton != null) {
+                    setPositiveButton(arg.positiveButton) { _, _ -&gt;
+                        listener?.onPositivePressed(arg.dialogId)
+                    }
+                }
+                if (arg.negativeButton != null) {
+                    setNegativeButton(arg.negativeButton) { _, _ -&gt;
+                        listener?.onNegativePressed(arg.dialogId)
+                    }
+                }
+            }
+            .setCancelable(true)
+            .create()
+    }
+
+    interface Listener {
+        fun onPositivePressed(dialogId: Int)
+        fun onNegativePressed(dialogId: Int)
+    }
+
+    @Parcelize
+    data class Arg(
+        val dialogId: Int,
+        val title: String,
+        val message: String,
+        val positiveButton: String?,
+        val negativeButton: String?
+    ) : Parcelable
+
+    companion object {
+        private const val ARG_KEY = &#34;arg&#34;
+
+        fun instantiate(arg: Arg): AlertDialogFragment {
+            return AlertDialogFragment().apply {
+                arguments = Bundle().apply { putParcelable(ARG_KEY, arg) }
+            }
+        }
+    }
+}
+
+actual fun Screen&lt;*&gt;.showDialog(
+    dialogId: Int,
+    title: StringDesc,
+    message: StringDesc,
+    positiveButton: StringDesc?,
+    negativeButton: StringDesc?,
+    buttonsHandler: DialogButtonsHandler // it&#39;s just marker
+) {
+    val context = requireContext()
+    AlertDialogFragment
+        .instantiate(
+            AlertDialogFragment.Arg(
+                dialogId,
+                title.toString(context),
+                message.toString(context),
+                positiveButton?.toString(context),
+                negativeButton?.toString(context)
+            )
+        )
+        .show(childFragmentManager, null)
+}
+
+actual class DialogButtonsHandler
+
+actual fun Screen&lt;*&gt;.registerDialogButtonsHandler(
+    onPositivePressed: (dialogId: Int) -&gt; Unit,
+    onNegativePressed: (dialogId: Int) -&gt; Unit
+): ReadOnlyProperty&lt;Screen&lt;*&gt;, DialogButtonsHandler&gt; {
+    return registerAttachFragmentHook(DialogButtonsHandler()) {
+        if (it is AlertDialogFragment) {
+            it.listener = object : AlertDialogFragment.Listener {
+                override fun onPositivePressed(dialogId: Int) {
+                    onPositivePressed(dialogId)
+                }
+
+                override fun onNegativePressed(dialogId: Int) {
+                    onNegativePressed(dialogId)
+                }
+            }
+        }
+    }
+}
+</code></pre>
+<h2 is-upgraded>iOS code</h2>
+<pre><code>actual fun Screen&lt;*&gt;.showDialog(
+    dialogId: Int,
+    title: StringDesc,
+    message: StringDesc,
+    positiveButton: StringDesc?,
+    negativeButton: StringDesc?,
+    buttonsHandler: DialogButtonsHandler
+) {
+    val alertController = UIAlertController.alertControllerWithTitle(
+        title = title.localized(),
+        message = message.localized(),
+        preferredStyle = UIAlertControllerStyleAlert
+    )
+    if (positiveButton != null) {
+        UIAlertAction.actionWithTitle(
+            title = positiveButton.localized(),
+            style = UIAlertActionStyleDefault,
+            handler = { buttonsHandler.onPositivePressed(dialogId) }
+        ).let { alertController.addAction(it) }
+    }
+    if (negativeButton != null) {
+        UIAlertAction.actionWithTitle(
+            title = negativeButton.localized(),
+            style = UIAlertActionStyleDestructive,
+            handler = { buttonsHandler.onNegativePressed(dialogId) }
+        ).let { alertController.addAction(it) }
+    }
+    viewController.presentViewController(alertController, animated = true, completion = null)
+}
+
+actual class DialogButtonsHandler(
+    val onPositivePressed: (dialogId: Int) -&gt; Unit,
+    val onNegativePressed: (dialogId: Int) -&gt; Unit
+)
+
+actual fun Screen&lt;*&gt;.registerDialogButtonsHandler(
+    onPositivePressed: (dialogId: Int) -&gt; Unit,
+    onNegativePressed: (dialogId: Int) -&gt; Unit
+): ReadOnlyProperty&lt;Screen&lt;*&gt;, DialogButtonsHandler&gt; {
+    return createConstReadOnlyProperty(
+        DialogButtonsHandler(
+            onPositivePressed = onPositivePressed,
+            onNegativePressed = onNegativePressed
+        )
+    )
+}
+</code></pre>
+<h2 is-upgraded>Sample</h2>
+<pre><code>class InputPhoneScreen(
+    ...
+) : ... {
+
+    ...
+
+    private val openUrlDialogHandler by registerDialogButtonsHandler(
+        onPositivePressed = {
+            showToast(&#34;positive from $it&#34;.desc())
+        },
+        onNegativePressed = {
+            showToast(&#34;negative from $it&#34;.desc())
+        }
+    )
+
+    ...
+
+    private fun onGitHubPressed() {
+        showDialog(
+            dialogId = 1,
+            title = &#34;Question 1&#34;.desc(),
+            message = &#34;Yes or no?&#34;.desc(),
+            positiveButton = &#34;Yes&#34;.desc(),
+            negativeButton = &#34;No&#34;.desc(),
+            buttonsHandler = openUrlDialogHandler
+        )
+    }
+
+    private fun onAboutPressed() {
+        showDialog(
+            dialogId = 2,
+            title = &#34;Question 2&#34;.desc(),
+            message = &#34;No or yes?&#34;.desc(),
+            positiveButton = &#34;No&#34;.desc(),
+            negativeButton = &#34;Yes&#34;.desc(),
+            buttonsHandler = openUrlDialogHandler
+        )
+    }
+
+    ...
+}
+</code></pre>
 
 
       </google-codelab-step>
     
-      <google-codelab-step label="Открытие системного экрана" duration="2">
+      <google-codelab-step label="Открытие системного экрана" duration="15">
         <p>При интеграции нативного функционала типа &#34;выбрать контакт из списка контактов телефона&#34; так же может потребоваться показ экрана с обработкой результата.</p>
-<aside class="warning"><p>на данный момент moko-widgets не позволяет корректно привязать кастомный обработчик данных, раздел будет обновлен позже после обновления <a href="https://github.com/icerockdev/moko-widgets/issues/4" target="_blank">moko-widgets#4</a></p>
-</aside>
-<p>will be used:<br>android:</p>
-<pre><code>Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI)
+<h2 is-upgraded>Common code</h2>
+<pre><code>expect class PhonePickerHandler
 
-startActivityForResult
+expect fun Screen&lt;*&gt;.registerPhonePickerHandler(
+    code: Int,
+    handler: (phone: String) -&gt; Unit
+): ReadOnlyProperty&lt;Screen&lt;*&gt;, PhonePickerHandler&gt;
 
-override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-    super.onActivityResult(requestCode, resultCode, data)
-    
-    if (requestCode == SELECT_CONTACT &amp;&amp; resultCode == Activity.RESULT_OK) {
-        val contactUri = data?.data ?: return
-        val projection = arrayOf(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME,
-                ContactsContract.CommonDataKinds.Phone.NUMBER)
-        val cursor = requireContext().contentResolver.query(contactUri, projection,
-                null, null, null)
+expect fun Screen&lt;*&gt;.showPhonePicker(
+    pickerHandler: PhonePickerHandler
+)
+</code></pre>
+<h2 is-upgraded>Android code</h2>
+<pre><code>actual fun Screen&lt;*&gt;.registerPhonePickerHandler(
+    code: Int,
+    handler: (phone: String) -&gt; Unit
+): ReadOnlyProperty&lt;Screen&lt;*&gt;, PhonePickerHandler&gt; {
+    return registerActivityResultHook(
+        requestCode = code,
+        value = PhonePickerHandler(code)
+    ) { result, data -&gt;
+        if (result == Activity.RESULT_OK) {
+            val contactUri = data?.data ?: return@registerActivityResultHook
 
-        if (cursor != null &amp;&amp; cursor.moveToFirst()) {
-            val nameIndex = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME)
-            val numberIndex = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)
-            val name = cursor.getString(nameIndex)
-            val number = cursor.getString(numberIndex)
+            val contentResolver = requireContext().contentResolver
+            val projection = arrayOf(ContactsContract.Contacts._ID)
+            val cursor = contentResolver.query(
+                contactUri, projection,
+                null, null, null
+            )
 
-            // do something with name and phone
+            if (cursor != null &amp;&amp; cursor.moveToFirst()) {
+                val idIdx = cursor.getColumnIndex(ContactsContract.Contacts._ID)
+                val id = cursor.getInt(idIdx)
+
+                val phones = contentResolver.query(
+                    ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null,
+                    ContactsContract.CommonDataKinds.Phone.CONTACT_ID + &#34; = &#34; + id, null, null
+                )
+                if (phones?.moveToFirst() == true) {
+                    val numberIdx = phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)
+                    val number = phones.getString(numberIdx)
+
+                    handler(number)
+                }
+                phones?.close()
+            }
+            cursor?.close()
         }
-        cursor?.close()
     }
 }
-</code></pre>
-<p>ios:</p>
-<pre><code>let contactPicker = CNContactPickerViewController()
-contactPicker.delegate = self
 
-extension FriendsViewController: CNContactPickerDelegate {
-  func contactPicker(_ picker: CNContactPickerViewController,
-                     didSelect contacts: [CNContact]) {
-    // ...
-  }
+actual class PhonePickerHandler(val requestCode: Int)
+
+actual fun Screen&lt;*&gt;.showPhonePicker(pickerHandler: PhonePickerHandler) {
+    val intent = Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI)
+    startActivityForResult(intent, pickerHandler.requestCode)
+}
+</code></pre>
+<h2 is-upgraded>iOS code</h2>
+<pre><code>actual class PhonePickerHandler(
+    val onSelected: (phone: String) -&gt; Unit
+) : NSObject(), CNContactPickerDelegateProtocol {
+    override fun contactPicker(picker: CNContactPickerViewController, didSelectContact: CNContact) {
+        val numbers = didSelectContact.phoneNumbers as List&lt;CNLabeledValue&gt;
+        val firstNumber = numbers.firstOrNull() ?: return
+        val cnPhoneNumber = firstNumber.value as CNPhoneNumber
+        onSelected(cnPhoneNumber.stringValue)
+    }
+}
+
+actual fun Screen&lt;*&gt;.registerPhonePickerHandler(
+    code: Int,
+    handler: (phone: String) -&gt; Unit
+): ReadOnlyProperty&lt;Screen&lt;*&gt;, PhonePickerHandler&gt; {
+    return createConstReadOnlyProperty(PhonePickerHandler(handler))
+}
+
+actual fun Screen&lt;*&gt;.showPhonePicker(pickerHandler: PhonePickerHandler) {
+    val contactPicker = CNContactPickerViewController()
+    contactPicker.delegate = pickerHandler
+
+    viewController.presentViewController(contactPicker, animated = true, completion = null)
+}
+</code></pre>
+<h2 is-upgraded>Sample</h2>
+<pre><code>class InputPhoneScreen(
+    ...
+) : ... {
+
+    ...
+
+    private val phonePickerHandler by registerPhonePickerHandler(9) {
+        showToast(&#34;picked $it&#34;.desc())
+    }
+
+    ...
+
+    private fun onGitHubPressed() {
+        showPhonePicker(phonePickerHandler)
+    }
+    
+    ...
 }
 </code></pre>
 
