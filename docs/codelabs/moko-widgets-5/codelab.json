@@ -3,12 +3,12 @@
   "format": "html",
   "prefix": "https://storage.googleapis.com",
   "mainga": "UA-49880327-14",
-  "updated": "2020-02-11T17:26:18+07:00",
-  "id": "moko-widgets-4",
-  "duration": 70,
-  "title": "MOKO Widgets #4 - screen actions",
-  "summary": "MOKO Widgets #4 - действия на экранах",
-  "source": "moko-widgets-4.md",
+  "updated": "2020-02-11T18:58:19+07:00",
+  "id": "moko-widgets-5",
+  "duration": 50,
+  "title": "MOKO Widgets #5 - custom ViewFactory",
+  "summary": "MOKO Widgets #5 - собственные фабрики виджетов",
+  "source": "moko-widgets-5.md",
   "theme": "",
   "status": [
     "published"
@@ -21,5 +21,5 @@
   ],
   "feedback": "https://github.com/icerockdev/kmp-codelabs/issues",
   "ga": "UA-81805223-5",
-  "url": "moko-widgets-4"
+  "url": "moko-widgets-5"
 }

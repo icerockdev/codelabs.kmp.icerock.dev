@@ -1,0 +1,293 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>MOKO Widgets #5 - custom ViewFactory</title>
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://storage.googleapis.com/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <google-codelab-analytics gaid="UA-49880327-14"></google-codelab-analytics>
+  <google-codelab codelab-gaid="UA-81805223-5"
+                  id="moko-widgets-5"
+                  title="MOKO Widgets #5 - custom ViewFactory"
+                  environment="web"
+                  feedback-link="https://github.com/icerockdev/kmp-codelabs/issues">
+    
+      <google-codelab-step label="Вводная" duration="5">
+        <p>Урок является продолжением <a href="https://codelabs.kmp.icerock.dev/codelabs/moko-widgets-4/" target="_blank">MOKO Widgets #4 - screen actions</a>. Для выполнения данного урока нужно иметь проект, полученный в результате выполнения предыдущего урока.</p>
+<p>Результатом прошлого урока было приложение с навигацией, стилизацией экранов и различными действиями на экранах.</p>
+<p>На этом уроке мы реализуем собственные фабрики виджетов на примере поля ввода телефона и кода.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Своя фабрика InputWidget полностью в Kotlin" duration="15">
+        <h2 is-upgraded>Common code</h2>
+<pre><code>expect class PhoneInputViewFactory() : ViewFactory&lt;InputWidget&lt;out WidgetSize&gt;&gt;
+</code></pre>
+<h2 is-upgraded>Android code</h2>
+<pre><code>actual class PhoneInputViewFactory : ViewFactory&lt;InputWidget&lt;out WidgetSize&gt;&gt; {
+    override fun &lt;WS : WidgetSize&gt; build(
+        widget: InputWidget&lt;out WidgetSize&gt;,
+        size: WS,
+        viewFactoryContext: ViewFactoryContext
+    ): ViewBundle&lt;WS&gt; {
+        val context = viewFactoryContext.androidContext
+        val lifecycleOwner = viewFactoryContext.lifecycleOwner
+
+        val editText = EditText(context).apply {
+            id = widget.id.androidId
+
+            layoutParams = ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            )
+
+            widget.inputType?.also { applyInputType(it) }
+
+            setOnFocusChangeListener { _, hasFocus -&gt;
+                if (!hasFocus) widget.field.validate()
+            }
+            addTextChangedListener(object : TextWatcher {
+                override fun afterTextChanged(s: Editable?) {}
+
+                override fun beforeTextChanged(
+                    s: CharSequence?,
+                    start: Int,
+                    count: Int,
+                    after: Int
+                ) {
+                }
+
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                    if (s == null) return
+
+                    widget.field.data.value = s.toString()
+                }
+            })
+        }
+
+        widget.field.data.bind(lifecycleOwner) { data -&gt;
+            if (editText.text?.toString() == data) return@bind
+
+            editText.setText(data)
+        }
+
+        widget.label.bind(lifecycleOwner) { editText.hint = it?.toString(context) }
+        widget.enabled?.bind(lifecycleOwner) { editText.isEnabled = it == true }
+        widget.maxLines?.bind(lifecycleOwner) { maxLines -&gt;
+            when (maxLines) {
+                null -&gt; editText.setSingleLine(false)
+                1 -&gt; editText.setSingleLine(true)
+                else -&gt; {
+                    editText.setSingleLine(false)
+                    editText.maxLines = maxLines
+                }
+            }
+        }
+
+        return ViewBundle(
+            view = editText,
+            size = size,
+            margins = null
+        )
+    }
+}
+</code></pre>
+<h2 is-upgraded>iOS code</h2>
+<pre><code>actual class PhoneInputViewFactory : ViewFactory&lt;InputWidget&lt;out WidgetSize&gt;&gt; {
+    override fun &lt;WS : WidgetSize&gt; build(
+        widget: InputWidget&lt;out WidgetSize&gt;,
+        size: WS,
+        viewFactoryContext: ViewFactoryContext
+    ): ViewBundle&lt;WS&gt; {
+
+        val textField = UITextField(frame = CGRectZero.readValue()).apply {
+            translatesAutoresizingMaskIntoConstraints = false
+            applyInputTypeIfNeeded(widget.inputType)
+
+            clipsToBounds = true
+        }
+
+        val mask = widget.inputType?.mask
+        if (mask != null) {
+            val delegate = DefaultFormatterUITextFieldDelegate(
+                inputFormatter = DefaultTextFormatter(
+                    textPattern = mask.toIosPattern(),
+                    patternSymbol = &#39;#&#39;
+                )
+            )
+            textField.delegate = delegate
+            setAssociatedObject(textField, delegate)
+        }
+
+        textField.setEventHandler(UIControlEventEditingChanged) {
+            val currentValue = widget.field.data.value
+            val newValue = textField.text
+
+            if (currentValue != newValue) {
+                widget.field.data.value = newValue.orEmpty()
+            }
+        }
+
+        widget.enabled?.bind { textField.enabled = it }
+        widget.label.bind { textField.placeholder = it.localized() }
+        widget.field.data.bind { textField.text = it }
+
+        return ViewBundle(
+            view = textField,
+            size = size,
+            margins = null
+        )
+    }
+}
+</code></pre>
+<h2 is-upgraded>Apply to app</h2>
+<pre><code>class App : BaseApplication() {
+    override fun setup(): ScreenDesc&lt;Args.Empty&gt; {
+        val theme = Theme() {
+            ...
+
+            factory[InputPhoneScreen.Ids.Phone] = PhoneInputViewFactory()
+        }
+
+        ...
+    }
+
+    ...
+}
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Своя фабрика InputWidget с использованием нативных библиотек" duration="30">
+        <h2 is-upgraded>Common code</h2>
+<pre><code>expect class CodeInputViewFactory() : ViewFactory&lt;InputWidget&lt;out WidgetSize&gt;&gt;
+</code></pre>
+<h2 is-upgraded>Android code</h2>
+<p><code>mpp-library/build.gradle.kts</code>:</p>
+<pre><code>    androidLibrary(Deps.Libs.Android.otpView)
+</code></pre>
+<pre><code>actual class CodeInputViewFactory actual constructor() : ViewFactory&lt;InputWidget&lt;out WidgetSize&gt;&gt; {
+    override fun &lt;WS : WidgetSize&gt; build(
+        widget: InputWidget&lt;out WidgetSize&gt;,
+        size: WS,
+        viewFactoryContext: ViewFactoryContext
+    ): ViewBundle&lt;WS&gt; {
+        val context = viewFactoryContext.androidContext
+        val lifecycleOwner = viewFactoryContext.lifecycleOwner
+
+        val editText = Pinview(context).apply {
+            id = widget.id.androidId
+
+            layoutParams = ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            )
+
+            setOnFocusChangeListener { _, hasFocus -&gt;
+                if (!hasFocus) widget.field.validate()
+            }
+            setPinViewEventListener { pinview, fromUser -&gt;
+                widget.field.data.value = pinview.value
+                widget.field.validate()
+            }
+        }
+
+        widget.field.data.bind(lifecycleOwner) { data -&gt;
+            if (editText.value == data) return@bind
+
+            editText.value = data
+        }
+
+        widget.enabled?.bind(lifecycleOwner) { editText.isEnabled = it == true }
+
+        return ViewBundle(
+            view = editText,
+            size = size,
+            margins = null
+        )
+    }
+}
+</code></pre>
+<h2 is-upgraded>iOS code</h2>
+<p>Podfile:</p>
+<pre><code>target &#39;ios-app&#39; do
+  ...
+
+  pod &#39;SVPinView&#39;, &#39;1.0.7&#39;
+end
+</code></pre>
+<p>И требуется удалить автоустановку <code>mpp-library</code>: <code>cd .. &amp;&amp; ./gradlew :mpp-library:syncMultiPlatformLibraryDebugFrameworkIosX64</code>.</p>
+<p><code>mpp-library/build.gradle.kts</code>:</p>
+<pre><code>cocoaPods {
+    podsProject = file(&#34;../ios-app/Pods/Pods.xcodeproj&#34;)
+
+    pod(&#34;SVPinView&#34;)
+}
+</code></pre>
+<pre><code>actual class CodeInputViewFactory actual constructor() : ViewFactory&lt;InputWidget&lt;out WidgetSize&gt;&gt; {
+    override fun &lt;WS : WidgetSize&gt; build(
+        widget: InputWidget&lt;out WidgetSize&gt;,
+        size: WS,
+        viewFactoryContext: ViewFactoryContext
+    ): ViewBundle&lt;WS&gt; {
+
+        val textField = SVPinView(frame = CGRectZero.readValue()).apply {
+            translatesAutoresizingMaskIntoConstraints = false
+
+            setPlaceholder(&#34;****&#34;)
+            
+            heightAnchor.constraintEqualToConstant(80.0).active = true
+        }
+
+//        textField.setEventHandler(UIControlEventEditingChanged) {
+//            val currentValue = widget.field.data.value
+//            val newValue = textField.text
+//
+//            if (currentValue != newValue) {
+//                widget.field.data.value = newValue.orEmpty()
+//            }
+//        }
+
+//        widget.field.data.bind { textField.text = it }
+
+        return ViewBundle(
+            view = textField,
+            size = size,
+            margins = null
+        )
+    }
+}
+</code></pre>
+<h2 is-upgraded>sample code</h2>
+<pre><code>factory[InputCodeScreen.Ids.Code] = CodeInputViewFactory()
+</code></pre>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://storage.googleapis.com/codelab-elements/native-shim.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/prettify.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/codelab-elements.js"></script>
+
+</body>
+</html>
