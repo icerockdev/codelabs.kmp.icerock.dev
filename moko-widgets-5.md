@@ -21,11 +21,13 @@ Duration: 5
 Duration: 15
 
 ### Common code
+`mpp-library/src/commonMain/kotlin/org/example/mpp/PhoneInputViewFactory.kt`:
 ```kotlin
 expect class PhoneInputViewFactory() : ViewFactory<InputWidget<out WidgetSize>>
 ```
 
 ### Android code
+`mpp-library/src/androidMain/kotlin/org/example/mpp/PhoneInputViewFactory.kt`:
 ```kotlin
 actual class PhoneInputViewFactory : ViewFactory<InputWidget<out WidgetSize>> {
     override fun <WS : WidgetSize> build(
@@ -97,6 +99,7 @@ actual class PhoneInputViewFactory : ViewFactory<InputWidget<out WidgetSize>> {
 ```
 
 ### iOS code
+`mpp-library/src/iosMain/kotlin/org/example/mpp/PhoneInputViewFactory.kt`:
 ```kotlin
 actual class PhoneInputViewFactory : ViewFactory<InputWidget<out WidgetSize>> {
     override fun <WS : WidgetSize> build(
@@ -147,6 +150,7 @@ actual class PhoneInputViewFactory : ViewFactory<InputWidget<out WidgetSize>> {
 ```
 
 ### Apply to app
+`mpp-library/src/commonMain/kotlin/org/example/mpp/App.kt`:
 ```kotlin
 class App : BaseApplication() {
     override fun setup(): ScreenDesc<Args.Empty> {
@@ -167,17 +171,57 @@ class App : BaseApplication() {
 Duration: 30
 
 ### Common code
+`mpp-library/src/commonMain/kotlin/org/example/mpp/CodeInputViewFactory.kt`:
 ```kotlin
 expect class CodeInputViewFactory() : ViewFactory<InputWidget<out WidgetSize>>
 ```
 
 ### Android code
-`mpp-library/build.gradle.kts`:
+`buildSrc/src/main/kotlin/Deps.kt`:
 ```kotlin
-    androidLibrary(Deps.Libs.Android.otpView)
+object Deps {
+    ...
+
+    object Libs {
+        object Android {
+            ...
+
+            val otpView = AndroidLibrary(
+                name = "com.github.GoodieBag:Pinview:v1.4"
+            )
+        }
+    }
+
+    ...
+}
 ```
 
+`build.gradle.kts`:
+```kotlin
+...
+allprojects {
+    repositories {
+        ...
 
+        maven { url = uri("https://jitpack.io") }
+    }
+    ...
+}
+...
+```
+
+`mpp-library/build.gradle.kts`:
+```kotlin
+...
+dependencies {
+    ...
+
+    androidLibrary(Deps.Libs.Android.otpView)
+}
+...
+```
+
+`mpp-library/src/androidMain/kotlin/org/example/mpp/CodeInputViewFactory.kt`:
 ```kotlin
 actual class CodeInputViewFactory actual constructor() : ViewFactory<InputWidget<out WidgetSize>> {
     override fun <WS : WidgetSize> build(
@@ -223,18 +267,32 @@ actual class CodeInputViewFactory actual constructor() : ViewFactory<InputWidget
 ```
 
 ### iOS code
-Podfile:
+`buildSrc/build.gradle.kts`:
+```kotlin
+...
+dependencies {
+    implementation("dev.icerock:mobile-multiplatform:0.5.0")
+    
+    ...
+}
+...
+```
+
+`ios-app/Podfile`:
 ```ruby
+...
 target 'ios-app' do
   ...
 
   pod 'SVPinView', '1.0.7'
 end
+...
 ```
 И требуется удалить автоустановку `mpp-library`: `cd .. && ./gradlew :mpp-library:syncMultiPlatformLibraryDebugFrameworkIosX64`.
 
 `mpp-library/build.gradle.kts`:
 ```kotlin
+...
 cocoaPods {
     podsProject = file("../ios-app/Pods/Pods.xcodeproj")
 
@@ -242,6 +300,7 @@ cocoaPods {
 }
 ```
 
+`mpp-library/src/iosMain/kotlin/org/example/mpp/CodeInputViewFactory.kt`:
 ```kotlin
 actual class CodeInputViewFactory actual constructor() : ViewFactory<InputWidget<out WidgetSize>> {
     override fun <WS : WidgetSize> build(
@@ -279,6 +338,19 @@ actual class CodeInputViewFactory actual constructor() : ViewFactory<InputWidget
 ```
 
 ### sample code
+`mpp-library/src/commonMain/kotlin/org/example/mpp/App.kt`:
 ```kotlin
-factory[InputCodeScreen.Ids.Code] = CodeInputViewFactory()
+class App : BaseApplication() {
+    override fun setup(): ScreenDesc<Args.Empty> {
+        val theme = Theme() {
+            ...
+
+            factory[InputCodeScreen.Ids.Code] = CodeInputViewFactory()
+        }
+
+        ...
+    }
+
+    ...
+}
 ```

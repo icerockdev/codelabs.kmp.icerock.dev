@@ -37,9 +37,11 @@
     
       <google-codelab-step label="Своя фабрика InputWidget полностью в Kotlin" duration="15">
         <h2 is-upgraded>Common code</h2>
+<p><code>mpp-library/src/commonMain/kotlin/org/example/mpp/PhoneInputViewFactory.kt</code>:</p>
 <pre><code>expect class PhoneInputViewFactory() : ViewFactory&lt;InputWidget&lt;out WidgetSize&gt;&gt;
 </code></pre>
 <h2 is-upgraded>Android code</h2>
+<p><code>mpp-library/src/androidMain/kotlin/org/example/mpp/PhoneInputViewFactory.kt</code>:</p>
 <pre><code>actual class PhoneInputViewFactory : ViewFactory&lt;InputWidget&lt;out WidgetSize&gt;&gt; {
     override fun &lt;WS : WidgetSize&gt; build(
         widget: InputWidget&lt;out WidgetSize&gt;,
@@ -109,6 +111,7 @@
 }
 </code></pre>
 <h2 is-upgraded>iOS code</h2>
+<p><code>mpp-library/src/iosMain/kotlin/org/example/mpp/PhoneInputViewFactory.kt</code>:</p>
 <pre><code>actual class PhoneInputViewFactory : ViewFactory&lt;InputWidget&lt;out WidgetSize&gt;&gt; {
     override fun &lt;WS : WidgetSize&gt; build(
         widget: InputWidget&lt;out WidgetSize&gt;,
@@ -157,6 +160,7 @@
 }
 </code></pre>
 <h2 is-upgraded>Apply to app</h2>
+<p><code>mpp-library/src/commonMain/kotlin/org/example/mpp/App.kt</code>:</p>
 <pre><code>class App : BaseApplication() {
     override fun setup(): ScreenDesc&lt;Args.Empty&gt; {
         val theme = Theme() {
@@ -177,12 +181,49 @@
     
       <google-codelab-step label="Своя фабрика InputWidget с использованием нативных библиотек" duration="30">
         <h2 is-upgraded>Common code</h2>
+<p><code>mpp-library/src/commonMain/kotlin/org/example/mpp/CodeInputViewFactory.kt</code>:</p>
 <pre><code>expect class CodeInputViewFactory() : ViewFactory&lt;InputWidget&lt;out WidgetSize&gt;&gt;
 </code></pre>
 <h2 is-upgraded>Android code</h2>
-<p><code>mpp-library/build.gradle.kts</code>:</p>
-<pre><code>    androidLibrary(Deps.Libs.Android.otpView)
+<p><code>buildSrc/src/main/kotlin/Deps.kt</code>:</p>
+<pre><code>object Deps {
+    ...
+
+    object Libs {
+        object Android {
+            ...
+
+            val otpView = AndroidLibrary(
+                name = &#34;com.github.GoodieBag:Pinview:v1.4&#34;
+            )
+        }
+    }
+
+    ...
+}
 </code></pre>
+<p><code>build.gradle.kts</code>:</p>
+<pre><code>...
+allprojects {
+    repositories {
+        ...
+
+        maven { url = uri(&#34;https://jitpack.io&#34;) }
+    }
+    ...
+}
+...
+</code></pre>
+<p><code>mpp-library/build.gradle.kts</code>:</p>
+<pre><code>...
+dependencies {
+    ...
+
+    androidLibrary(Deps.Libs.Android.otpView)
+}
+...
+</code></pre>
+<p><code>mpp-library/src/androidMain/kotlin/org/example/mpp/CodeInputViewFactory.kt</code>:</p>
 <pre><code>actual class CodeInputViewFactory actual constructor() : ViewFactory&lt;InputWidget&lt;out WidgetSize&gt;&gt; {
     override fun &lt;WS : WidgetSize&gt; build(
         widget: InputWidget&lt;out WidgetSize&gt;,
@@ -226,21 +267,34 @@
 }
 </code></pre>
 <h2 is-upgraded>iOS code</h2>
-<p>Podfile:</p>
-<pre><code>target &#39;ios-app&#39; do
+<p><code>buildSrc/build.gradle.kts</code>:</p>
+<pre><code>...
+dependencies {
+    implementation(&#34;dev.icerock:mobile-multiplatform:0.5.0&#34;)
+    
+    ...
+}
+...
+</code></pre>
+<p><code>ios-app/Podfile</code>:</p>
+<pre><code>...
+target &#39;ios-app&#39; do
   ...
 
   pod &#39;SVPinView&#39;, &#39;1.0.7&#39;
 end
+...
 </code></pre>
 <p>И требуется удалить автоустановку <code>mpp-library</code>: <code>cd .. &amp;&amp; ./gradlew :mpp-library:syncMultiPlatformLibraryDebugFrameworkIosX64</code>.</p>
 <p><code>mpp-library/build.gradle.kts</code>:</p>
-<pre><code>cocoaPods {
+<pre><code>...
+cocoaPods {
     podsProject = file(&#34;../ios-app/Pods/Pods.xcodeproj&#34;)
 
     pod(&#34;SVPinView&#34;)
 }
 </code></pre>
+<p><code>mpp-library/src/iosMain/kotlin/org/example/mpp/CodeInputViewFactory.kt</code>:</p>
 <pre><code>actual class CodeInputViewFactory actual constructor() : ViewFactory&lt;InputWidget&lt;out WidgetSize&gt;&gt; {
     override fun &lt;WS : WidgetSize&gt; build(
         widget: InputWidget&lt;out WidgetSize&gt;,
@@ -276,7 +330,20 @@ end
 }
 </code></pre>
 <h2 is-upgraded>sample code</h2>
-<pre><code>factory[InputCodeScreen.Ids.Code] = CodeInputViewFactory()
+<p><code>mpp-library/src/commonMain/kotlin/org/example/mpp/App.kt</code>:</p>
+<pre><code>class App : BaseApplication() {
+    override fun setup(): ScreenDesc&lt;Args.Empty&gt; {
+        val theme = Theme() {
+            ...
+
+            factory[InputCodeScreen.Ids.Code] = CodeInputViewFactory()
+        }
+
+        ...
+    }
+
+    ...
+}
 </code></pre>
 
 
