@@ -72,7 +72,7 @@ actual class PlatformInfoScreen actual constructor(
 }
 ```
 
-После этого нужно реализовать создание интерфейса, так как того требует android. Для начала сделаем верстку экрана, для этого нужно добавить директорию `res` в `mpp-library/src/androidMain` и потом в ней `New -> Layout XML File`. Назовем лейаут `screen_info`.
+После этого нужно реализовать создание интерфейса так, как того требует android. Для начала сделаем верстку экрана, для этого нужно добавить директорию `res` в `mpp-library/src/androidMain` и потом в ней `New -> Layout XML File`. Назовем лейаут `screen_info`.
 В файле лейаута сделаем следующую верстку:
 ```xml
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -91,7 +91,7 @@ actual class PlatformInfoScreen actual constructor(
         android:text="Open profile" />
 </FrameLayout>
 ```
-То есть просто расположим кнопку открытия профиля по центру, а саму кнопку оформим стилем "без границ".
+То есть просто расположим кнопку открытия профиля по центру, а саму кнопку немного стилизуем.
 
 Остается загрузить эту верстку в классе экрана - для этого переопределим метод `onCreateView`:
 ```kotlin
