@@ -1,0 +1,156 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>MOKO Widgets #6 - platform Screen</title>
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://storage.googleapis.com/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <google-codelab-analytics gaid="UA-49880327-14"></google-codelab-analytics>
+  <google-codelab codelab-gaid="UA-81805223-5"
+                  id="moko-widgets-6"
+                  title="MOKO Widgets #6 - platform Screen"
+                  environment="web"
+                  feedback-link="https://github.com/icerockdev/kmp-codelabs/issues">
+    
+      <google-codelab-step label="Вводная" duration="5">
+        <p>Урок является продолжением <a href="https://codelabs.kmp.icerock.dev/codelabs/moko-widgets-5/" target="_blank">MOKO Widgets #5 - custom ViewFactory</a>. Для выполнения данного урока нужно иметь проект, полученный в результате выполнения предыдущего урока.</p>
+<p>Результатом прошлого урока было приложение с навигацией, стилизацией экранов и различными действиями на экранах и кастомными фабриками.</p>
+<p>На этом уроке мы реализуем платформенный экран - верстка экрана будет сделана полностью нативными инструментами Android и iOS.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Добавление экрана с платформенным интерфейсом" duration="10">
+        <p>Возьмем <code>InfoScreen</code>, созданный на прошлых уроках как основу. На экране у нас должна быть кнопка, которая произведет переход на экран профиля, но сам интерфейс должен быть сделан на платформах.</p>
+<p>Сначала выделим обработчик кнопки в отдельный метод:</p>
+<pre><code>class InfoScreen(
+    ...
+) : ... {
+
+    ...
+
+    fun onProfileButtonPressed() {
+        routeProfile.route()
+    }
+}
+</code></pre>
+<p>Далее заменим базовый класс - вместо <code>WidgetsScreen</code> будем использовать корневой класс - <code>Screen</code>, так как мы не будем создавать контент экрана виджетами. В итоге получим:</p>
+<pre><code>class InfoScreen(
+    private val theme: Theme,
+    private val routeProfile: Route&lt;Unit&gt;
+) : Screen&lt;Args.Empty&gt;() {
+
+    fun onProfileButtonPressed() {
+        routeProfile.route()
+    }
+}
+</code></pre>
+<p>На уровне общего кода IDE не покажет никаких ошибок, но каждая из платформ требует свою реализацию.<br>Например для Android <code>InfoScreen</code> становится обычным <code>Fragment</code>, в котором интерфейс нужно создавать через <code>onCreateView</code>, а для iOS <code>InfoScreen</code> даже не скомпилируется, так как не реализован абстрактный метод класса <code>Screen</code> - <code>fun createViewController(): UIViewController</code>. Из-за разницы платформ нам нужно использовать <code>expect</code> класс, но <code>expect</code> не может иметь никаких реализаций методов (как <code>onProfileButtonPressed</code>), поэтому сделаем <code>InfoScreen</code> абстрактным классом, а от него унаследуем <code>expect class PlatformInfoScreen</code>.</p>
+<pre><code>expect class PlatformInfoScreen(
+    theme: Theme,
+    routeProfile: Route&lt;Unit&gt;
+) : InfoScreen
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Реализация экрана на Android" duration="10">
+        <p>Добавим <code>actual</code> реализацию для класса <code>PlatformInfoScreen</code> на android (можно через меню с действиями <code>opt + Enter</code> от <code>expect</code> объявления класса).<br>Начальная реализация должна быть следующая:</p>
+<pre><code>actual class PlatformInfoScreen actual constructor(
+    theme: Theme,
+    routeProfile: Route&lt;Unit&gt;
+) : InfoScreen(theme, routeProfile) {
+    
+}
+</code></pre>
+<p>После этого нужно реализовать создание интерфейса, так как того требует android. Для начала сделаем верстку экрана, для этого нужно добавить директорию <code>res</code> в <code>mpp-library/src/androidMain</code> и потом в ней <code>New -&gt; Layout XML File</code>. Назовем лейаут <code>screen_info</code>.<br>В файле лейаута сделаем следующую верстку:</p>
+<pre><code>&lt;FrameLayout xmlns:android=&#34;http://schemas.android.com/apk/res/android&#34;
+    android:layout_width=&#34;match_parent&#34;
+    android:layout_height=&#34;match_parent&#34;
+    xmlns:app=&#34;http://schemas.android.com/apk/res-auto&#34;&gt;
+
+    &lt;Button
+        android:id=&#34;@+id/profile_btn&#34;
+        android:layout_width=&#34;wrap_content&#34;
+        android:layout_height=&#34;wrap_content&#34;
+        android:layout_gravity=&#34;center&#34;
+        app:backgroundTint=&#34;@android:color/black&#34;
+        android:textColor=&#34;@android:color/white&#34;
+        android:textAllCaps=&#34;false&#34;
+        android:text=&#34;Open profile&#34; /&gt;
+&lt;/FrameLayout&gt;
+</code></pre>
+<p>То есть просто расположим кнопку открытия профиля по центру, а саму кнопку оформим стилем &#34;без границ&#34;.</p>
+<p>Остается загрузить эту верстку в классе экрана - для этого переопределим метод <code>onCreateView</code>:</p>
+<pre><code>actual class PlatformInfoScreen actual constructor(
+    ...
+) : ... {
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        val view = inflater.inflate(R.layout.screen_info, container, false)
+        view.findViewById&lt;Button&gt;(R.id.profile_btn).setOnClickListener {
+            onProfileButtonPressed()
+        }
+        return view
+    }
+}
+</code></pre>
+<p>Чтобы запустить и проверить остается заменить в <code>mpp-library/src/commonMain/kotlin/org/example/mpp/App.kt</code> класс, используемый для создания экрана:</p>
+<pre><code>class App : BaseApplication() {
+    override fun setup(): ScreenDesc&lt;Args.Empty&gt; {
+        ...
+
+        return registerScreen(RootNavigationScreen::class) {
+            ...
+
+            val mainScreen = registerScreen(MainBottomNavigationScreen::class) {
+                ...
+
+                val infoScreen = registerScreen(PlatformInfoScreen::class) {
+                    PlatformInfoScreen(theme, bottomNavigationRouter.createChangeTabRoute(2))
+                }
+
+                ...
+            }
+
+            ...
+        }
+    }
+}
+</code></pre>
+<p>Теперь можно открыть приложение и на главном экране вкладка <code>Info</code> будет оформлена так, как мы сделали в платформенной реализации.</p>
+<p class="image-container"><img alt="android-app" src="img/18f2b27942844fac.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Реализация экрана на iOS" duration="15">
+        
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://storage.googleapis.com/codelab-elements/native-shim.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/prettify.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/codelab-elements.js"></script>
+
+</body>
+</html>

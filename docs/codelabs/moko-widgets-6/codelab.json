@@ -1,0 +1,25 @@
+{
+  "environment": "web",
+  "format": "html",
+  "prefix": "https://storage.googleapis.com",
+  "mainga": "UA-49880327-14",
+  "updated": "2020-02-13T17:18:35+07:00",
+  "id": "moko-widgets-6",
+  "duration": 40,
+  "title": "MOKO Widgets #6 - platform Screen",
+  "summary": "MOKO Widgets #6 - платформенные экраны",
+  "source": "moko-widgets-6.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "moko"
+  ],
+  "tags": [
+    "kotlin-mobile-mpp"
+  ],
+  "feedback": "https://github.com/icerockdev/kmp-codelabs/issues",
+  "ga": "UA-81805223-5",
+  "url": "moko-widgets-6"
+}
