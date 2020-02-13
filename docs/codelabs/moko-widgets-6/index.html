@@ -211,11 +211,20 @@ end
   @IBAction func onProfileButtonTap() {
     onProfileButtonPressed?()
   }
+  
+  @objc public static func create() -&gt; InfoViewController {
+    return InfoViewController(
+      nibName: nil,
+      bundle: Bundle(for: InfoViewController.self)
+    )
+  }
 }
 </code></pre>
 <aside class="special"><p>Директива <code>@objc</code> говорит компилятору что для класс <code>InfoViewController</code> и поле <code>onProfileButtonPressed</code> должны быть доступны из Objective-C - это требуется для работы с данным классом из Kotlin (Kotlin имеет interop с Objective-C и C, но не Swift).</p>
 </aside>
 <aside class="special"><p>По умолчанию в swift используется видимость <code>internal</code>, поэтому для работы с классом из вне фреймворка требуется указать видимость <code>public</code>.</p>
+</aside>
+<aside class="special"><p>Для создания объекта <code>InfoViewController</code> мы передаем <code>nibName = nil</code>, чтобы система использовала имя класса для поиска <code>xib</code>, а так же <code>bundle</code> полученный от класса - чтобы поиск xib производился в правильном framework (в mppLibraryIos.framework)</p>
 </aside>
 <p>Далее перейдем к настройке интерфейса в <code>mpp-library/src/iosMain/bundle/InfoViewController.xib</code>:</p>
 <ol type="1">
@@ -261,10 +270,7 @@ cocoaPods {
 ) : ... {
 
     override fun createViewController(): UIViewController {
-        val vc = InfoViewController(
-            nibName = null,
-            bundle = NSBundle.bundleForClass(InfoViewController.`class`()!!)
-        )
+        val vc = InfoViewController.create()
         vc.setOnProfileButtonPressed {
             onProfileButtonPressed()
         }
@@ -272,8 +278,6 @@ cocoaPods {
     }
 }
 </code></pre>
-<aside class="special"><p>Для создания объекта <code>InfoViewController</code> мы передаем <code>nibName = null</code>, чтобы система использовала имя класса для поиска <code>xib</code>, а так же <code>bundle</code> полученный от класса - чтобы поиск xib производился в правильном framework (в mppLibraryIos.framework)</p>
-</aside>
 <p>На этом все готово и можно запустить iOS приложение, в котором увидим:</p>
 <p class="image-container"><img alt="ios info page" src="img/405a8f7c15995a51.png"></p>
 

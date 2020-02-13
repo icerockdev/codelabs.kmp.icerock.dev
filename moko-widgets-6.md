@@ -225,6 +225,13 @@ Positive
   @IBAction func onProfileButtonTap() {
     onProfileButtonPressed?()
   }
+  
+  @objc public static func create() -> InfoViewController {
+    return InfoViewController(
+      nibName: nil,
+      bundle: Bundle(for: InfoViewController.self)
+    )
+  }
 }
 ```
 
@@ -233,6 +240,9 @@ Positive
 
 Positive
 : По умолчанию в swift используется видимость `internal`, поэтому для работы с классом из вне фреймворка требуется указать видимость `public`.
+
+Positive
+: Для создания объекта `InfoViewController` мы передаем `nibName = nil`, чтобы система использовала имя класса для поиска `xib`, а так же `bundle` полученный от класса - чтобы поиск xib производился в правильном framework (в mppLibraryIos.framework)
 
 Далее перейдем к настройке интерфейса в `mpp-library/src/iosMain/bundle/InfoViewController.xib`:
 
@@ -289,10 +299,7 @@ actual class PlatformInfoScreen actual constructor(
 ) : ... {
 
     override fun createViewController(): UIViewController {
-        val vc = InfoViewController(
-            nibName = null,
-            bundle = NSBundle.bundleForClass(InfoViewController.`class`()!!)
-        )
+        val vc = InfoViewController.create()
         vc.setOnProfileButtonPressed {
             onProfileButtonPressed()
         }
@@ -300,9 +307,6 @@ actual class PlatformInfoScreen actual constructor(
     }
 }
 ```
-
-Positive
-: Для создания объекта `InfoViewController` мы передаем `nibName = null`, чтобы система использовала имя класса для поиска `xib`, а так же `bundle` полученный от класса - чтобы поиск xib производился в правильном framework (в mppLibraryIos.framework)
 
 На этом все готово и можно запустить iOS приложение, в котором увидим:
 
