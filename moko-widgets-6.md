@@ -141,4 +141,169 @@ class App : BaseApplication() {
 ## Реализация экрана на iOS
 Duration: 15
 
+Добавим `actual` реализацию для класса `PlatformInfoScreen` на android (можно через меню с действиями `opt + Enter` от `expect` объявления класса).
+Начальная реализация должна быть следующая:
+```kotlin
+actual class PlatformInfoScreen actual constructor(
+    theme: Theme,
+    routeProfile: Route<Unit>
+) : InfoScreen(theme, routeProfile) {
 
+    override fun createViewController(): UIViewController {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+}
+```
+
+Нам остается добавить реализацию создания `UIViewController` нашего экрана. 
+Для этого нам потребуется:
+- Создать локальный `CocoaPod`, в котором будет наша нативная реализация экрана;
+- Подключить новый `CocoaPod` к `mpp-library`;
+- Создать объект нативного класса в методе `createViewController` в `Kotlin`.
+
+### Создание CocoaPod
+Создадим файл `mpp-library/mppLibraryIos.podspec` с содержимым:
+```ruby
+Pod::Spec.new do |spec|
+    spec.name                     = 'mppLibraryIos'
+    spec.version                  = '0.1.0'
+    spec.homepage                 = 'Link'
+    spec.source                   = { :git => "Not Published", :tag => "Cocoapods/#{spec.name}/#{spec.version}" }
+    spec.authors                  = 'IceRock Development'
+    spec.license                  = ''
+    spec.summary                  = 'Shared code between iOS and Android'
+    spec.module_name              = "#{spec.name}"
+
+    spec.source_files             = "src/iosMain/swift/**/*.{h,m,swift}"
+    spec.resources                = "src/iosMain/bundle/**/*"
+
+    spec.ios.deployment_target  = '11.0'
+    spec.swift_version          = '5.0'
+
+    spec.pod_target_xcconfig = {
+        'VALID_ARCHS' => '$(ARCHS_STANDARD_64_BIT)'
+    }
+end
+```
+Это настройки локального `CocoaPod`, согласно которым файлы исходного кода будут находиться в директории `mpp-library/src/iosMain/swift`, а файлы ресурсов (изображения, xib и прочее) в директории `mpp-library/src/iosMain/bundle`.
+
+Теперь подключим данный `CocoaPod` к проекту - добавим в `ios-app/Podfile`:
+```ruby
+...
+
+target 'ios-app' do
+  ...
+
+  pod 'mppLibraryIos', :path => '../mpp-library'
+end
+```
+
+После этого можно выполнить `pod install` (в директории `ios-app`) чтобы была произведена настройка `Pods` проекта.
+
+Теперь нужно добавить файлы для нативной реализации. Для этого в Xcode создаем файлы:
+- `mpp-library/src/iosMain/swift/InfoViewController.swift`
+- `mpp-library/src/iosMain/bundle/InfoViewController.xib`
+
+Создаем в группе `mppLibraryIos`:
+![xcode](assets/moko-widgets-6-ios-xcode.png)
+
+Для таргета `mppLibraryIos`:
+![target](assets/moko-widgets-6-ios-target.png)
+
+Positive
+: На вопрос о создании Objective-C Bridging Header ответьте "Нет"
+
+Positive
+: После создания обоих файлов нужно повторно выполнить `pod install` чтобы файлы были корректно подключены к проекту.
+
+### Реализация нативного экрана
+В файле `mpp-library/src/iosMain/swift/InfoViewController.swift` добавим реализацию:
+```swift
+@objc public class InfoViewController: UIViewController {
+  @objc public var onProfileButtonPressed: (() -> Void)? = nil
+  
+  @IBAction func onProfileButtonTap() {
+    onProfileButtonPressed?()
+  }
+}
+```
+
+Positive
+: Директива `@objc` говорит компилятору что для класс `InfoViewController` и поле `onProfileButtonPressed` должны быть доступны из Objective-C - это требуется для работы с данным классом из Kotlin (Kotlin имеет interop с Objective-C и C, но не Swift).
+
+Positive
+: По умолчанию в swift используется видимость `internal`, поэтому для работы с классом из вне фреймворка требуется указать видимость `public`.
+
+Далее перейдем к настройке интерфейса в `mpp-library/src/iosMain/bundle/InfoViewController.xib`:
+
+1. Укажем в `File's Owner` наш класс `InfoViewController`:
+
+![xib owner](assets/moko-widgets-6-ios-xib-owner.png)
+
+2. Добавим кнопку на корневую `View` и настроим связи - центрирование по контейнеру:
+
+![xib button constraints](assets/moko-widgets-6-ios-button-constraints.png)
+
+3. Настроим внешний вид кнопки - заголовок, цвет текста, цвет фона:
+
+![xib button attributes](assets/moko-widgets-6-ios-button-attributes.png)
+
+4. Укажем связь `View` и `File's Owner` - корневая `view` привязывается к аутлету `view`, действие `onProfileButtonTap` привязывается к кнопке на событие `Touch Up Inside`:
+
+![xib outlets](assets/moko-widgets-6-ios-outlets.png)
+
+5. Далее попробуем собрать фреймворк - для этого в схемах включим отображение схему `mppLibraryIos` и, выбрав ее, произведем сборку:
+
+![ios scheme](assets/moko-widgets-6-ios-scheme.png)
+
+Если все было успешно собрано, значит можно переходить к подключению нативного фреймворка в Kotlin.
+
+### Подключение нативного экрана к mpp-library
+
+Сначала требуется добавить новый `CocoaPod` в список подключенных к Kotlin.
+
+`mpp-library/build.gradle.kts`:
+```kotlin
+...
+
+cocoaPods {
+    ...
+
+    pod("mppLibraryIos")
+}
+```
+
+После добавления настройки нужно вызвать `Gradle Sync` и в панели управления Gradle мы сможем вызвать задачу `cinteropCocoapodMppLibraryIosIosX64`:
+
+![xib outlets](assets/moko-widgets-6-ios-cinterop.png)
+
+После завершения работы задачи `cinteropCocoapodMppLibraryIosIosX64` требуется сделать `Gradle Sync`, чтобы IDE корректно считала сгенерированные данной задачей klib'ы с нативными классами.
+
+Positive
+: Если не видно из Kotlin классов от CocoaPod - можно удалить директорию `mpp-library/build/classes` и вызвать по новой cinterop таску, после чего `Gradle Sync`.
+
+Далее можно открыть `mpp-library/src/iosX64Main/kotlin/org/example/mpp/info/PlatformInfoScreen.kt` и внести изменения:
+```kotlin
+actual class PlatformInfoScreen actual constructor(
+    ...
+) : ... {
+
+    override fun createViewController(): UIViewController {
+        val vc = InfoViewController(
+            nibName = null,
+            bundle = NSBundle.bundleForClass(InfoViewController.`class`()!!)
+        )
+        vc.setOnProfileButtonPressed {
+            onProfileButtonPressed()
+        }
+        return vc
+    }
+}
+```
+
+Positive
+: Для создания объекта `InfoViewController` мы передаем `nibName = null`, чтобы система использовала имя класса для поиска `xib`, а так же `bundle` полученный от класса - чтобы поиск xib производился в правильном framework (в mppLibraryIos.framework)
+
+На этом все готово и можно запустить iOS приложение, в котором увидим:
+
+![ios info page](assets/moko-widgets-6-ios-info.png)

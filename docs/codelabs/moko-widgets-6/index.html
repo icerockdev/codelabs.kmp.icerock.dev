@@ -79,7 +79,7 @@
     
 }
 </code></pre>
-<p>После этого нужно реализовать создание интерфейса, так как того требует android. Для начала сделаем верстку экрана, для этого нужно добавить директорию <code>res</code> в <code>mpp-library/src/androidMain</code> и потом в ней <code>New -&gt; Layout XML File</code>. Назовем лейаут <code>screen_info</code>.<br>В файле лейаута сделаем следующую верстку:</p>
+<p>После этого нужно реализовать создание интерфейса так, как того требует android. Для начала сделаем верстку экрана, для этого нужно добавить директорию <code>res</code> в <code>mpp-library/src/androidMain</code> и потом в ней <code>New -&gt; Layout XML File</code>. Назовем лейаут <code>screen_info</code>.<br>В файле лейаута сделаем следующую верстку:</p>
 <pre><code>&lt;FrameLayout xmlns:android=&#34;http://schemas.android.com/apk/res/android&#34;
     android:layout_width=&#34;match_parent&#34;
     android:layout_height=&#34;match_parent&#34;
@@ -96,7 +96,7 @@
         android:text=&#34;Open profile&#34; /&gt;
 &lt;/FrameLayout&gt;
 </code></pre>
-<p>То есть просто расположим кнопку открытия профиля по центру, а саму кнопку оформим стилем &#34;без границ&#34;.</p>
+<p>То есть просто расположим кнопку открытия профиля по центру, а саму кнопку немного стилизуем.</p>
 <p>Остается загрузить эту верстку в классе экрана - для этого переопределим метод <code>onCreateView</code>:</p>
 <pre><code>actual class PlatformInfoScreen actual constructor(
     ...
@@ -141,7 +141,142 @@
       </google-codelab-step>
     
       <google-codelab-step label="Реализация экрана на iOS" duration="15">
-        
+        <p>Добавим <code>actual</code> реализацию для класса <code>PlatformInfoScreen</code> на android (можно через меню с действиями <code>opt + Enter</code> от <code>expect</code> объявления класса).<br>Начальная реализация должна быть следующая:</p>
+<pre><code>actual class PlatformInfoScreen actual constructor(
+    theme: Theme,
+    routeProfile: Route&lt;Unit&gt;
+) : InfoScreen(theme, routeProfile) {
+
+    override fun createViewController(): UIViewController {
+        TODO(&#34;not implemented&#34;) //To change body of created functions use File | Settings | File Templates.
+    }
+}
+</code></pre>
+<p>Нам остается добавить реализацию создания <code>UIViewController</code> нашего экрана.<br>Для этого нам потребуется:</p>
+<ul>
+<li>Создать локальный <code>CocoaPod</code>, в котором будет наша нативная реализация экрана;</li>
+<li>Подключить новый <code>CocoaPod</code> к <code>mpp-library</code>;</li>
+<li>Создать объект нативного класса в методе <code>createViewController</code> в <code>Kotlin</code>.</li>
+</ul>
+<h2 is-upgraded>Создание CocoaPod</h2>
+<p>Создадим файл <code>mpp-library/mppLibraryIos.podspec</code> с содержимым:</p>
+<pre><code>Pod::Spec.new do |spec|
+    spec.name                     = &#39;mppLibraryIos&#39;
+    spec.version                  = &#39;0.1.0&#39;
+    spec.homepage                 = &#39;Link&#39;
+    spec.source                   = { :git =&gt; &#34;Not Published&#34;, :tag =&gt; &#34;Cocoapods/#{spec.name}/#{spec.version}&#34; }
+    spec.authors                  = &#39;IceRock Development&#39;
+    spec.license                  = &#39;&#39;
+    spec.summary                  = &#39;Shared code between iOS and Android&#39;
+    spec.module_name              = &#34;#{spec.name}&#34;
+
+    spec.source_files             = &#34;src/iosMain/swift/**/*.{h,m,swift}&#34;
+    spec.resources                = &#34;src/iosMain/bundle/**/*&#34;
+
+    spec.ios.deployment_target  = &#39;11.0&#39;
+    spec.swift_version          = &#39;5.0&#39;
+
+    spec.pod_target_xcconfig = {
+        &#39;VALID_ARCHS&#39; =&gt; &#39;$(ARCHS_STANDARD_64_BIT)&#39;
+    }
+end
+</code></pre>
+<p>Это настройки локального <code>CocoaPod</code>, согласно которым файлы исходного кода будут находиться в директории <code>mpp-library/src/iosMain/swift</code>, а файлы ресурсов (изображения, xib и прочее) в директории <code>mpp-library/src/iosMain/bundle</code>.</p>
+<p>Теперь подключим данный <code>CocoaPod</code> к проекту - добавим в <code>ios-app/Podfile</code>:</p>
+<pre><code>...
+
+target &#39;ios-app&#39; do
+  ...
+
+  pod &#39;mppLibraryIos&#39;, :path =&gt; &#39;../mpp-library&#39;
+end
+</code></pre>
+<p>После этого можно выполнить <code>pod install</code> (в директории <code>ios-app</code>) чтобы была произведена настройка <code>Pods</code> проекта.</p>
+<p>Теперь нужно добавить файлы для нативной реализации. Для этого в Xcode создаем файлы:</p>
+<ul>
+<li><code>mpp-library/src/iosMain/swift/InfoViewController.swift</code></li>
+<li><code>mpp-library/src/iosMain/bundle/InfoViewController.xib</code></li>
+</ul>
+<p>Создаем в группе <code>mppLibraryIos</code>:<br><img alt="xcode" src="img/86bc1df3658d73e7.png"></p>
+<p>Для таргета <code>mppLibraryIos</code>:<br><img alt="target" src="img/333e9d019218b844.png"></p>
+<aside class="special"><p>На вопрос о создании Objective-C Bridging Header ответьте &#34;Нет&#34;</p>
+</aside>
+<aside class="special"><p>После создания обоих файлов нужно повторно выполнить <code>pod install</code> чтобы файлы были корректно подключены к проекту.</p>
+</aside>
+<h2 is-upgraded>Реализация нативного экрана</h2>
+<p>В файле <code>mpp-library/src/iosMain/swift/InfoViewController.swift</code> добавим реализацию:</p>
+<pre><code>@objc public class InfoViewController: UIViewController {
+  @objc public var onProfileButtonPressed: (() -&gt; Void)? = nil
+  
+  @IBAction func onProfileButtonTap() {
+    onProfileButtonPressed?()
+  }
+}
+</code></pre>
+<aside class="special"><p>Директива <code>@objc</code> говорит компилятору что для класс <code>InfoViewController</code> и поле <code>onProfileButtonPressed</code> должны быть доступны из Objective-C - это требуется для работы с данным классом из Kotlin (Kotlin имеет interop с Objective-C и C, но не Swift).</p>
+</aside>
+<aside class="special"><p>По умолчанию в swift используется видимость <code>internal</code>, поэтому для работы с классом из вне фреймворка требуется указать видимость <code>public</code>.</p>
+</aside>
+<p>Далее перейдем к настройке интерфейса в <code>mpp-library/src/iosMain/bundle/InfoViewController.xib</code>:</p>
+<ol type="1">
+<li>Укажем в <code>File&#39;s Owner</code> наш класс <code>InfoViewController</code>:</li>
+</ol>
+<p class="image-container"><img alt="xib owner" src="img/9e04479c209e3633.png"></p>
+<ol type="1">
+<li>Добавим кнопку на корневую <code>View</code> и настроим связи - центрирование по контейнеру:</li>
+</ol>
+<p class="image-container"><img alt="xib button constraints" src="img/e87327bdda537af3.png"></p>
+<ol type="1">
+<li>Настроим внешний вид кнопки - заголовок, цвет текста, цвет фона:</li>
+</ol>
+<p class="image-container"><img alt="xib button attributes" src="img/ea62f3a8d9b497f5.png"></p>
+<ol type="1">
+<li>Укажем связь <code>View</code> и <code>File&#39;s Owner</code> - корневая <code>view</code> привязывается к аутлету <code>view</code>, действие <code>onProfileButtonTap</code> привязывается к кнопке на событие <code>Touch Up Inside</code>:</li>
+</ol>
+<p class="image-container"><img alt="xib outlets" src="img/e47d00e7555bfcd5.png"></p>
+<ol type="1">
+<li>Далее попробуем собрать фреймворк - для этого в схемах включим отображение схему <code>mppLibraryIos</code> и, выбрав ее, произведем сборку:</li>
+</ol>
+<p class="image-container"><img alt="ios scheme" src="img/21b733ceca837c7e.png"></p>
+<p>Если все было успешно собрано, значит можно переходить к подключению нативного фреймворка в Kotlin.</p>
+<h2 is-upgraded>Подключение нативного экрана к mpp-library</h2>
+<p>Сначала требуется добавить новый <code>CocoaPod</code> в список подключенных к Kotlin.</p>
+<p><code>mpp-library/build.gradle.kts</code>:</p>
+<pre><code>...
+
+cocoaPods {
+    ...
+
+    pod(&#34;mppLibraryIos&#34;)
+}
+</code></pre>
+<p>После добавления настройки нужно вызвать <code>Gradle Sync</code> и в панели управления Gradle мы сможем вызвать задачу <code>cinteropCocoapodMppLibraryIosIosX64</code>:</p>
+<p class="image-container"><img alt="xib outlets" src="img/ae6c48ad038f6d24.png"></p>
+<p>После завершения работы задачи <code>cinteropCocoapodMppLibraryIosIosX64</code> требуется сделать <code>Gradle Sync</code>, чтобы IDE корректно считала сгенерированные данной задачей klib&#39;ы с нативными классами.</p>
+<aside class="special"><p>Если не видно из Kotlin классов от CocoaPod - можно удалить директорию <code>mpp-library/build/classes</code> и вызвать по новой cinterop таску, после чего <code>Gradle Sync</code>.</p>
+</aside>
+<p>Далее можно открыть <code>mpp-library/src/iosX64Main/kotlin/org/example/mpp/info/PlatformInfoScreen.kt</code> и внести изменения:</p>
+<pre><code>actual class PlatformInfoScreen actual constructor(
+    ...
+) : ... {
+
+    override fun createViewController(): UIViewController {
+        val vc = InfoViewController(
+            nibName = null,
+            bundle = NSBundle.bundleForClass(InfoViewController.`class`()!!)
+        )
+        vc.setOnProfileButtonPressed {
+            onProfileButtonPressed()
+        }
+        return vc
+    }
+}
+</code></pre>
+<aside class="special"><p>Для создания объекта <code>InfoViewController</code> мы передаем <code>nibName = null</code>, чтобы система использовала имя класса для поиска <code>xib</code>, а так же <code>bundle</code> полученный от класса - чтобы поиск xib производился в правильном framework (в mppLibraryIos.framework)</p>
+</aside>
+<p>На этом все готово и можно запустить iOS приложение, в котором увидим:</p>
+<p class="image-container"><img alt="ios info page" src="img/405a8f7c15995a51.png"></p>
+
 
       </google-codelab-step>
     
