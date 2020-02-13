@@ -141,7 +141,7 @@
       </google-codelab-step>
     
       <google-codelab-step label="Реализация экрана на iOS" duration="15">
-        <p>Добавим <code>actual</code> реализацию для класса <code>PlatformInfoScreen</code> на android (можно через меню с действиями <code>opt + Enter</code> от <code>expect</code> объявления класса).<br>Начальная реализация должна быть следующая:</p>
+        <p>Добавим <code>actual</code> реализацию для класса <code>PlatformInfoScreen</code> на ios (можно через меню с действиями <code>opt + Enter</code> от <code>expect</code> объявления класса).<br>Начальная реализация должна быть следующая:</p>
 <pre><code>actual class PlatformInfoScreen actual constructor(
     theme: Theme,
     routeProfile: Route&lt;Unit&gt;
@@ -198,9 +198,9 @@ end
 <li><code>mpp-library/src/iosMain/bundle/InfoViewController.xib</code></li>
 </ul>
 <p>Создаем в группе <code>mppLibraryIos</code>:<br><img alt="xcode" src="img/86bc1df3658d73e7.png"></p>
-<p>Для таргета <code>mppLibraryIos</code>:<br><img alt="target" src="img/333e9d019218b844.png"></p>
 <aside class="special"><p>На вопрос о создании Objective-C Bridging Header ответьте &#34;Нет&#34;</p>
 </aside>
+<p>Для таргета <code>mppLibraryIos</code>:<br><img alt="target" src="img/333e9d019218b844.png"></p>
 <aside class="special"><p>После создания обоих файлов нужно повторно выполнить <code>pod install</code> чтобы файлы были корректно подключены к проекту.</p>
 </aside>
 <h2 is-upgraded>Реализация нативного экрана</h2>

@@ -141,7 +141,7 @@ class App : BaseApplication() {
 ## Реализация экрана на iOS
 Duration: 15
 
-Добавим `actual` реализацию для класса `PlatformInfoScreen` на android (можно через меню с действиями `opt + Enter` от `expect` объявления класса).
+Добавим `actual` реализацию для класса `PlatformInfoScreen` на ios (можно через меню с действиями `opt + Enter` от `expect` объявления класса).
 Начальная реализация должна быть следующая:
 ```kotlin
 actual class PlatformInfoScreen actual constructor(
@@ -207,11 +207,11 @@ end
 Создаем в группе `mppLibraryIos`:
 ![xcode](assets/moko-widgets-6-ios-xcode.png)
 
-Для таргета `mppLibraryIos`:
-![target](assets/moko-widgets-6-ios-target.png)
-
 Positive
 : На вопрос о создании Objective-C Bridging Header ответьте "Нет"
+
+Для таргета `mppLibraryIos`:
+![target](assets/moko-widgets-6-ios-target.png)
 
 Positive
 : После создания обоих файлов нужно повторно выполнить `pod install` чтобы файлы были корректно подключены к проекту.
