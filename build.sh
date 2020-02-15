@@ -16,3 +16,4 @@ mv dist docs
 rm docs/codelabs
 mv codelabs docs/codelabs
 cp CNAME docs/
+cp -a files docs/

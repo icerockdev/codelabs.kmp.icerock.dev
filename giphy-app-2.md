@@ -25,7 +25,7 @@ Positive
 : Фича списка уже присутствует в шаблоне, поэтому логику не придется реализовывать. Для большего понимания как устроена фича следует ознакомиться с [схемой модуля](https://github.com/icerockdev/moko-template#list-module-scheme) и посмотреть код в `mpp-library:feature:list`.
 
 ### Замена OpenAPI спецификации
-Заменим содержимое файла `mpp-library/domain/src/openapi.yml` содержимым из [OpenAPI спецификации сервиса GIPHY](assets/giphy-openapi.yml). После этого можно вызвать `Gradle Sync` и по завершению мы увидим что появились ошибки в коде, который работал с `newsapi`. Нужно обновить этот код под новую API.
+Заменим содержимое файла `mpp-library/domain/src/openapi.yml` содержимым из [OpenAPI спецификации сервиса GIPHY](/files/giphy-openapi.yml). После этого можно вызвать `Gradle Sync` и по завершению мы увидим что появились ошибки в коде, который работал с `newsapi`. Нужно обновить этот код под новую API.
 
 Positive
 : Сгенерированные файлы находятся по пути `mpp-library/domain/build/generate-resources/main/src/main/kotlin`

@@ -28,7 +28,7 @@ Positive
 
 ### Replace OpenAPI spec
 
-Replace file `mpp-library/domain/src/openapi.yml` by the content from [OpenAPI spec of GIPHY service](assets/giphy-openapi.yml). After it please do `Gradle Sync` and as the result you will see some errors in the `newsapi` code. Let's update code by new API. 
+Replace file `mpp-library/domain/src/openapi.yml` by the content from [OpenAPI spec of GIPHY service](/files/giphy-openapi.yml). After it please do `Gradle Sync` and as the result you will see some errors in the `newsapi` code. Let's update code by new API. 
 
 Positive
 : You can find generated files here `mpp-library/domain/build/generate-resources/main/src/main/kotlin`
