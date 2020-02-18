@@ -192,18 +192,14 @@
 <pre><code>inline class UnitItemRoot private constructor(private val wrapper: Wrapper) {
 
     companion object {
-        @JvmName(&#34;fromWidgetConstExactHeight&#34;)
         fun from(widget: Widget&lt;WidgetSize.Const&lt;SizeSpec.AsParent, SizeSpec.Exact&gt;&gt;): UnitItemRoot {
-            Result
             return UnitItemRoot(Wrapper(widget))
         }
 
-        @JvmName(&#34;fromWidgetConstContentHeight&#34;)
         fun from(widget: Widget&lt;WidgetSize.Const&lt;SizeSpec.AsParent, SizeSpec.WrapContent&gt;&gt;): UnitItemRoot {
             return UnitItemRoot(Wrapper(widget))
         }
 
-        @JvmName(&#34;fromWidgetAspectWidth&#34;)
         fun from(widget: Widget&lt;WidgetSize.AspectByWidth&lt;SizeSpec.AsParent&gt;&gt;): UnitItemRoot {
             return UnitItemRoot(Wrapper(widget))
         }

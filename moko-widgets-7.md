@@ -198,18 +198,14 @@ Positive
 inline class UnitItemRoot private constructor(private val wrapper: Wrapper) {
 
     companion object {
-        @JvmName("fromWidgetConstExactHeight")
         fun from(widget: Widget<WidgetSize.Const<SizeSpec.AsParent, SizeSpec.Exact>>): UnitItemRoot {
-            Result
             return UnitItemRoot(Wrapper(widget))
         }
 
-        @JvmName("fromWidgetConstContentHeight")
         fun from(widget: Widget<WidgetSize.Const<SizeSpec.AsParent, SizeSpec.WrapContent>>): UnitItemRoot {
             return UnitItemRoot(Wrapper(widget))
         }
 
-        @JvmName("fromWidgetAspectWidth")
         fun from(widget: Widget<WidgetSize.AspectByWidth<SizeSpec.AsParent>>): UnitItemRoot {
             return UnitItemRoot(Wrapper(widget))
         }
