@@ -1,0 +1,25 @@
+{
+  "environment": "web",
+  "format": "html",
+  "prefix": "https://storage.googleapis.com",
+  "mainga": "UA-49880327-14",
+  "updated": "2020-02-18T18:58:05+07:00",
+  "id": "moko-widgets-7",
+  "duration": 40,
+  "title": "MOKO Widgets #7 - lists on widgets",
+  "summary": "MOKO Widgets #7 - списки на виджетах",
+  "source": "moko-widgets-7.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "moko"
+  ],
+  "tags": [
+    "kotlin-mobile-mpp"
+  ],
+  "feedback": "https://github.com/icerockdev/kmp-codelabs/issues",
+  "ga": "UA-81805223-5",
+  "url": "moko-widgets-7"
+}

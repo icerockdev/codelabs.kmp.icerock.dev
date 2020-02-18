@@ -1,0 +1,349 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>MOKO Widgets #7 - lists on widgets</title>
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://storage.googleapis.com/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <google-codelab-analytics gaid="UA-49880327-14"></google-codelab-analytics>
+  <google-codelab codelab-gaid="UA-81805223-5"
+                  id="moko-widgets-7"
+                  title="MOKO Widgets #7 - lists on widgets"
+                  environment="web"
+                  feedback-link="https://github.com/icerockdev/kmp-codelabs/issues">
+    
+      <google-codelab-step label="Вводная" duration="5">
+        <p>Урок является продолжением <a href="https://codelabs.kmp.icerock.dev/codelabs/moko-widgets-6/" target="_blank">MOKO Widgets #6 - platform Screen</a>. Для выполнения данного урока нужно иметь проект, полученный в результате выполнения предыдущего урока.</p>
+<p>Результатом прошлого урока было приложение с навигацией, стилизацией экранов, различными действиями на экранах, кастомными фабриками и платформенным экраном.</p>
+<p>На этом уроке мы реализуем экран с списком элементов - это будет экран &#34;друзья&#34;, на который можно попасть из профиля.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Создание экрана со списком" duration="10">
+        <p>Добавим класс <code>FriendsScreen</code> основанный на <code>WidgetsScreen</code>:<br><code>mpp-library/src/commonMain/kotlin/org/example/mpp/friends/FriendsScreen.kt</code>:</p>
+<pre><code>class FriendsScreen(
+    private val theme: Theme
+) : WidgetScreen&lt;Args.Empty&gt;(), NavigationItem {
+
+    override val navigationBar: NavigationBar = NavigationBar.Normal(title = &#34;Friends&#34;.desc())
+
+    override fun createContentWidget(): Widget&lt;WidgetSize.Const&lt;SizeSpec.AsParent, SizeSpec.AsParent&gt;&gt; {
+        TODO()
+    }
+}
+</code></pre>
+<p>Контентом экрана будет <code>ListWidget</code>:</p>
+<pre><code>class FriendsScreen(
+    ...
+) : ... {
+    ...
+
+    override fun createContentWidget(): Widget&lt;WidgetSize.Const&lt;SizeSpec.AsParent, SizeSpec.AsParent&gt;&gt; {
+        return with(theme) {
+            list(
+                size = WidgetSize.AsParent,
+                id = Ids.List,
+                items = TODO()
+            )
+        }
+    }
+
+    object Ids {
+        object List : ListWidget.Id
+    }
+}
+</code></pre>
+<aside class="special"><p>Для создания виджета списка нам требуется передать Id - это нужно чтобы Android мог сохранить положение скролла и восстановить при перезаходе на экран или смене конфигурации.</p>
+</aside>
+<p>Для хранения данных нам потребуется сущность <code>Friend</code>:<br><code>mpp-library/src/commonMain/kotlin/org/example/mpp/friends/Friend.kt</code>:</p>
+<pre><code>data class Friend(
+    val id: Int,
+    val name: String,
+    val avatarUrl: String
+)
+</code></pre>
+<p>Источником данных сделаем <code>FriendsViewModel</code>:<br><code>mpp-library/src/commonMain/kotlin/org/example/mpp/friends/FriendsViewModel.kt</code>:</p>
+<pre><code>class FriendsViewModel : ViewModel() {
+    private val _friends: MutableLiveData&lt;List&lt;Friend&gt;&gt; =
+        MutableLiveData(
+            initialValue = List(10) {
+                Friend(
+                    id = it,
+                    name = &#34;friend $it&#34;,
+                    avatarUrl = &#34;https://exchange.icinga.com/jschanz/Batman%20Theme%20%28Light%29/logo&#34;
+                )
+            }
+        )
+    val friends: LiveData&lt;List&lt;Friend&gt;&gt; = _friends
+}
+</code></pre>
+<p>Сделаем получение данных на экране:<br><code>mpp-library/src/commonMain/kotlin/org/example/mpp/friends/FriendsScreen.kt</code>:</p>
+<pre><code>class FriendsScreen(
+    ...
+) : ... {
+    ...
+
+    override fun createContentWidget(): Widget&lt;WidgetSize.Const&lt;SizeSpec.AsParent, SizeSpec.AsParent&gt;&gt; {
+        val viewModel = getViewModel { FriendsViewModel() }
+
+        return with(theme) {
+            list(
+                size = WidgetSize.AsParent,
+                id = Ids.List,
+                items = viewModel.friends.map { friendsToTableUnits(it) }
+            )
+        }
+    }
+
+    private fun Theme.friendsToTableUnits(friends: List&lt;Friend&gt;): List&lt;TableUnitItem&gt; {
+        return friends.map { friend -&gt;
+            TODO()
+        }
+    }
+
+    ...
+}
+</code></pre>
+<p>Остается настроить преобразование элемента данных <code>Friend</code> в элемент списка - <code>TableUnitItem</code>.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Создание элемента списка" duration="10">
+        <p><code>mpp-library/src/commonMain/kotlin/org/example/mpp/friends/FriendUnitItem.kt</code>:</p>
+<pre><code>class FriendUnitItem(
+    private val theme: Theme,
+    itemId: Long,
+    friend: Friend
+) : WidgetsTableUnitItem&lt;Friend&gt;(
+    itemId = itemId,
+    data = friend
+) {
+    override val reuseId: String = &#34;friendCell&#34;
+
+    override fun createWidget(data: LiveData&lt;Friend&gt;): UnitItemRoot {
+        TODO()
+    }
+}
+</code></pre>
+<p>Мы унаследовались от <code>WidgetsTableUnitItem</code>, это специальный <code>TableUnitItem</code>, который умеет создавать элемент списка с контентом полученным из <code>Widget</code>. Для корректной работы на iOS требуется задать уникальный <code>reuseId</code> для данного класса элемента.</p>
+<aside class="special"><p>В метод <code>createWidget</code> передается <code>LiveData&lt;Friend&gt;</code>, эта лайвдата будет автоматически изменяться при переиспользовании уже созданной view.</p>
+</aside>
+<p>Реализуем создание элемента:</p>
+<pre><code>class FriendUnitItem(
+    ...
+) : ... {
+    ...
+
+    override fun createWidget(data: LiveData&lt;Friend&gt;): UnitItemRoot {
+        return with(theme) {
+            constraint(
+                size = WidgetSize.WidthAsParentHeightWrapContent
+            ) {
+                val title = +text(
+                    size = WidgetSize.Const(
+                        width = SizeSpec.MatchConstraint,
+                        height = SizeSpec.WrapContent
+                    ),
+                    text = TODO(),
+                )
+
+                val avatar = +image(
+                    size = WidgetSize.Const(
+                        width = SizeSpec.Exact(64f),
+                        height = SizeSpec.Exact(64f)
+                    ),
+                    image = TODO(),
+                    scaleType = ImageWidget.ScaleType.FIT
+                )
+
+                constraints {
+                    avatar.top pin root.top offset 16
+                    avatar.left pin root.left offset 16
+                    avatar.bottom pin root.bottom offset 16
+
+                    title.left pin avatar.right offset 8
+                    title.right pin root.right offset 16
+                    title centerYToCenterY root
+                }
+            }
+        }.let { UnitItemRoot.Companion.from(it) }
+    }
+}
+</code></pre>
+<p>Мы создали элемент списка с иконкой и текстом, но данные пока не привязаны. Как было сказано выше - данные должны считываться из специальной <code>LiveData</code>, которая передается в метод <code>createWidget</code>. Создание виджета будет производиться только при создании новых <code>View</code> для списка. В остальных случаях будет переиспользоваться уже существующая <code>View</code> и привязка данных будет происходить через обновление <code>LiveData</code>.</p>
+<p>Привяжем данные:</p>
+<pre><code>class FriendUnitItem(
+    ...
+) : ... {
+    ...
+
+    override fun createWidget(data: LiveData&lt;Friend&gt;): UnitItemRoot {
+        return with(theme) {
+            constraint(
+                size = WidgetSize.WidthAsParentHeightWrapContent
+            ) {
+                val title = +text(
+                    ...
+                    text = data.map { it.name.desc() as StringDesc }
+                )
+
+                val avatar = +image(
+                    ...
+                    image = data.map { Image.network(it.avatarUrl) },
+                    ...
+                )
+
+                ...
+            }
+        }.let { UnitItemRoot.Companion.from(it) }
+    }
+}
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Заполнение списка на экране" duration="5">
+        <p><code>mpp-library/src/commonMain/kotlin/org/example/mpp/friends/FriendsScreen.kt</code>:</p>
+<pre><code>class FriendsScreen(
+    ...
+) : ... {
+    ...
+
+    private fun Theme.friendsToTableUnits(friends: List&lt;Friend&gt;): List&lt;TableUnitItem&gt; {
+        return friends.map { friend -&gt;
+            FriendUnitItem(
+                theme = theme,
+                itemId = friend.id.toLong(),
+                friend = friend
+            )
+        }
+    }
+
+    ...
+}
+</code></pre>
+<p>Преобразуем список друзей в список юнитов, для отображения на UI.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Тестирование" duration="10">
+        <p>Остается встроить экран в навигацию приложения.</p>
+<p>Добавляем <code>NavigationItem</code> для экрана:</p>
+<pre><code>class FriendsScreen(
+    ...
+) : WidgetScreen&lt;Args.Empty&gt;(), NavigationItem {
+
+    override val navigationBar: NavigationBar = NavigationBar.Normal(title = &#34;Friends&#34;.desc())
+
+    ...
+}
+</code></pre>
+<p>Добавляем кнопку на экране профиля:</p>
+<pre><code>class ProfileScreen(
+    ...
+    private val routeFriends: Route&lt;Unit&gt;
+) : ... {
+
+    ...
+
+    override fun createContentWidget() = with(theme) {
+        constraint(size = WidgetSize.AsParent) {
+            ...
+
+            val friendsButton = +button(
+                size = WidgetSize.WidthAsParentHeightWrapContent,
+                content = ButtonWidget.Content.Text(Value.data(&#34;Friends&#34;.desc()))
+            ) {
+                routeFriends.route()
+            }
+
+            constraints {
+                ...
+
+                friendsButton topToBottom logoutButton
+                friendsButton centerXToCenterX root
+            }
+        }
+    }
+}
+</code></pre>
+<p>Добавляем экран в фабрике профиля:</p>
+<pre><code>class ProfileFactory(
+    ...
+) {
+    fun createProfileScreen(
+        ...
+        routeFriends: Route&lt;Unit&gt;
+    ): ProfileScreen {
+        return ProfileScreen(
+            ...
+            routeFriends = routeFriends
+        )
+    }
+
+    ...
+
+    fun createFriendsScreen(): FriendsScreen {
+        return FriendsScreen(theme = theme)
+    }
+}
+</code></pre>
+<p>Добавляем его в приложении:</p>
+<pre><code>class App : BaseApplication() {
+    ...
+
+    private fun registerProfileTab(
+        profileFactory: ProfileFactory,
+        rootNavigationRouter: NavigationScreen.Router
+    ): TypedScreenDesc&lt;Args.Empty, ProfileNavigationScreen&gt; {
+        return registerScreen(ProfileNavigationScreen::class) {
+            ...
+
+            val friendsScreen = registerScreen(FriendsScreen::class) {
+                profileFactory.createFriendsScreen()
+            }
+
+            val profileScreen = registerScreen(ProfileScreen::class) {
+                profileFactory.createProfileScreen(
+                    ...
+                    routeFriends = navigationRouter.createPushRoute(friendsScreen)
+                )
+            }
+
+            ...
+        }
+    }
+}
+</code></pre>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://storage.googleapis.com/codelab-elements/native-shim.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/prettify.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/codelab-elements.js"></script>
+
+</body>
+</html>
