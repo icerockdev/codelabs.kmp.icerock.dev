@@ -183,12 +183,44 @@
                     title centerYToCenterY root
                 }
             }
-        }.let { UnitItemRoot.Companion.from(it) }
+        }.let { UnitItemRoot.from(it) }
     }
 }
 </code></pre>
+<aside class="special"><p><code>UnitItemRoot</code> - специальный класс, ограничивающий допустимые для использования в элементе списка размеры.</p>
+</aside>
+<pre><code>inline class UnitItemRoot private constructor(private val wrapper: Wrapper) {
+
+    companion object {
+        @JvmName(&#34;fromWidgetConstExactHeight&#34;)
+        fun from(widget: Widget&lt;WidgetSize.Const&lt;SizeSpec.AsParent, SizeSpec.Exact&gt;&gt;): UnitItemRoot {
+            Result
+            return UnitItemRoot(Wrapper(widget))
+        }
+
+        @JvmName(&#34;fromWidgetConstContentHeight&#34;)
+        fun from(widget: Widget&lt;WidgetSize.Const&lt;SizeSpec.AsParent, SizeSpec.WrapContent&gt;&gt;): UnitItemRoot {
+            return UnitItemRoot(Wrapper(widget))
+        }
+
+        @JvmName(&#34;fromWidgetAspectWidth&#34;)
+        fun from(widget: Widget&lt;WidgetSize.AspectByWidth&lt;SizeSpec.AsParent&gt;&gt;): UnitItemRoot {
+            return UnitItemRoot(Wrapper(widget))
+        }
+    }
+
+    val widget: Widget&lt;out WidgetSize&gt; get() = wrapper.widget
+}
+</code></pre>
+<p>Исходный код класса показывает, что доступно всего 3 варианта размеров:</p>
+<ul>
+<li>ширина по родителю, высота фиксированная;</li>
+<li>ширина по родителю, высота по контенту;</li>
+<li>ширина по родителю, высота по соотношению сторон (относительно ширины).</li>
+</ul>
+<p>За счет использования <code>inline</code> мы не накладываем дополнительную нагрузку на память - при компиляции класс будет стерт и использоваться будет <code>widget</code> напрямую.</p>
+<h2 is-upgraded>Привязка данных</h2>
 <p>Мы создали элемент списка с иконкой и текстом, но данные пока не привязаны. Как было сказано выше - данные должны считываться из специальной <code>LiveData</code>, которая передается в метод <code>createWidget</code>. Создание виджета будет производиться только при создании новых <code>View</code> для списка. В остальных случаях будет переиспользоваться уже существующая <code>View</code> и привязка данных будет происходить через обновление <code>LiveData</code>.</p>
-<p>Привяжем данные:</p>
 <pre><code>class FriendUnitItem(
     ...
 ) : ... {

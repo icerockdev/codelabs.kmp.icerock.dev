@@ -186,14 +186,49 @@ class FriendUnitItem(
                     title centerYToCenterY root
                 }
             }
-        }.let { UnitItemRoot.Companion.from(it) }
+        }.let { UnitItemRoot.from(it) }
     }
 }
 ```
 
+Positive
+: `UnitItemRoot` - специальный класс, ограничивающий допустимые для использования в элементе списка размеры.
+
+```kotlin
+inline class UnitItemRoot private constructor(private val wrapper: Wrapper) {
+
+    companion object {
+        @JvmName("fromWidgetConstExactHeight")
+        fun from(widget: Widget<WidgetSize.Const<SizeSpec.AsParent, SizeSpec.Exact>>): UnitItemRoot {
+            Result
+            return UnitItemRoot(Wrapper(widget))
+        }
+
+        @JvmName("fromWidgetConstContentHeight")
+        fun from(widget: Widget<WidgetSize.Const<SizeSpec.AsParent, SizeSpec.WrapContent>>): UnitItemRoot {
+            return UnitItemRoot(Wrapper(widget))
+        }
+
+        @JvmName("fromWidgetAspectWidth")
+        fun from(widget: Widget<WidgetSize.AspectByWidth<SizeSpec.AsParent>>): UnitItemRoot {
+            return UnitItemRoot(Wrapper(widget))
+        }
+    }
+
+    val widget: Widget<out WidgetSize> get() = wrapper.widget
+}
+```
+Исходный код класса показывает, что доступно всего 3 варианта размеров:
+- ширина по родителю, высота фиксированная;
+- ширина по родителю, высота по контенту;
+- ширина по родителю, высота по соотношению сторон (относительно ширины).
+
+За счет использования `inline` мы не накладываем дополнительную нагрузку на память - при компиляции класс будет стерт и использоваться будет `widget` напрямую.
+
+### Привязка данных
+
 Мы создали элемент списка с иконкой и текстом, но данные пока не привязаны. Как было сказано выше - данные должны считываться из специальной `LiveData`, которая передается в метод `createWidget`. Создание виджета будет производиться только при создании новых `View` для списка. В остальных случаях будет переиспользоваться уже существующая `View` и привязка данных будет происходить через обновление `LiveData`.
 
-Привяжем данные:
 ```kotlin
 class FriendUnitItem(
     ...
