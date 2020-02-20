@@ -11,6 +11,7 @@ claat export -o codelabs moko-widgets-4.md
 claat export -o codelabs moko-widgets-5.md
 claat export -o codelabs moko-widgets-6.md
 claat export -o codelabs moko-widgets-7.md
+claat export -o codelabs moko-widgets-8.md
 gulp dist
 rm -r docs
 mv dist docs

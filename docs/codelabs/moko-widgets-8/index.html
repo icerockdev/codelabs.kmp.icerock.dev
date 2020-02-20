@@ -1,0 +1,201 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>MOKO Widgets #8 - create new widget</title>
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://storage.googleapis.com/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <google-codelab-analytics gaid="UA-49880327-14"></google-codelab-analytics>
+  <google-codelab codelab-gaid="UA-81805223-5"
+                  id="moko-widgets-8"
+                  title="MOKO Widgets #8 - create new widget"
+                  environment="web"
+                  feedback-link="https://github.com/icerockdev/kmp-codelabs/issues">
+    
+      <google-codelab-step label="Вводная" duration="5">
+        <p>Урок является продолжением <a href="https://codelabs.kmp.icerock.dev/codelabs/moko-widgets-7/" target="_blank">MOKO Widgets #7 - lists on widgets</a>. Для выполнения данного урока нужно иметь проект, полученный в результате выполнения предыдущего урока.</p>
+<p>Результатом прошлого урока было приложение с навигацией, стилизацией экранов, различными действиями на экранах, кастомными фабриками, платформенным экраном и списком друзей.</p>
+<p>На этом уроке мы реализуем новый виджет - слайдер (для выбора значения в заданном диапазоне).</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Создание класса виджета" duration="10">
+        <p><code>mpp-library/build.gradle.kts</code>:</p>
+<pre><code>plugins {
+    ...
+    id(&#34;dev.icerock.mobile.multiplatform-widgets-generator&#34;)
+}
+</code></pre>
+<p><code>mpp-library/src/commonMain/kotlin/org/example/mpp/info/SliderWidget.kt</code>:</p>
+<pre><code>@WidgetDef(SliderViewFactory::class)
+class SliderWidget&lt;WS : WidgetSize&gt;(
+    override val size: WS,
+    private val factory: ViewFactory&lt;SliderWidget&lt;out WidgetSize&gt;&gt;,
+    override val id: Id,
+    val minValue: Int,
+    val maxValue: Int,
+    val value: MutableLiveData&lt;Int&gt;
+) : Widget&lt;WS&gt;(), RequireId&lt;SliderWidget.Id&gt; {
+    override fun buildView(viewFactoryContext: ViewFactoryContext): ViewBundle&lt;WS&gt; {
+        return factory.build(this, size, viewFactoryContext)
+    }
+
+    interface Id : Theme.Id&lt;SliderWidget&lt;out WidgetSize&gt;&gt;
+    interface Category : Theme.Category&lt;SliderWidget&lt;out WidgetSize&gt;&gt;
+
+    object DefaultCategory : Category
+}
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Создание фабрики виджета" duration="10">
+        <p><code>mpp-library/src/commonMain/kotlin/org/example/mpp/info/SliderViewFactory.kt</code>:</p>
+<pre><code>expect class SliderViewFactory() : ViewFactory&lt;SliderWidget&lt;out WidgetSize&gt;&gt;
+</code></pre>
+<p><code>mpp-library/src/androidMain/kotlin/org/example/mpp/info/SliderViewFactory.kt</code>:</p>
+<pre><code>actual class SliderViewFactory : ViewFactory&lt;SliderWidget&lt;out WidgetSize&gt;&gt; {
+    override fun &lt;WS : WidgetSize&gt; build(
+        widget: SliderWidget&lt;out WidgetSize&gt;,
+        size: WS,
+        viewFactoryContext: ViewFactoryContext
+    ): ViewBundle&lt;WS&gt; {
+        val context = viewFactoryContext.androidContext
+        val lifecycleOwner = viewFactoryContext.lifecycleOwner
+
+        val slider = SeekBar(context).apply {
+            max = widget.maxValue - widget.minValue
+        }
+
+        widget.value.bindNotNull(lifecycleOwner) { slider.progress = it - widget.minValue }
+
+        slider.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                val fixedProgress = progress + widget.minValue
+                if (widget.value.value == fixedProgress) return
+
+                widget.value.value = fixedProgress
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
+        })
+
+        return ViewBundle(
+            view = slider,
+            size = size,
+            margins = null
+        )
+    }
+}
+</code></pre>
+<p><code>mpp-library/src/iosX64Main/kotlin/org/example/mpp/info/SliderViewFactory.kt</code>:</p>
+<pre><code>actual class SliderViewFactory : ViewFactory&lt;SliderWidget&lt;out WidgetSize&gt;&gt; {
+    override fun &lt;WS : WidgetSize&gt; build(
+        widget: SliderWidget&lt;out WidgetSize&gt;,
+        size: WS,
+        viewFactoryContext: ViewFactoryContext
+    ): ViewBundle&lt;WS&gt; {
+        val slider = UISlider(frame = CGRectZero.readValue()).apply {
+            translatesAutoresizingMaskIntoConstraints = false
+
+            minimumValue = widget.minValue.toFloat()
+            maximumValue = widget.maxValue.toFloat()
+        }
+
+        widget.value.bind { slider.value = it.toFloat() }
+        slider.setEventHandler(UIControlEventValueChanged) {
+            val value = slider.value.toInt()
+            slider.value = value.toFloat()
+            
+            if (widget.value.value == value) return@setEventHandler
+
+            widget.value.value = value
+        }
+
+        return ViewBundle(
+            view = slider,
+            size = size,
+            margins = null
+        )
+    }
+}
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Тестирование" duration="10">
+        <p><code>mpp-library/src/commonMain/kotlin/org/example/mpp/profile/ProfileScreen.kt</code>:</p>
+<pre><code>class ProfileScreen(
+    ...
+) : ... {
+    ...
+
+    override fun createContentWidget() = with(theme) {
+        val sliderValue = MutableLiveData&lt;Int&gt;(initialValue = 0)
+
+        constraint(size = WidgetSize.AsParent) {
+            ...
+
+            val slider = +slider(
+                size = WidgetSize.WidthAsParentHeightWrapContent,
+                id = Ids.Slider,
+                minValue = -5,
+                maxValue = 5,
+                value = sliderValue
+            )
+
+            val valueText = +text(
+                size = WidgetSize.WidthAsParentHeightWrapContent,
+                text = sliderValue.map { it.toString().desc() as StringDesc }
+            )
+
+            constraints {
+                ...
+
+                slider bottomToTop editButton offset 16
+                slider leftRightToLeftRight root
+
+                valueText bottomToTop slider offset 16
+                valueText leftRightToLeftRight root
+            }
+        }
+    }
+
+    object Ids {
+        object Slider : SliderWidget.Id
+    }
+}
+</code></pre>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://storage.googleapis.com/codelab-elements/native-shim.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/prettify.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/codelab-elements.js"></script>
+
+</body>
+</html>
