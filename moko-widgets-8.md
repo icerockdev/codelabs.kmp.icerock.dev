@@ -177,3 +177,9 @@ class ProfileScreen(
     }
 }
 ```
+
+В результате получаем:
+
+|android app|ios app|
+|---|---|
+|![android-app](assets/moko-widgets-8-android-slider.png)|![ios-app](assets/moko-widgets-8-ios-slider.png)|
