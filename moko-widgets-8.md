@@ -104,7 +104,7 @@ plugins {
 ```
 
 И добавить аннотацию, а так-же категорию (для системы категорий в `Theme`)
-`mpp-library/src/commonMain/kotlin/org/example/mpp/info/SliderWidget.kt`:
+`mpp-library/src/commonMain/kotlin/org/example/mpp/SliderWidget.kt`:
 ```kotlin
 @WidgetDef(SliderViewFactory::class)
 class SliderWidget<WS : WidgetSize>(
@@ -126,7 +126,7 @@ Duration: 10
 Аналогично уроку [MOKO Widgets #5 - custom ViewFactory](https://codelabs.kmp.icerock.dev/codelabs/moko-widgets-5/) нужно создать новую фабрику, но для нашего виджета. Для простоты не будем давать никакой параметризации.
 
 ### Common code
-`mpp-library/src/commonMain/kotlin/org/example/mpp/info/SliderViewFactory.kt`:
+`mpp-library/src/commonMain/kotlin/org/example/mpp/SliderViewFactory.kt`:
 ```kotlin
 expect class SliderViewFactory() : ViewFactory<SliderWidget<out WidgetSize>>
 ```
@@ -134,7 +134,7 @@ expect class SliderViewFactory() : ViewFactory<SliderWidget<out WidgetSize>>
 ### Android code
 Для создания UI элемента на android используем [SeekBar](https://developer.android.com/reference/android/widget/SeekBar).
 
-`mpp-library/src/androidMain/kotlin/org/example/mpp/info/SliderViewFactory.kt`:
+`mpp-library/src/androidMain/kotlin/org/example/mpp/SliderViewFactory.kt`:
 ```kotlin
 actual class SliderViewFactory : ViewFactory<SliderWidget<out WidgetSize>> {
     override fun <WS : WidgetSize> build(
@@ -176,7 +176,7 @@ actual class SliderViewFactory : ViewFactory<SliderWidget<out WidgetSize>> {
 ### iOS code
 Для создания UI элемента на iOS используем [UISlider](https://developer.apple.com/documentation/uikit/uislider).
 
-`mpp-library/src/iosX64Main/kotlin/org/example/mpp/info/SliderViewFactory.kt`:
+`mpp-library/src/iosX64Main/kotlin/org/example/mpp/SliderViewFactory.kt`:
 ```kotlin
 actual class SliderViewFactory : ViewFactory<SliderWidget<out WidgetSize>> {
     override fun <WS : WidgetSize> build(

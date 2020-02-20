@@ -99,7 +99,7 @@
     id(&#34;dev.icerock.mobile.multiplatform-widgets-generator&#34;)
 }
 </code></pre>
-<p>И добавить аннотацию, а так-же категорию (для системы категорий в <code>Theme</code>)<br><code>mpp-library/src/commonMain/kotlin/org/example/mpp/info/SliderWidget.kt</code>:</p>
+<p>И добавить аннотацию, а так-же категорию (для системы категорий в <code>Theme</code>)<br><code>mpp-library/src/commonMain/kotlin/org/example/mpp/SliderWidget.kt</code>:</p>
 <pre><code>@WidgetDef(SliderViewFactory::class)
 class SliderWidget&lt;WS : WidgetSize&gt;(
     ...
@@ -119,12 +119,12 @@ class SliderWidget&lt;WS : WidgetSize&gt;(
       <google-codelab-step label="Создание фабрики виджета" duration="10">
         <p>Аналогично уроку <a href="https://codelabs.kmp.icerock.dev/codelabs/moko-widgets-5/" target="_blank">MOKO Widgets #5 - custom ViewFactory</a> нужно создать новую фабрику, но для нашего виджета. Для простоты не будем давать никакой параметризации.</p>
 <h2 is-upgraded>Common code</h2>
-<p><code>mpp-library/src/commonMain/kotlin/org/example/mpp/info/SliderViewFactory.kt</code>:</p>
+<p><code>mpp-library/src/commonMain/kotlin/org/example/mpp/SliderViewFactory.kt</code>:</p>
 <pre><code>expect class SliderViewFactory() : ViewFactory&lt;SliderWidget&lt;out WidgetSize&gt;&gt;
 </code></pre>
 <h2 is-upgraded>Android code</h2>
 <p>Для создания UI элемента на android используем <a href="https://developer.android.com/reference/android/widget/SeekBar" target="_blank">SeekBar</a>.</p>
-<p><code>mpp-library/src/androidMain/kotlin/org/example/mpp/info/SliderViewFactory.kt</code>:</p>
+<p><code>mpp-library/src/androidMain/kotlin/org/example/mpp/SliderViewFactory.kt</code>:</p>
 <pre><code>actual class SliderViewFactory : ViewFactory&lt;SliderWidget&lt;out WidgetSize&gt;&gt; {
     override fun &lt;WS : WidgetSize&gt; build(
         widget: SliderWidget&lt;out WidgetSize&gt;,
@@ -163,7 +163,7 @@ class SliderWidget&lt;WS : WidgetSize&gt;(
 </code></pre>
 <h2 is-upgraded>iOS code</h2>
 <p>Для создания UI элемента на iOS используем <a href="https://developer.apple.com/documentation/uikit/uislider" target="_blank">UISlider</a>.</p>
-<p><code>mpp-library/src/iosX64Main/kotlin/org/example/mpp/info/SliderViewFactory.kt</code>:</p>
+<p><code>mpp-library/src/iosX64Main/kotlin/org/example/mpp/SliderViewFactory.kt</code>:</p>
 <pre><code>actual class SliderViewFactory : ViewFactory&lt;SliderWidget&lt;out WidgetSize&gt;&gt; {
     override fun &lt;WS : WidgetSize&gt; build(
         widget: SliderWidget&lt;out WidgetSize&gt;,
