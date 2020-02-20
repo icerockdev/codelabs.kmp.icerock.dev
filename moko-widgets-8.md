@@ -20,6 +20,81 @@ Duration: 5
 ## Создание класса виджета
 Duration: 10
 
+Любой виджет состоит из 2 частей - описание виджета в общем коде (наследник от `Widget`) и фабрика виджета с реализацией на каждой платформе (наследник от `ViewFactory`).
+
+Начинается создание нового виджета с создания наследника от `Widget`:
+`mpp-library/src/commonMain/kotlin/org/example/mpp/SliderWidget.kt`:
+```kotlin
+class SliderWidget<WS : WidgetSize>(
+    override val size: WS
+) : Widget<WS>()
+```
+
+Каждый виджет должен реализовывать метод сборки виджета, но для реализации требуется фабрика виджета. Добавим это:
+`mpp-library/src/commonMain/kotlin/org/example/mpp/SliderWidget.kt`:
+```kotlin
+class SliderWidget<WS : WidgetSize>(
+    ...
+    private val factory: ViewFactory<SliderWidget<out WidgetSize>>
+) : ... {
+    override fun buildView(viewFactoryContext: ViewFactoryContext): ViewBundle<WS> {
+        return factory.build(this, size, viewFactoryContext)
+    }
+}
+```
+
+Так же у всех виджетов должен быть аргумент `id` и интерфейс либо `RequiredId` (обязательно требуется указывать id - для интерактивных элементов, чтобы android мог сохранить состояние экрана), либо `OptionalId`.
+`mpp-library/src/commonMain/kotlin/org/example/mpp/SliderWidget.kt`:
+```kotlin
+class SliderWidget<WS : WidgetSize>(
+    ...
+    override val id: Id
+) : Widget<WS>(), RequireId<SliderWidget.Id> {
+    ...
+
+    interface Id : Theme.Id<SliderWidget<out WidgetSize>>
+}
+```
+
+Positive
+: `Id` это интерфейс наследующийся от специального интерфейса `Theme.Id`. За счет строгой типизации компилятор проверяет корректные ли операции применяются по id или нет.
+
+Базовые свойства виджета уже добавлены, теперь нужно добавить данные этого виджета - то, что не касается визуального оформления элемента. Эти данные будут считываться фабрикой виджета и применяться к ui элементу.
+`mpp-library/src/commonMain/kotlin/org/example/mpp/SliderWidget.kt`:
+```kotlin
+class SliderWidget<WS : WidgetSize>(
+    ...
+    val minValue: Int,
+    val maxValue: Int,
+    val value: MutableLiveData<Int>
+) : ... {
+    ...
+}
+```
+
+Данная конфигурация виджета позволяет создавать виджет следующим образом:
+```kotlin
+SliderWidget(
+    size = WidgetSize.WrapContent,
+    factory = MyFactory(),
+    id = Ids.Slider,
+    minValue = -5,
+    maxValue = 5,
+    value = MutableLiveData(initialValue = 0)
+)
+```
+
+То есть фабрику нам нужно самостоятельно где-то получить и передать в виджет. Если же мы хотим использовать возможности `Theme` с подстановкой фабрики и создавать виджет следующим образом:
+```kotlin
+theme.slider(
+    size = WidgetSize.WrapContent,
+    id = Ids.Slider,
+    minValue = -5,
+    maxValue = 5,
+    value = MutableLiveData(initialValue = 0)
+)
+```
+то нам требуется подключить специальный gradle plugin `dev.icerock.mobile.multiplatform-widgets-generator`:
 `mpp-library/build.gradle.kts`:
 ```kotlin
 plugins {
@@ -28,35 +103,36 @@ plugins {
 }
 ```
 
+И добавить аннотацию, а так-же категорию (для системы категорий в `Theme`)
 `mpp-library/src/commonMain/kotlin/org/example/mpp/info/SliderWidget.kt`:
 ```kotlin
 @WidgetDef(SliderViewFactory::class)
 class SliderWidget<WS : WidgetSize>(
-    override val size: WS,
-    private val factory: ViewFactory<SliderWidget<out WidgetSize>>,
-    override val id: Id,
-    val minValue: Int,
-    val maxValue: Int,
-    val value: MutableLiveData<Int>
-) : Widget<WS>(), RequireId<SliderWidget.Id> {
-    override fun buildView(viewFactoryContext: ViewFactoryContext): ViewBundle<WS> {
-        return factory.build(this, size, viewFactoryContext)
-    }
+    ...
+) : ... {
+    ...
 
-    interface Id : Theme.Id<SliderWidget<out WidgetSize>>
     interface Category : Theme.Category<SliderWidget<out WidgetSize>>
 
     object DefaultCategory : Category
 }
 ```
 
+В аннотации `WidgetDef` аргументом указывается класс фабрики по-умолчанию для виджета (то есть та фабрика, которая будет использоваться даже если в `Theme` не делалось никаких настроек). Мы указали `SliderViewFactory`, остается только создать эту фабрику.
+
 ## Создание фабрики виджета
 Duration: 10
 
+Аналогично уроку [MOKO Widgets #5 - custom ViewFactory](https://codelabs.kmp.icerock.dev/codelabs/moko-widgets-5/) нужно создать новую фабрику, но для нашего виджета. Для простоты не будем давать никакой параметризации.
+
+### Common code
 `mpp-library/src/commonMain/kotlin/org/example/mpp/info/SliderViewFactory.kt`:
 ```kotlin
 expect class SliderViewFactory() : ViewFactory<SliderWidget<out WidgetSize>>
 ```
+
+### Android code
+Для создания UI элемента на android используем [SeekBar](https://developer.android.com/reference/android/widget/SeekBar).
 
 `mpp-library/src/androidMain/kotlin/org/example/mpp/info/SliderViewFactory.kt`:
 ```kotlin
@@ -97,6 +173,9 @@ actual class SliderViewFactory : ViewFactory<SliderWidget<out WidgetSize>> {
 }
 ```
 
+### iOS code
+Для создания UI элемента на iOS используем [UISlider](https://developer.apple.com/documentation/uikit/uislider).
+
 `mpp-library/src/iosX64Main/kotlin/org/example/mpp/info/SliderViewFactory.kt`:
 ```kotlin
 actual class SliderViewFactory : ViewFactory<SliderWidget<out WidgetSize>> {
@@ -133,6 +212,8 @@ actual class SliderViewFactory : ViewFactory<SliderWidget<out WidgetSize>> {
 
 ## Тестирование
 Duration: 10
+
+Для проверки результата добавим на экран профиля слайдер и текст, в котором выведем текущее выбранное в слайдере значение.
 
 `mpp-library/src/commonMain/kotlin/org/example/mpp/profile/ProfileScreen.kt`:
 ```kotlin

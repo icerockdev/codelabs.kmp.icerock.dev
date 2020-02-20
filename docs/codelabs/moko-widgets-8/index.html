@@ -36,40 +36,94 @@
       </google-codelab-step>
     
       <google-codelab-step label="Создание класса виджета" duration="10">
-        <p><code>mpp-library/build.gradle.kts</code>:</p>
+        <p>Любой виджет состоит из 2 частей - описание виджета в общем коде (наследник от <code>Widget</code>) и фабрика виджета с реализацией на каждой платформе (наследник от <code>ViewFactory</code>).</p>
+<p>Начинается создание нового виджета с создания наследника от <code>Widget</code>:<br><code>mpp-library/src/commonMain/kotlin/org/example/mpp/SliderWidget.kt</code>:</p>
+<pre><code>class SliderWidget&lt;WS : WidgetSize&gt;(
+    override val size: WS
+) : Widget&lt;WS&gt;()
+</code></pre>
+<p>Каждый виджет должен реализовывать метод сборки виджета, но для реализации требуется фабрика виджета. Добавим это:<br><code>mpp-library/src/commonMain/kotlin/org/example/mpp/SliderWidget.kt</code>:</p>
+<pre><code>class SliderWidget&lt;WS : WidgetSize&gt;(
+    ...
+    private val factory: ViewFactory&lt;SliderWidget&lt;out WidgetSize&gt;&gt;
+) : ... {
+    override fun buildView(viewFactoryContext: ViewFactoryContext): ViewBundle&lt;WS&gt; {
+        return factory.build(this, size, viewFactoryContext)
+    }
+}
+</code></pre>
+<p>Так же у всех виджетов должен быть аргумент <code>id</code> и интерфейс либо <code>RequiredId</code> (обязательно требуется указывать id - для интерактивных элементов, чтобы android мог сохранить состояние экрана), либо <code>OptionalId</code>.<br><code>mpp-library/src/commonMain/kotlin/org/example/mpp/SliderWidget.kt</code>:</p>
+<pre><code>class SliderWidget&lt;WS : WidgetSize&gt;(
+    ...
+    override val id: Id
+) : Widget&lt;WS&gt;(), RequireId&lt;SliderWidget.Id&gt; {
+    ...
+
+    interface Id : Theme.Id&lt;SliderWidget&lt;out WidgetSize&gt;&gt;
+}
+</code></pre>
+<aside class="special"><p><code>Id</code> это интерфейс наследующийся от специального интерфейса <code>Theme.Id</code>. За счет строгой типизации компилятор проверяет корректные ли операции применяются по id или нет.</p>
+</aside>
+<p>Базовые свойства виджета уже добавлены, теперь нужно добавить данные этого виджета - то, что не касается визуального оформления элемента. Эти данные будут считываться фабрикой виджета и применяться к ui элементу.<br><code>mpp-library/src/commonMain/kotlin/org/example/mpp/SliderWidget.kt</code>:</p>
+<pre><code>class SliderWidget&lt;WS : WidgetSize&gt;(
+    ...
+    val minValue: Int,
+    val maxValue: Int,
+    val value: MutableLiveData&lt;Int&gt;
+) : ... {
+    ...
+}
+</code></pre>
+<p>Данная конфигурация виджета позволяет создавать виджет следующим образом:</p>
+<pre><code>SliderWidget(
+    size = WidgetSize.WrapContent,
+    factory = MyFactory(),
+    id = Ids.Slider,
+    minValue = -5,
+    maxValue = 5,
+    value = MutableLiveData(initialValue = 0)
+)
+</code></pre>
+<p>То есть фабрику нам нужно самостоятельно где-то получить и передать в виджет. Если же мы хотим использовать возможности <code>Theme</code> с подстановкой фабрики и создавать виджет следующим образом:</p>
+<pre><code>theme.slider(
+    size = WidgetSize.WrapContent,
+    id = Ids.Slider,
+    minValue = -5,
+    maxValue = 5,
+    value = MutableLiveData(initialValue = 0)
+)
+</code></pre>
+<p>то нам требуется подключить специальный gradle plugin <code>dev.icerock.mobile.multiplatform-widgets-generator</code>:<br><code>mpp-library/build.gradle.kts</code>:</p>
 <pre><code>plugins {
     ...
     id(&#34;dev.icerock.mobile.multiplatform-widgets-generator&#34;)
 }
 </code></pre>
-<p><code>mpp-library/src/commonMain/kotlin/org/example/mpp/info/SliderWidget.kt</code>:</p>
+<p>И добавить аннотацию, а так-же категорию (для системы категорий в <code>Theme</code>)<br><code>mpp-library/src/commonMain/kotlin/org/example/mpp/info/SliderWidget.kt</code>:</p>
 <pre><code>@WidgetDef(SliderViewFactory::class)
 class SliderWidget&lt;WS : WidgetSize&gt;(
-    override val size: WS,
-    private val factory: ViewFactory&lt;SliderWidget&lt;out WidgetSize&gt;&gt;,
-    override val id: Id,
-    val minValue: Int,
-    val maxValue: Int,
-    val value: MutableLiveData&lt;Int&gt;
-) : Widget&lt;WS&gt;(), RequireId&lt;SliderWidget.Id&gt; {
-    override fun buildView(viewFactoryContext: ViewFactoryContext): ViewBundle&lt;WS&gt; {
-        return factory.build(this, size, viewFactoryContext)
-    }
+    ...
+) : ... {
+    ...
 
-    interface Id : Theme.Id&lt;SliderWidget&lt;out WidgetSize&gt;&gt;
     interface Category : Theme.Category&lt;SliderWidget&lt;out WidgetSize&gt;&gt;
 
     object DefaultCategory : Category
 }
 </code></pre>
+<p>В аннотации <code>WidgetDef</code> аргументом указывается класс фабрики по-умолчанию для виджета (то есть та фабрика, которая будет использоваться даже если в <code>Theme</code> не делалось никаких настроек). Мы указали <code>SliderViewFactory</code>, остается только создать эту фабрику.</p>
 
 
       </google-codelab-step>
     
       <google-codelab-step label="Создание фабрики виджета" duration="10">
-        <p><code>mpp-library/src/commonMain/kotlin/org/example/mpp/info/SliderViewFactory.kt</code>:</p>
+        <p>Аналогично уроку <a href="https://codelabs.kmp.icerock.dev/codelabs/moko-widgets-5/" target="_blank">MOKO Widgets #5 - custom ViewFactory</a> нужно создать новую фабрику, но для нашего виджета. Для простоты не будем давать никакой параметризации.</p>
+<h2 is-upgraded>Common code</h2>
+<p><code>mpp-library/src/commonMain/kotlin/org/example/mpp/info/SliderViewFactory.kt</code>:</p>
 <pre><code>expect class SliderViewFactory() : ViewFactory&lt;SliderWidget&lt;out WidgetSize&gt;&gt;
 </code></pre>
+<h2 is-upgraded>Android code</h2>
+<p>Для создания UI элемента на android используем <a href="https://developer.android.com/reference/android/widget/SeekBar" target="_blank">SeekBar</a>.</p>
 <p><code>mpp-library/src/androidMain/kotlin/org/example/mpp/info/SliderViewFactory.kt</code>:</p>
 <pre><code>actual class SliderViewFactory : ViewFactory&lt;SliderWidget&lt;out WidgetSize&gt;&gt; {
     override fun &lt;WS : WidgetSize&gt; build(
@@ -107,6 +161,8 @@ class SliderWidget&lt;WS : WidgetSize&gt;(
     }
 }
 </code></pre>
+<h2 is-upgraded>iOS code</h2>
+<p>Для создания UI элемента на iOS используем <a href="https://developer.apple.com/documentation/uikit/uislider" target="_blank">UISlider</a>.</p>
 <p><code>mpp-library/src/iosX64Main/kotlin/org/example/mpp/info/SliderViewFactory.kt</code>:</p>
 <pre><code>actual class SliderViewFactory : ViewFactory&lt;SliderWidget&lt;out WidgetSize&gt;&gt; {
     override fun &lt;WS : WidgetSize&gt; build(
@@ -144,7 +200,8 @@ class SliderWidget&lt;WS : WidgetSize&gt;(
       </google-codelab-step>
     
       <google-codelab-step label="Тестирование" duration="10">
-        <p><code>mpp-library/src/commonMain/kotlin/org/example/mpp/profile/ProfileScreen.kt</code>:</p>
+        <p>Для проверки результата добавим на экран профиля слайдер и текст, в котором выведем текущее выбранное в слайдере значение.</p>
+<p><code>mpp-library/src/commonMain/kotlin/org/example/mpp/profile/ProfileScreen.kt</code>:</p>
 <pre><code>class ProfileScreen(
     ...
 ) : ... {
