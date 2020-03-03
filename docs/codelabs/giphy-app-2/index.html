@@ -37,9 +37,8 @@
       <google-codelab-step label="Implement common logic of Gif list in shared library" duration="30">
         <p>App should get list of Gifs from GIPHY service. There is an example with getting list of news from newsapi in the project template (using <a href="https://github.com/icerockdev/moko-network" target="_blank">moko-network</a> with generating network entites and API classes from OpenAPI specification).</p>
 <p>We can get OpenAPI spec of GIPHY from <a href="https://apis.guru/browse-apis/" target="_blank">apis.guru</a> and can replace getting news by getting Gif.</p>
-<aside class="special"><p>Фича списка уже присутствует в шаблоне, поэтому логику не придется реализовывать. Для большего понимания как устроена фича следует ознакомиться с <a href="https://github.com/icerockdev/moko-template#list-module-scheme" target="_blank">схемой модуля</a> и посмотреть код в <code>mpp-library:feature:list</code>.</p>
+<aside class="special"><p>Feature List is already in the project template and you have not to implement any additional logic. You can see <a href="https://github.com/icerockdev/moko-template#list-module-scheme" target="_blank">scheme of module</a> and look into <code>mpp-library:feature:list</code> for detail information about it.</p>
 </aside>
-<p>Feature List is already in the project template and you have not to implement any additional logic. You can see <a href="https://github.com/icerockdev/moko-template#list-module-scheme" target="_blank">scheme of module</a> and look into <code>mpp-library:feature:list</code> for detail information about it.</p>
 <h2 is-upgraded>Replace OpenAPI spec</h2>
 <p>Replace file <code>mpp-library/domain/src/openapi.yml</code> by the content from <a href="/files/giphy-openapi.yml" target="_blank">OpenAPI spec of GIPHY service</a>. After it please do <code>Gradle Sync</code> and as the result you will see some errors in the <code>newsapi</code> code. Let&#39;s update code by new API.</p>
 <aside class="special"><p>You can find generated files here <code>mpp-library/domain/build/generate-resources/main/src/main/kotlin</code></p>
@@ -137,7 +136,7 @@ val gifRepository: GifRepository by lazy {
     ): UnitItem
 }
 </code></pre>
-<p>То есть из общей логики будет выдаваться <code>id</code> для корректного определения diff&#39;а списка с анимированием обновления и <code>gifUrl</code> в котором будет url для вывода анимации на UI.<br>So, there will be <code>id</code> (for proper diff list calculation for UI animation ) and <code>gifUrl</code> (this is url for animation output) from shared code.</p>
+<p>So, there will be <code>id</code> (for proper diff list calculation for UI animation ) and <code>gifUrl</code> (this is url for animation output) from shared code.</p>
 <h3 is-upgraded>newsFactory -&gt; gifsFactory</h3>
 <p>List Factory should be replaced by the following code:</p>
 <pre><code>val gifsFactory: ListFactory&lt;Gif&gt; = ListFactory(
@@ -284,7 +283,6 @@ val gifRepository: GifRepository by lazy {
     }
 }
 </code></pre>
-<p>В самом layout&#39;е мы использовали нестандартный Binding Adapter - <code>app:gifUrl</code>. Нужно его реализовать, для этого создадим файл <code>android-app/src/main/java/org/example/app/BindingAdapters.kt</code> с содержимым:</p>
 <p>In the layout we use non-standart Binding Adapter - <code>app:gifUrl</code>. We should implement it. To do this let&#39;s create <code>android-app/src/main/java/org/example/app/BindingAdapters.kt</code> file with the following code:</p>
 <pre><code>package org.example.app
 
@@ -408,7 +406,6 @@ fun ImageView.bindGif(gifUrl: String?) {
     }
 }
 </code></pre>
-<p>Мы получаем из фабрики <code>gifsFactory</code> нашу <code>ListViewModel&lt;Gif&gt;</code> и она будет выставлена в поле <code>viewModel</code> в layout&#39;е <code>activity_gif_list</code>.</p>
 <p>We&#39;ve got <code>ListViewModel&lt;Gif&gt;</code> from <code>gifsFactory</code> factory and it will be inserted in <code>viewModel</code> field from <code>activity_gif_list</code> layout.</p>
 <p>Also we define <code>setOnRefreshListener</code> in code for proper execution <code>SwipeRefreshLayout</code> and call <code>viewModel.onRefresh</code> that report in lambda when update will be finished and we can turn off the updating animation.</p>
 <h2 is-upgraded>Replace a startup screen</h2>

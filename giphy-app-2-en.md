@@ -22,8 +22,6 @@ App should get list of Gifs from GIPHY service. There is an example with getting
 We can get OpenAPI spec of GIPHY from [apis.guru](https://apis.guru/browse-apis/) and can replace getting news by getting Gif. 
 
 Positive
-: Фича списка уже присутствует в шаблоне, поэтому логику не придется реализовывать. Для большего понимания как устроена фича следует ознакомиться с [схемой модуля](https://github.com/icerockdev/moko-template#list-module-scheme) и посмотреть код в `mpp-library:feature:list`.
-
 : Feature List is already in the project template and you have not to implement any additional logic. You can see [scheme of module](https://github.com/icerockdev/moko-template#list-module-scheme) and look into `mpp-library:feature:list` for detail information about it.
 
 ### Replace OpenAPI spec
@@ -144,7 +142,6 @@ interface GifsUnitsFactory {
     ): UnitItem
 }
 ```
-То есть из общей логики будет выдаваться `id` для корректного определения diff'а списка с анимированием обновления и `gifUrl` в котором будет url для вывода анимации на UI.
 So, there will be `id` (for proper diff list calculation for UI animation ) and `gifUrl` (this is url for animation output) from shared code. 
 
 #### newsFactory -> gifsFactory
@@ -320,8 +317,6 @@ class GifListUnitsFactory : SharedFactory.GifsUnitsFactory {
 }
 ```
 
-В самом layout'е мы использовали нестандартный Binding Adapter - `app:gifUrl`. Нужно его реализовать, для этого создадим файл `android-app/src/main/java/org/example/app/BindingAdapters.kt` с содержимым:
-
 In the layout we use non-standart Binding Adapter - `app:gifUrl`. We should implement it. To do this let's create `android-app/src/main/java/org/example/app/BindingAdapters.kt` file with the following code: 
 
 ```kotlin
@@ -452,8 +447,6 @@ class GifListActivity : MvvmActivity<ActivityGifListBinding, ListViewModel<Gif>>
     }
 }
 ```
-Мы получаем из фабрики `gifsFactory` нашу `ListViewModel<Gif>` и она будет выставлена в поле `viewModel` в layout'е `activity_gif_list`. 
-
 We've got `ListViewModel<Gif>` from `gifsFactory` factory and it will be inserted in `viewModel` field from `activity_gif_list` layout.
 
 Also we define `setOnRefreshListener` in code for proper execution `SwipeRefreshLayout` and call `viewModel.onRefresh` that report in lambda when update will be finished and we can turn off the updating animation. 

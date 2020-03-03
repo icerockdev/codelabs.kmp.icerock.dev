@@ -19,7 +19,7 @@ We will need:
 - Xcode 10.3+;
 - Xcode Command Line Tools (`xcode-select --install`);
 - [CocoaPods](https://cocoapods.org/) (`sudo gem install cocoapods`);
-- [JDK](https://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html) - требуется для запуска `gradle` из `Xcode build phase`.
+- [JDK](https://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html) - required to run `gradle` from `Xcode build phase`.
 
 ### The Result
 As the result of `GiphyApp` lessons you will get an application to view gif files using [GIPHY API](https://developers.giphy.com/docs/api). 
@@ -41,7 +41,7 @@ Positive
 The project template has a sample of several features as well as. 
 
 ### Use this template
-To use this template you have to go on [GitHub репозиторий шаблона moko-template](https://github.com/icerockdev/moko-template) and press a green button `Use this template`. As the result, you create a new repository according to the last commit of  `master` branch of `moko-template` project.
+To use this template you have to go on [GitHub repo moko-template](https://github.com/icerockdev/moko-template) and press a green button `Use this template`. As the result, you create a new repository according to the last commit of  `master` branch of `moko-template` project.
 
 After succefull creation you should clone this rep:  `git clone <git url of repo>`.
 
