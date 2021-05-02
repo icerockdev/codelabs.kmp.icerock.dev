@@ -1,6 +1,6 @@
 {
   "title": "Russian",
-  "description": "Обучение разработки мобильных приложений Android, iOS с Kotlin Multiplatform Mobile",
+  "description": "Обучающие инструкции по Kotlin Multiplatform Mobile разработке",
   "tags": [
   ],
   "categories": [
@@ -8,7 +8,6 @@
   ],
   "exclude": [
   ],
-  "logoUrl": "/images/icons/web.svg",
   "toolbarBgColor": "#37474F",
   "sort": "mainCategory",
   "pins": []
