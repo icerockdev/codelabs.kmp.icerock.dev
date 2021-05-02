@@ -128,8 +128,8 @@ gulp.task('build:scss', () => {
 });
 
 gulp.task('build:files', () => {
-  return gulp.src('files')
-      .pipe(gulp.dest('build'));
+  return gulp.src('files/*')
+      .pipe(gulp.dest('build/files'));
 });
 
 gulp.task('build:cname', () => {
