@@ -22,7 +22,7 @@ $ npm install
 like `gulp`, you may want to add `./node_modules/.bin/` to your `$PATH` for convenience:
 
 ```text
-$ export PATH="/Users/mac2/go/bin/:$PATH"
+$ export PATH="~/go/bin/:$PATH"
 $ export PATH="./node_modules/.bin/:$PATH"
 ```
 
