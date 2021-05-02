@@ -1,11 +1,10 @@
-summary: MOKO Widgets #2 - роутинг
-id: moko-onboarfing-2
-categories: moko
-environments: kotlin-mobile-mpp
+summary: Погружение в KMM в IceRock №2
+id: kmm-icerock-onboarding-2-ru
+categories: lang-ru,kmm-icerock-onboarding,moko
 status: published
-Feedback Link: https://github.com/icerockdev/kmp-codelabs/issues
-Analytics Account: UA-81805223-5
-Author: Aleksey Lobynya <alobynya@icerockdev.com>
+authors: Andrey Kovalev, Aleksey Lobynya, Aleksey Mikhailov
+tags: onboarding,kmm,ios,android,moko
+feedback link: https://github.com/icerockdev/kmp-codelabs/issues
 
 # MOKO Onboarding #2 - ViewModel
 ## Пишем ViewModel
@@ -260,6 +259,8 @@ MvvmEventsFragment сам подпишется на eventDispatcher вьюмод
         AppComponent.factory.authFactory.createAuthViewModel(eventsDispatcherOnMain())
     }
 ```
+Помимо этого нужно реализовать функции интерфейса AuthViewModel.EventsListener от которого мы отнаследовались, что-бы фрагмент мог реагировать на события которые будет отправлять viewModel
+
 
 
 ### Дружим ViewController и ViewModel
