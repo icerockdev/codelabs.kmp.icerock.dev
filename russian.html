@@ -12,11 +12,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="description" content="">
+  <meta name="description" content="Обучающие инструкции по Kotlin Multiplatform Mobile разработке">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="generator" content="Kotlin Multiplatform Codelabs">
-  <meta name="application-name" content="Kotlin Multiplatform Codelabs">
-  <link rel="canonical" href="https://codelabs.kmp.icerock.dev/" />
+  <meta name="generator" content="Russian">
+  <meta name="application-name" content="Russian">
+  <link rel="canonical" href="https://codelabs.kmp.icerock.dev/russian/" />
   <link rel="preconnect" href="https://www.google-analytics.com" />
 
   <script>
@@ -27,7 +27,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   </script>
   <script async src='https://www.google-analytics.com/analytics.js'></script>
 
-  <title>Kotlin Multiplatform Codelabs</title>
+  <title>Russian</title>
 
   <link rel="stylesheet" href="/styles/main.css">
 
@@ -55,7 +55,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="#455a64">
-  <meta name="apple-mobile-web-app-title" content="Kotlin Multiplatform Codelabs">
+  <meta name="apple-mobile-web-app-title" content="Russian">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/favicons/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicons/favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="192x192" href="/images/favicons/android-chrome-192x192.png">
@@ -67,9 +67,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   <meta name="theme-color" content="#455a64">
 
   <meta name="og:type" property="og:type" content="website" />
-  <meta name="og:title" property="og:title" content="Kotlin Multiplatform Codelabs" />
-  <meta name="og:description" property="og:description" content="" />
-  <meta name="og:url" property="og:url" content="https://codelabs.kmp.icerock.dev/" />
+  <meta name="og:title" property="og:title" content="Russian" />
+  <meta name="og:description" property="og:description" content="Обучающие инструкции по Kotlin Multiplatform Mobile разработке" />
+  <meta name="og:url" property="og:url" content="https://codelabs.kmp.icerock.dev/russian/" />
   <meta name="og:site_name" property="og:site_name" content="Codelabs" />
   <meta name="og:determiner" property="og:determiner" content="the" />
   <meta name="og:locale" property="og:locale" content="en_US" />
@@ -81,13 +81,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   <meta name="og:image:alt" property="og:image:alt" content="Codelabs" />
 
   <meta name="twitter:card" property="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" property="twitter:title" content="Kotlin Multiplatform Codelabs" />
-  <meta name="twitter:description" property="twitter:description" content="" />
+  <meta name="twitter:title" property="twitter:title" content="Russian" />
+  <meta name="twitter:description" property="twitter:description" content="Обучающие инструкции по Kotlin Multiplatform Mobile разработке" />
   <meta name="twitter:image" property="twitter:image" content="/images/og-image.png" />
-  <meta name="twitter:url" property="twitter:url" content="https://codelabs.kmp.icerock.dev/" />
+  <meta name="twitter:url" property="twitter:url" content="https://codelabs.kmp.icerock.dev/russian/" />
 </head>
 
-<body id="app" is="body-bind" class="loading fullbleed ">
+<body id="app" is="body-bind" class="loading fullbleed view">
   <paper-header-panel id="main" mode="standard" main>
     
     <div id="mainToolbar" class="paper-header">
@@ -107,20 +107,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     
 
     
-    <header id="banner" down$="[[_toBoolean(selectedFilter)]]">
+    <header id="banner" down>
       <div class="site-width">
-        
-          <h2 class="banner-title">Welcome to Codelabs!</h2>
+        <h2>Russian</h2>
           <div class="banner-description"
                data-filter-selected$="[[_toBoolean(selectedFilter)]]">
-            <p class="banner-info">
-              Codelabs provide a guided, tutorial, hands-on
-              coding experience. Most codelabs will step you through the process
-              of building a small application, or adding a new feature to an
-              existing application.
-              <br>
-              <a href="https://github.com/googlecodelabs/tools">Codelab tools on GitHub</a>
-            </p>
+            <p class="banner-info">Обучающие инструкции по Kotlin Multiplatform Mobile разработке</p>
+            
           </div>
       </div>
     </header>
@@ -136,26 +129,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         </div>
 
         <div id="filters-controls">
-          
-          <paper-dropdown-menu
-            label="Language"
-            class="dropdown-filter"
-            no-label-float
-            noink no-animations
-          >
-            <paper-listbox
-              id="eventList"
-              slot="dropdown-content"
-              class="dropdown-content"
-            ><a href="/english/" tabindex="-1">
-                    <paper-item>English</paper-item>
-                  </a>
-                <a href="/russian/" tabindex="-1">
-                    <paper-item>Russian</paper-item>
-                  </a>
-                
-            </paper-listbox>
-          </paper-dropdown-menu>
           <paper-dropdown-menu
             label="Filter by category"
             class="dropdown-filter"
@@ -183,70 +156,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         
           
             
-            <a href="/codelabs/giphy-app-1-en/index.html?index=..%2F..index" on-tap="navigate"
-               class="codelab-card category-lang-en"
-               data-category="lang-en,moko,moko-template"
-               data-title="GiphyApp #1 - Creation an application based on moko-template"
-               data-duration="28"
-               data-updated="2021-05-02T11:09:15Z"
-               data-tags=""
-               data-pin="">
-              <div class="description">GiphyApp #1 - Creation an application based on moko-template</div>
-              <div class="card-duration">
-                <span>28 min </span>
-                <span>Updated May 2, 2021</span>
-              </div>
-              <div class="card-footer">
-                <div class="category-icon lang-en-icon"></div>
-                <paper-button class="lang-en-bg">Start</paper-button>
-              </div>
-            </a>
-          
-          
-            
-            <a href="/codelabs/giphy-app-2-en/index.html?index=..%2F..index" on-tap="navigate"
-               class="codelab-card category-lang-en"
-               data-category="lang-en,moko,moko-template"
-               data-title="GiphyApp #2 - Development list of Gifs"
-               data-duration="90"
-               data-updated="2021-05-02T11:09:15Z"
-               data-tags=""
-               data-pin="">
-              <div class="description">GiphyApp #2 - Development list of Gifs</div>
-              <div class="card-duration">
-                <span>90 min </span>
-                <span>Updated May 2, 2021</span>
-              </div>
-              <div class="card-footer">
-                <div class="category-icon lang-en-icon"></div>
-                <paper-button class="lang-en-bg">Start</paper-button>
-              </div>
-            </a>
-          
-          
-            
-            <a href="/codelabs/kmp-mobile-from-zero-en/index.html?index=..%2F..index" on-tap="navigate"
-               class="codelab-card category-lang-en"
-               data-category="lang-en,basics"
-               data-title="Append Shared library to Android, iOS projects"
-               data-duration="50"
-               data-updated="2021-05-02T11:09:15Z"
-               data-tags=""
-               data-pin="">
-              <div class="description">Append Shared library to Android, iOS projects</div>
-              <div class="card-duration">
-                <span>50 min </span>
-                <span>Updated May 2, 2021</span>
-              </div>
-              <div class="card-footer">
-                <div class="category-icon lang-en-icon"></div>
-                <paper-button class="lang-en-bg">Start</paper-button>
-              </div>
-            </a>
-          
-          
-            
-            <a href="/codelabs/giphy-app-1-ru/index.html?index=..%2F..index" on-tap="navigate"
+            <a href="/codelabs/giphy-app-1-ru/index.html?index=..%2F..russian" on-tap="navigate"
                class="codelab-card category-lang-ru"
                data-category="lang-ru,moko,moko-template"
                data-title="GiphyApp #1 - Создание приложения на базе moko-template"
@@ -267,7 +177,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           
           
             
-            <a href="/codelabs/giphy-app-2-ru/index.html?index=..%2F..index" on-tap="navigate"
+            <a href="/codelabs/giphy-app-2-ru/index.html?index=..%2F..russian" on-tap="navigate"
                class="codelab-card category-lang-ru"
                data-category="lang-ru,moko,moko-template"
                data-title="GiphyApp #2 - Реализация списка Gif"
@@ -288,7 +198,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           
           
             
-            <a href="/codelabs/kmm-icerock-onboarding-1-ru/index.html?index=..%2F..index" on-tap="navigate"
+            <a href="/codelabs/kmm-icerock-onboarding-1-ru/index.html?index=..%2F..russian" on-tap="navigate"
                class="codelab-card category-lang-ru"
                data-category="lang-ru,kmm-icerock-onboarding,moko"
                data-title="IceRock KMM onboarding #1"
@@ -309,7 +219,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           
           
             
-            <a href="/codelabs/kmm-icerock-onboarding-2-ru/index.html?index=..%2F..index" on-tap="navigate"
+            <a href="/codelabs/kmm-icerock-onboarding-2-ru/index.html?index=..%2F..russian" on-tap="navigate"
                class="codelab-card category-lang-ru"
                data-category="lang-ru,kmm-icerock-onboarding,moko"
                data-title="MOKO Onboarding #2 - ViewModel"
@@ -330,7 +240,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           
           
             
-            <a href="/codelabs/kmp-mobile-from-zero-ru/index.html?index=..%2F..index" on-tap="navigate"
+            <a href="/codelabs/kmp-mobile-from-zero-ru/index.html?index=..%2F..russian" on-tap="navigate"
                class="codelab-card category-lang-ru"
                data-category="lang-ru,basics"
                data-title="Добавление к существующим Android, iOS проектам общей библиотеки"
@@ -351,7 +261,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           
           
             
-            <a href="/codelabs/moko-contribution-ru/index.html?index=..%2F..index" on-tap="navigate"
+            <a href="/codelabs/moko-contribution-ru/index.html?index=..%2F..russian" on-tap="navigate"
                class="codelab-card category-lang-ru"
                data-category="lang-ru,moko"
                data-title="MOKO contribution guide"
@@ -372,7 +282,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           
           
             
-            <a href="/codelabs/moko-widgets-1-ru/index.html?index=..%2F..index" on-tap="navigate"
+            <a href="/codelabs/moko-widgets-1-ru/index.html?index=..%2F..russian" on-tap="navigate"
                class="codelab-card category-lang-ru"
                data-category="lang-ru,moko,moko-widgets"
                data-title="MOKO Widgets #1 - hello world"
@@ -393,7 +303,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           
           
             
-            <a href="/codelabs/moko-widgets-2-ru/index.html?index=..%2F..index" on-tap="navigate"
+            <a href="/codelabs/moko-widgets-2-ru/index.html?index=..%2F..russian" on-tap="navigate"
                class="codelab-card category-lang-ru"
                data-category="lang-ru,moko,moko-widgets"
                data-title="MOKO Widgets #2 - routing"
@@ -414,7 +324,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           
           
             
-            <a href="/codelabs/moko-widgets-3-ru/index.html?index=..%2F..index" on-tap="navigate"
+            <a href="/codelabs/moko-widgets-3-ru/index.html?index=..%2F..russian" on-tap="navigate"
                class="codelab-card category-lang-ru"
                data-category="lang-ru,moko,moko-widgets"
                data-title="MOKO Widgets #3 - styles"
@@ -435,7 +345,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           
           
             
-            <a href="/codelabs/moko-widgets-4-ru/index.html?index=..%2F..index" on-tap="navigate"
+            <a href="/codelabs/moko-widgets-4-ru/index.html?index=..%2F..russian" on-tap="navigate"
                class="codelab-card category-lang-ru"
                data-category="lang-ru,moko,moko-widgets"
                data-title="MOKO Widgets #4 - screen actions"
@@ -456,7 +366,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           
           
             
-            <a href="/codelabs/moko-widgets-5-ru/index.html?index=..%2F..index" on-tap="navigate"
+            <a href="/codelabs/moko-widgets-5-ru/index.html?index=..%2F..russian" on-tap="navigate"
                class="codelab-card category-lang-ru"
                data-category="lang-ru,moko,moko-widgets"
                data-title="MOKO Widgets #5 - custom ViewFactory"
@@ -477,7 +387,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           
           
             
-            <a href="/codelabs/moko-widgets-6-ru/index.html?index=..%2F..index" on-tap="navigate"
+            <a href="/codelabs/moko-widgets-6-ru/index.html?index=..%2F..russian" on-tap="navigate"
                class="codelab-card category-lang-ru"
                data-category="lang-ru,moko,moko-widgets"
                data-title="MOKO Widgets #6 - platform Screen"
@@ -498,7 +408,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           
           
             
-            <a href="/codelabs/moko-widgets-7-ru/index.html?index=..%2F..index" on-tap="navigate"
+            <a href="/codelabs/moko-widgets-7-ru/index.html?index=..%2F..russian" on-tap="navigate"
                class="codelab-card category-lang-ru"
                data-category="lang-ru,moko,moko-widgets"
                data-title="MOKO Widgets #7 - lists on widgets"
@@ -519,7 +429,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           
           
             
-            <a href="/codelabs/moko-widgets-8-ru/index.html?index=..%2F..index" on-tap="navigate"
+            <a href="/codelabs/moko-widgets-8-ru/index.html?index=..%2F..russian" on-tap="navigate"
                class="codelab-card category-lang-ru"
                data-category="lang-ru,moko,moko-widgets"
                data-title="MOKO Widgets #8 - create new widget"
