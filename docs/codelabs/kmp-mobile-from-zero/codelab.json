@@ -3,7 +3,7 @@
   "format": "html",
   "prefix": "https://storage.googleapis.com",
   "mainga": "UA-49880327-14",
-  "updated": "2020-03-04T00:08:34+07:00",
+  "updated": "2021-05-02T13:12:50+07:00",
   "id": "kmp-mobile-from-zero",
   "duration": 50,
   "title": "Append Shared library to Android, iOS projects",
@@ -14,9 +14,10 @@
     "published"
   ],
   "category": [
-    "multiplatform"
+    "english"
   ],
   "tags": [
+    "basics",
     "kotlin-mobile-mpp"
   ],
   "feedback": "https://github.com/icerockdev/kmp-codelabs/issues",

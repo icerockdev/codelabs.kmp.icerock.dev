@@ -3,7 +3,7 @@
   "format": "html",
   "prefix": "https://storage.googleapis.com",
   "mainga": "UA-49880327-14",
-  "updated": "2020-02-11T17:26:18+07:00",
+  "updated": "2021-05-02T13:09:04+07:00",
   "id": "moko-widgets-4",
   "duration": 70,
   "title": "MOKO Widgets #4 - screen actions",
@@ -14,7 +14,7 @@
     "published"
   ],
   "category": [
-    "moko"
+    "moko-widgets"
   ],
   "tags": [
     "kotlin-mobile-mpp"

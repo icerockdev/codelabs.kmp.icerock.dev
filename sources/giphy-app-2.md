@@ -1,6 +1,6 @@
 summary: Реализация списка Gif
 id: giphy-app-2
-categories: multiplatform
+categories: russian,moko,moko-template
 environments: moko-template
 status: published
 Feedback Link: https://github.com/icerockdev/kmp-codelabs/issues
@@ -25,7 +25,7 @@ Positive
 : Фича списка уже присутствует в шаблоне, поэтому логику не придется реализовывать. Для большего понимания как устроена фича следует ознакомиться с [схемой модуля](https://github.com/icerockdev/moko-template#list-module-scheme) и посмотреть код в `mpp-library:feature:list`.
 
 ### Замена OpenAPI спецификации
-Заменим содержимое файла `mpp-library/domain/src/openapi.yml` содержимым из [OpenAPI спецификации сервиса GIPHY](/files/giphy-openapi.yml). После этого можно вызвать `Gradle Sync` и по завершению мы увидим что появились ошибки в коде, который работал с `newsapi`. Нужно обновить этот код под новую API.
+Заменим содержимое файла `mpp-library/domain/src/openapi.yml` содержимым из [OpenAPI спецификации сервиса GIPHY](/sources/files/giphy-openapi.yml). После этого можно вызвать `Gradle Sync` и по завершению мы увидим что появились ошибки в коде, который работал с `newsapi`. Нужно обновить этот код под новую API.
 
 Positive
 : Сгенерированные файлы находятся по пути `mpp-library/domain/build/generate-resources/main/src/main/kotlin`
@@ -550,11 +550,11 @@ extension GifTableViewCell: Reusable {
 ```
 И нужно создать `ios-app/src/units/GifTableViewCell.xib` с версткой ячейки.
 Итоговый результат выглядит так:
-![GifTableViewCell.xib](assets/giphy-2-1.png)
+![GifTableViewCell.xib](sources/assets/giphy-2-1.png)
 У самой `UITableViewCell` нужно указать класс `GifTableViewCell`:
-![GifTableViewCell class](assets/giphy-2-2.png)
+![GifTableViewCell class](sources/assets/giphy-2-2.png)
 А так же указать идентификатор для переиспользования:
-![reuseIdentifier](assets/giphy-2-3.png)
+![reuseIdentifier](sources/assets/giphy-2-3.png)
 
 Теперь в `GifListUnitsFactory` можно написать реализацию создания `UnitItem`:
 ```swift
@@ -634,11 +634,11 @@ class GifListViewController: UIViewController {
 }
 ```
 И перепривяжем в `MainStoryboard` `NewsViewController` к `GifListViewController`:
-![GifListViewController](assets/giphy-2-4.png)
+![GifListViewController](sources/assets/giphy-2-4.png)
 
 ### Замена стартового экрана
 Чтобы приложение запускалось сразу с экрана гифок, нужно указать у `Navigation Controller` `rootViewController` связь с `GifListViewController`:
-![rootViewController](assets/giphy-2-5.png)
+![rootViewController](sources/assets/giphy-2-5.png)
 
 ### Удаление лишних файлов
 Теперь можно удалить все лишнее:

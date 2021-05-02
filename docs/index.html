@@ -3,11 +3,11 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="description" content="Обучение разработки мобильных приложений Android, iOS с общим кодом через Kotlin Multiplatform">
+<meta name="description" content="Обучение разработки мобильных приложений Android, iOS с Kotlin Multiplatform Mobile">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="generator" content="Kotlin Multiplatform Codelabs">
 <meta name="application-name" content="Kotlin Multiplatform Codelabs">
-<link rel="canonical" href="https://codelabs.kmp.icerock.dev/">
+<link rel="canonical" href="http://localhost:63342/test-codelabs/">
 <link rel="preconnect" href="https://www.google-analytics.com">
 <script>
 window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
@@ -34,8 +34,8 @@ window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
 <meta name="theme-color" content="#455a64">
 <meta name="og:type" property="og:type" content="website">
 <meta name="og:title" property="og:title" content="Kotlin Multiplatform Codelabs">
-<meta name="og:description" property="og:description" content="Обучение разработки мобильных приложений Android, iOS с общим кодом через Kotlin Multiplatform">
-<meta name="og:url" property="og:url" content="https://codelabs.kmp.icerock.dev/">
+<meta name="og:description" property="og:description" content="Обучение разработки мобильных приложений Android, iOS с Kotlin Multiplatform Mobile">
+<meta name="og:url" property="og:url" content="http://localhost:63342/test-codelabs/">
 <meta name="og:site_name" property="og:site_name" content="Codelabs">
 <meta name="og:determiner" property="og:determiner" content="the">
 <meta name="og:locale" property="og:locale" content="en_US">
@@ -47,9 +47,9 @@ window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
 <meta name="og:image:alt" property="og:image:alt" content="Codelabs">
 <meta name="twitter:card" property="twitter:card" content="summary_large_image">
 <meta name="twitter:title" property="twitter:title" content="Kotlin Multiplatform Codelabs">
-<meta name="twitter:description" property="twitter:description" content="Обучение разработки мобильных приложений Android, iOS с общим кодом через Kotlin Multiplatform">
+<meta name="twitter:description" property="twitter:description" content="Обучение разработки мобильных приложений Android, iOS с Kotlin Multiplatform Mobile">
 <meta name="twitter:image" property="twitter:image" content="/images/og-image.png">
-<meta name="twitter:url" property="twitter:url" content="https://codelabs.kmp.icerock.dev/">
+<meta name="twitter:url" property="twitter:url" content="http://localhost:63342/test-codelabs/">
 </head>
 <body id="app" is="body-bind" class="loading fullbleed">
 <paper-header-panel id="main" mode="standard" main>
@@ -92,143 +92,39 @@ Codelabs provide a guided, tutorial, hands-on coding experience. Most codelabs w
 <paper-listbox id="eventList" slot="dropdown-content" class="dropdown-content">
 </paper-listbox>
 </paper-dropdown-menu>
-<paper-dropdown-menu label="Filter by category" class="dropdown-filter" no-label-float noink no-animations>
-<paper-listbox id="categorylist" slot="dropdown-content" class="dropdown-content" on-iron-activate="onCategoryActivate" attr-for-selected="filter">
-<paper-item filter="moko">moko</paper-item>
-<paper-item filter="multiplatform">multiplatform</paper-item>
-</paper-listbox>
-</paper-dropdown-menu></div>
+</div>
 <card-sorter id="cards" class="site-width">
-<a href="/codelabs/moko-widgets-3/index.html?index=..%2F..index" on-tap="navigate" class="codelab-card category-moko" data-category="moko" data-title="MOKO Widgets #3 - styles" data-duration="60" data-updated="2020-01-30T19:37:04+07:00" data-tags="kotlin-mobile-mpp" data-pin="">
-<div class="description">MOKO Widgets #3 - styles</div>
-<div class="card-duration">
-<span>60 min </span>
-<span>Updated Jan 30, 2020</span>
-</div>
-<div class="card-footer">
-<div class="category-icon moko-icon"></div>
-<paper-button class="moko-bg">Start</paper-button>
-</div>
-</a>
-<a href="/codelabs/moko-widgets-8/index.html?index=..%2F..index" on-tap="navigate" class="codelab-card category-moko" data-category="moko" data-title="MOKO Widgets #8 - create new widget" data-duration="35" data-updated="2020-02-20T19:10:38+07:00" data-tags="kotlin-mobile-mpp" data-pin="">
-<div class="description">MOKO Widgets #8 - create new widget</div>
-<div class="card-duration">
-<span>35 min </span>
-<span>Updated Feb 20, 2020</span>
-</div>
-<div class="card-footer">
-<div class="category-icon moko-icon"></div>
-<paper-button class="moko-bg">Start</paper-button>
-</div>
-</a>
-<a href="/codelabs/moko-widgets-7/index.html?index=..%2F..index" on-tap="navigate" class="codelab-card category-moko" data-category="moko" data-title="MOKO Widgets #7 - lists on widgets" data-duration="40" data-updated="2020-02-18T19:31:21+07:00" data-tags="kotlin-mobile-mpp" data-pin="">
-<div class="description">MOKO Widgets #7 - lists on widgets</div>
-<div class="card-duration">
-<span>40 min </span>
-<span>Updated Feb 18, 2020</span>
-</div>
-<div class="card-footer">
-<div class="category-icon moko-icon"></div>
-<paper-button class="moko-bg">Start</paper-button>
-</div>
-</a>
-<a href="/codelabs/moko-contribution/index.html?index=..%2F..index" on-tap="navigate" class="codelab-card category-moko" data-category="moko" data-title="MOKO contribution guide" data-duration="27" data-updated="2020-01-21T18:47:13+07:00" data-tags="kotlin-mobile-mpp" data-pin="">
-<div class="description">MOKO contribution guide</div>
-<div class="card-duration">
-<span>27 min </span>
-<span>Updated Jan 21, 2020</span>
-</div>
-<div class="card-footer">
-<div class="category-icon moko-icon"></div>
-<paper-button class="moko-bg">Start</paper-button>
-</div>
-</a>
-<a href="/codelabs/moko-widgets-1/index.html?index=..%2F..index" on-tap="navigate" class="codelab-card category-moko" data-category="moko" data-title="MOKO Widgets #1 - hello world" data-duration="37" data-updated="2020-01-28T12:58:59+07:00" data-tags="kotlin-mobile-mpp" data-pin="">
-<div class="description">MOKO Widgets #1 - hello world</div>
-<div class="card-duration">
-<span>37 min </span>
-<span>Updated Jan 28, 2020</span>
-</div>
-<div class="card-footer">
-<div class="category-icon moko-icon"></div>
-<paper-button class="moko-bg">Start</paper-button>
-</div>
-</a>
-<a href="/codelabs/moko-widgets-2/index.html?index=..%2F..index" on-tap="navigate" class="codelab-card category-moko" data-category="moko" data-title="MOKO Widgets #2 - routing" data-duration="104" data-updated="2020-01-28T19:38:02+07:00" data-tags="kotlin-mobile-mpp" data-pin="">
-<div class="description">MOKO Widgets #2 - routing</div>
-<div class="card-duration">
-<span>104 min </span>
-<span>Updated Jan 28, 2020</span>
-</div>
-<div class="card-footer">
-<div class="category-icon moko-icon"></div>
-<paper-button class="moko-bg">Start</paper-button>
-</div>
-</a>
-<a href="/codelabs/moko-widgets-6/index.html?index=..%2F..index" on-tap="navigate" class="codelab-card category-moko" data-category="moko" data-title="MOKO Widgets #6 - platform Screen" data-duration="40" data-updated="2020-02-13T19:37:34+07:00" data-tags="kotlin-mobile-mpp" data-pin="">
-<div class="description">MOKO Widgets #6 - platform Screen</div>
-<div class="card-duration">
-<span>40 min </span>
-<span>Updated Feb 13, 2020</span>
-</div>
-<div class="card-footer">
-<div class="category-icon moko-icon"></div>
-<paper-button class="moko-bg">Start</paper-button>
-</div>
-</a>
-<a href="/codelabs/moko-widgets-4/index.html?index=..%2F..index" on-tap="navigate" class="codelab-card category-moko" data-category="moko" data-title="MOKO Widgets #4 - screen actions" data-duration="70" data-updated="2020-02-11T17:26:18+07:00" data-tags="kotlin-mobile-mpp" data-pin="">
-<div class="description">MOKO Widgets #4 - screen actions</div>
-<div class="card-duration">
-<span>70 min </span>
-<span>Updated Feb 11, 2020</span>
-</div>
-<div class="card-footer">
-<div class="category-icon moko-icon"></div>
-<paper-button class="moko-bg">Start</paper-button>
-</div>
-</a>
-<a href="/codelabs/moko-widgets-5/index.html?index=..%2F..index" on-tap="navigate" class="codelab-card category-moko" data-category="moko" data-title="MOKO Widgets #5 - custom ViewFactory" data-duration="50" data-updated="2020-02-11T19:29:27+07:00" data-tags="kotlin-mobile-mpp" data-pin="">
-<div class="description">MOKO Widgets #5 - custom ViewFactory</div>
-<div class="card-duration">
-<span>50 min </span>
-<span>Updated Feb 11, 2020</span>
-</div>
-<div class="card-footer">
-<div class="category-icon moko-icon"></div>
-<paper-button class="moko-bg">Start</paper-button>
-</div>
-</a>
-<a href="/codelabs/giphy-app-2/index.html?index=..%2F..index" on-tap="navigate" class="codelab-card category-multiplatform" data-category="multiplatform" data-title="GiphyApp #2 - Development list of Gifs" data-duration="90" data-updated="2020-03-04T00:08:36+07:00" data-tags="moko-template" data-pin="">
-<div class="description">GiphyApp #2 - Development list of Gifs</div>
-<div class="card-duration">
-<span>90 min </span>
-<span>Updated Mar 3, 2020</span>
-</div>
-<div class="card-footer">
-<div class="category-icon multiplatform-icon"></div>
-<paper-button class="multiplatform-bg">Start</paper-button>
-</div>
-</a>
-<a href="/codelabs/kmp-mobile-from-zero/index.html?index=..%2F..index" on-tap="navigate" class="codelab-card category-multiplatform" data-category="multiplatform" data-title="Append Shared library to Android, iOS projects" data-duration="50" data-updated="2020-03-04T00:08:34+07:00" data-tags="kotlin-mobile-mpp" data-pin="">
-<div class="description">Append Shared library to Android, iOS projects</div>
-<div class="card-duration">
-<span>50 min </span>
-<span>Updated Mar 3, 2020</span>
-</div>
-<div class="card-footer">
-<div class="category-icon multiplatform-icon"></div>
-<paper-button class="multiplatform-bg">Start</paper-button>
-</div>
-</a>
-<a href="/codelabs/giphy-app-1/index.html?index=..%2F..index" on-tap="navigate" class="codelab-card category-multiplatform" data-category="multiplatform" data-title="GiphyApp #1 - Creation an application based on moko-template" data-duration="28" data-updated="2020-03-03T23:53:21+07:00" data-tags="moko-template" data-pin="">
+<a href="/codelabs/giphy-app-1/index.html?index=..%2F..index" on-tap="navigate" class="codelab-card category-english" data-category="english" data-title="GiphyApp #1 - Creation an application based on moko-template" data-duration="28" data-updated="2021-05-02T13:12:01+07:00" data-tags="moko,moko-template" data-pin="">
 <div class="description">GiphyApp #1 - Creation an application based on moko-template</div>
 <div class="card-duration">
 <span>28 min </span>
-<span>Updated Mar 3, 2020</span>
+<span>Updated May 2, 2021</span>
 </div>
 <div class="card-footer">
-<div class="category-icon multiplatform-icon"></div>
-<paper-button class="multiplatform-bg">Start</paper-button>
+<div class="category-icon english-icon"></div>
+<paper-button class="english-bg">Start</paper-button>
+</div>
+</a>
+<a href="/codelabs/giphy-app-2/index.html?index=..%2F..index" on-tap="navigate" class="codelab-card category-english" data-category="english" data-title="GiphyApp #2 - Development list of Gifs" data-duration="90" data-updated="2021-05-02T13:12:12+07:00" data-tags="moko,moko-template" data-pin="">
+<div class="description">GiphyApp #2 - Development list of Gifs</div>
+<div class="card-duration">
+<span>90 min </span>
+<span>Updated May 2, 2021</span>
+</div>
+<div class="card-footer">
+<div class="category-icon english-icon"></div>
+<paper-button class="english-bg">Start</paper-button>
+</div>
+</a>
+<a href="/codelabs/kmp-mobile-from-zero/index.html?index=..%2F..index" on-tap="navigate" class="codelab-card category-english" data-category="english" data-title="Append Shared library to Android, iOS projects" data-duration="50" data-updated="2021-05-02T13:12:50+07:00" data-tags="basics,kotlin-mobile-mpp" data-pin="">
+<div class="description">Append Shared library to Android, iOS projects</div>
+<div class="card-duration">
+<span>50 min </span>
+<span>Updated May 2, 2021</span>
+</div>
+<div class="card-footer">
+<div class="category-icon english-icon"></div>
+<paper-button class="english-bg">Start</paper-button>
 </div>
 </a>
 </card-sorter>

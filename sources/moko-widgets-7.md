@@ -1,7 +1,6 @@
 summary: MOKO Widgets #7 - списки на виджетах
 id: moko-widgets-7
-categories: moko
-environments: kotlin-mobile-mpp
+categories: russian,moko,moko-widgets
 status: published
 Feedback Link: https://github.com/icerockdev/kmp-codelabs/issues
 Analytics Account: UA-81805223-5

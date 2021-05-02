@@ -3,7 +3,7 @@
   "format": "html",
   "prefix": "https://storage.googleapis.com",
   "mainga": "UA-49880327-14",
-  "updated": "2020-01-28T12:58:59+07:00",
+  "updated": "2021-05-02T13:08:55+07:00",
   "id": "moko-widgets-1",
   "duration": 37,
   "title": "MOKO Widgets #1 - hello world",
@@ -14,7 +14,7 @@
     "published"
   ],
   "category": [
-    "moko"
+    "moko-widgets"
   ],
   "tags": [
     "kotlin-mobile-mpp"

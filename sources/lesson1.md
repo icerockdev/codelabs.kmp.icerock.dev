@@ -1,7 +1,6 @@
 summary: Создание multiplatform модуля для нативных Android, iOS приложений
 id: kmp-mobile-from-zero
-categories: multiplatform
-environments: kotlin-mobile-mpp
+categories: russian,basics
 status: published
 Feedback Link: https://github.com/icerockdev/kmp-codelabs/issues
 Analytics Account: UA-81805223-5
@@ -364,17 +363,17 @@ kotlin {
 ### Интегрируем framework в iOS приложение
 Открываем через Xcode `ios-app/ios-app.xcodeproj` и добавляем фреймворк к проекту. Для этого:  
 Добавляем сам фреймворк в проект.  
-![step1](assets/ios-integration-1.png)
-![step2](assets/ios-integration-2.png)
+![step1](sources/assets/ios-integration-1.png)
+![step2](sources/assets/ios-integration-2.png)
 
 В итоге должны увидеть фреймворк следующим образом:  
-![step3](assets/ios-integration-3.png)
+![step3](sources/assets/ios-integration-3.png)
 
 После этого нужно добавить его в embed frameworks. После добавления появится дублирование в прилинкованных, нужно удалить один из прилинкованных, чтобы получилось как на скриншоте:  
-![step4](assets/ios-integration-4.png)
+![step4](sources/assets/ios-integration-4.png)
 
 И последнее - нужно добавить директорию где лежит фреймворк в доступные для поиска (директория `./../mpp-library/build/bin/iosX64/MultiPlatformLibraryDebugFramework`). Это делается через `Build Settings` таргета приложения.  
-![step5](assets/ios-integration-5.png)
+![step5](sources/assets/ios-integration-5.png)
 
 [git changes](https://github.com/icerockdev/mobile-multiplatform-education/commit/8b4f83e18537d429dd18b2e9421649e34b762d48)
 
@@ -492,7 +491,7 @@ end
 ```
 
 В настройках проекта убираем ранее прописанную настройку `FRAMEWORK_SEARCH_PATHS` (для этого надо нажать `backspace` чтобы значение было удалено, а не редактировать значение оставив пустую строку).  
-![step6](assets/ios-integration-6.png)
+![step6](sources/assets/ios-integration-6.png)
 
 Вызываем `pod install` в директории `ios-app` (заранее нужно установить [cocoapods](https://cocoapods.org)).
 

@@ -1,7 +1,6 @@
 summary: Как вносить изменения в moko библиотеки самостоятельно
 id: moko-contribution
-categories: moko
-environments: kotlin-mobile-mpp
+categories: russian,moko
 status: published
 Feedback Link: https://github.com/icerockdev/kmp-codelabs/issues
 Analytics Account: UA-81805223-5

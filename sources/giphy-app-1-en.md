@@ -1,7 +1,6 @@
 summary: Creation an application based on moko-template
 id: giphy-app-1
-categories: multiplatform
-environments: moko-template
+categories: english,moko,moko-template
 status: published
 Feedback Link: https://github.com/icerockdev/kmp-codelabs/issues
 Analytics Account: UA-81805223-5
@@ -27,7 +26,7 @@ UI of this application will be completely native, player of gif files will make 
 
 |android app|ios app|
 |---|---|
-|![giphy-android-app](assets/giphy-android-app.webp)|![giphy-ios-app](assets/giphy-ios-app.webp)|
+|![giphy-android-app](sources/assets/giphy-android-app.webp)|![giphy-ios-app](sources/assets/giphy-ios-app.webp)|
 
 Final code is on [github](https://github.com/Alex009/giphy-mobile) repository.
 
@@ -75,7 +74,7 @@ android {
 }
 ```
 iOS - you have to set `Bundle Identifier` in the project's setting in Xcode like on the screenshot below:  
-![Xcode bundle identifier](assets/giphy-1-1.png)
+![Xcode bundle identifier](sources/assets/giphy-1-1.png)
 
 ### Change an application name 
 Android - in file `android-app/src/main/res/values/strings.xml` change:
@@ -86,10 +85,10 @@ Android - in file `android-app/src/main/res/values/strings.xml` change:
 </resources>
 ```
 iOS - you have to set `Display name` in the project's setting in Xcode like on the screenshot below:  
-![Xcode display name](assets/giphy-1-2.png)
+![Xcode display name](sources/assets/giphy-1-2.png)
 
 ### Change an application icon
-You can download the icon's resources [here](assets/giphy-1-icons.zip).  
+You can download the icon's resources [here](sources/assets/giphy-1-icons.zip).  
 
 To change Android icons you have to move content of `android` directory of this archive in `android-app/src/main/res` directory. After this, you need to set this icon on `android-app/src/main/AndroidManifest.xml`:
 
@@ -107,7 +106,7 @@ To change icons on iOS you have to replace `ios-app/src/Assets.xcassets/AppIcon.
 ### Change launch screen 
 There is a launch screen on iOS and to replace it you have to modify `ios-app/src/Resources/LaunchScreen.storyboard` file. For example, let's just change a text like on screenshot: 
 
-![change launch screen](assets/giphy-1-3.png)
+![change launch screen](sources/assets/giphy-1-3.png)
 
 ## Next steps 
 Duration: 3

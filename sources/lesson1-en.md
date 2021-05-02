@@ -1,7 +1,6 @@
 summary: Creation multiplatform module for native Android, iOS application
 id: kmp-mobile-from-zero
-categories: multiplatform
-environments: kotlin-mobile-mpp
+categories: english,basics
 status: published
 Feedback Link: https://github.com/icerockdev/kmp-codelabs/issues
 Analytics Account: UA-81805223-5
@@ -386,17 +385,17 @@ After this change we can call `Gradle Task``:mpp-library:linkMultiPlatformLibrar
 Open `ios-app/ios-app.xcodeproj` in Xcode and add framework to the project. To do this: 
 Add the framework to the project.
 
-![step1](assets/ios-integration-1.png)
-![step2](assets/ios-integration-2.png)
+![step1](sources/assets/ios-integration-1.png)
+![step2](sources/assets/ios-integration-2.png)
 
 As a result, the framework should appear here:
-![step3](assets/ios-integration-3.png)
+![step3](sources/assets/ios-integration-3.png)
 
 Now we need to add the framework to embed frameworks. Once that’s done, there will be duplicates in the linked frameworks. Delete one of them to get this:
-![step4](assets/ios-integration-4.png)
+![step4](sources/assets/ios-integration-4.png)
 
 The last thing is to add the directory with the framework (`./../mpp-library/build/bin/iosX64/MultiPlatformLibraryDebugFramework`)to the search paths. We can do this in `Build Settings` of the target app.
-![step5](assets/ios-integration-5.png)
+![step5](sources/assets/ios-integration-5.png)
 
 [git changes](https://github.com/icerockdev/mobile-multiplatform-education/commit/8b4f83e18537d429dd18b2e9421649e34b762d48)
 
@@ -512,7 +511,7 @@ target 'ios-app' do
 end
 ```
 Remove previously added `FRAMEWORK_SEARCH_PATHS` in the project settings. To do this, press `backspace` and remove the value altogether instead of editing the field by leaving it empty.
-![step6](assets/ios-integration-6.png)
+![step6](sources/assets/ios-integration-6.png)
 
 Call `pod install` in the directory `ios-app` ([cocoapods](https://cocoapods.org) need to be installed prior to this).
 

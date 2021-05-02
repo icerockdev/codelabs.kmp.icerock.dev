@@ -1,7 +1,6 @@
 summary: MOKO Widgets #3 - стилизация
 id: moko-widgets-3
-categories: moko
-environments: kotlin-mobile-mpp
+categories: russian,moko,moko-widgets
 status: published
 Feedback Link: https://github.com/icerockdev/kmp-codelabs/issues
 Analytics Account: UA-81805223-5
@@ -34,7 +33,7 @@ Duration: 10
 
 |android app|ios app|
 |---|---|
-|![android-app](assets/moko-widgets-3-android-accent.png)|![ios-app](assets/moko-widgets-3-ios-tint.png)|
+|![android-app](sources/assets/moko-widgets-3-android-accent.png)|![ios-app](sources/assets/moko-widgets-3-ios-tint.png)|
 
 Теперь изменим цвет статусбара и навбара на Android, а так же акцент цвет на обеих платформах (синий на iOS и ярко зеленый на Android).
 
@@ -72,7 +71,7 @@ Duration: 10
 ```
 
 В результате получим:
-![android-app](assets/moko-widgets-3-android-accent-new.png)
+![android-app](sources/assets/moko-widgets-3-android-accent-new.png)
 
 ### iOS
 На iOS можно задать глобальный tint цвет, который выдаст нужный нам результат. 
@@ -91,7 +90,7 @@ func application(_ application: UIApplication, didFinishLaunchingWithOptions lau
 ```
 
 И получим:
-![ios-app](assets/moko-widgets-3-ios-tint-new.png)
+![ios-app](sources/assets/moko-widgets-3-ios-tint-new.png)
 
 ## Глобальное применение стилей
 Duration: 10
@@ -164,7 +163,7 @@ class App : BaseApplication() {
 
 |android app|ios app|
 |---|---|
-|![android-app](assets/moko-widgets-3-android-buttons.png)|![ios-app](assets/moko-widgets-3-ios-buttons.png)|
+|![android-app](sources/assets/moko-widgets-3-android-buttons.png)|![ios-app](sources/assets/moko-widgets-3-ios-buttons.png)|
 
 
 ## Применение стилей к группе элементов
@@ -273,12 +272,12 @@ class App : BaseApplication() {
 ### Android
 |phone|code|
 |---|---|
-|![android-app](assets/moko-widgets-3-android-category-1.png)|![android-app](assets/moko-widgets-3-android-category-2.png)|
+|![android-app](sources/assets/moko-widgets-3-android-category-1.png)|![android-app](sources/assets/moko-widgets-3-android-category-2.png)|
 
 ### iOS
 |phone|code|
 |---|---|
-|![ios-app](assets/moko-widgets-3-ios-category-1.png)|![ios-app](assets/moko-widgets-3-ios-category-2.png)|
+|![ios-app](sources/assets/moko-widgets-3-ios-category-1.png)|![ios-app](sources/assets/moko-widgets-3-ios-category-2.png)|
 
 ## Применение стилей к отдельному элементу
 Duration: 5
@@ -306,7 +305,7 @@ factory[InputPhoneScreen.Ids.Phone] = SystemInputViewFactory(
 
 |android app|ios app|
 |---|---|
-|![android-app](assets/moko-widgets-3-android-id.png)|![ios-app](assets/moko-widgets-3-ios-id.png)|
+|![android-app](sources/assets/moko-widgets-3-android-id.png)|![ios-app](sources/assets/moko-widgets-3-ios-id.png)|
 
 ## Наследование тем
 Duration: 10
@@ -340,12 +339,12 @@ val profileFactory = ProfileFactory(profileTheme)
 ### Android
 |phone|code|
 |---|---|
-|![android-app](assets/moko-widgets-3-android-profile-1.png)|![android-app](assets/moko-widgets-3-android-profile-2.png)|
+|![android-app](sources/assets/moko-widgets-3-android-profile-1.png)|![android-app](sources/assets/moko-widgets-3-android-profile-2.png)|
 
 ### iOS
 |phone|code|
 |---|---|
-|![ios-app](assets/moko-widgets-3-ios-profile-1.png)|![ios-app](assets/moko-widgets-3-ios-profile-2.png)|
+|![ios-app](sources/assets/moko-widgets-3-ios-profile-1.png)|![ios-app](sources/assets/moko-widgets-3-ios-profile-2.png)|
 
 ## Применение стилей к нижней навигации
 Duration: 10
@@ -367,4 +366,4 @@ class MainBottomNavigationScreen(
 
 |android app|ios app|
 |---|---|
-|![android-app](assets/moko-widgets-3-android-bottom.png)|![ios-app](assets/moko-widgets-3-ios-bottom.png)|
+|![android-app](sources/assets/moko-widgets-3-android-bottom.png)|![ios-app](sources/assets/moko-widgets-3-ios-bottom.png)|

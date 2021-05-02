@@ -1,7 +1,6 @@
 summary: Gif list development 
 id: giphy-app-2
-categories: multiplatform
-environments: moko-template
+categories: english,moko,moko-template
 status: published
 Feedback Link: https://github.com/icerockdev/kmp-codelabs/issues
 Analytics Account: UA-81805223-5
@@ -26,7 +25,7 @@ Positive
 
 ### Replace OpenAPI spec
 
-Replace file `mpp-library/domain/src/openapi.yml` by the content from [OpenAPI spec of GIPHY service](/files/giphy-openapi.yml). After it please do `Gradle Sync` and as the result you will see some errors in the `newsapi` code. Let's update code by new API. 
+Replace file `mpp-library/domain/src/openapi.yml` by the content from [OpenAPI spec of GIPHY service](/sources/files/giphy-openapi.yml). After it please do `Gradle Sync` and as the result you will see some errors in the `newsapi` code. Let's update code by new API. 
 
 Positive
 : You can find generated files here `mpp-library/domain/build/generate-resources/main/src/main/kotlin`
@@ -574,13 +573,13 @@ extension GifTableViewCell: Reusable {
 Then create  `ios-app/src/units/GifTableViewCell.xib` with a cell layout. 
 
 The result looks like this: 
-![GifTableViewCell.xib](assets/giphy-2-1.png)
+![GifTableViewCell.xib](sources/assets/giphy-2-1.png)
 
 We have to set `GifTableViewCell` class in `UITableViewCell` cell: 
-![GifTableViewCell class](assets/giphy-2-2.png)
+![GifTableViewCell class](sources/assets/giphy-2-2.png)
 
 And set an identifier for reuse: 
-![reuseIdentifier](assets/giphy-2-3.png)
+![reuseIdentifier](sources/assets/giphy-2-3.png)
 
 Now we can implement `UnitItem` creation in `GifListUnitsFactory`:
 ```swift
@@ -660,12 +659,12 @@ class GifListViewController: UIViewController {
 }
 ```
 And let's bind `NewsViewController` to `GifListViewController` in `MainStoryboard`: 
-![GifListViewController](assets/giphy-2-4.png)
+![GifListViewController](sources/assets/giphy-2-4.png)
 
 ### Replace a startup screen 
 To launch the application from gif screen we have to link `rootViewController` with `GifListViewController` in `Navigation Controller`: 
 
-![rootViewController](assets/giphy-2-5.png)
+![rootViewController](sources/assets/giphy-2-5.png)
 
 ### Remove unnecessary files
 Now we can delete all unnnecessary files from project:

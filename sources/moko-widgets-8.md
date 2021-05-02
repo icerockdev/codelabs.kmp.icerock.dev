@@ -1,7 +1,6 @@
 summary: MOKO Widgets #8 - создание виджета
 id: moko-widgets-8
-categories: moko
-environments: kotlin-mobile-mpp
+categories: russian,moko,moko-widgets
 status: published
 Feedback Link: https://github.com/icerockdev/kmp-codelabs/issues
 Analytics Account: UA-81805223-5
@@ -263,4 +262,4 @@ class ProfileScreen(
 
 |android app|ios app|
 |---|---|
-|![android-app](assets/moko-widgets-8-android-slider.png)|![ios-app](assets/moko-widgets-8-ios-slider.png)|
+|![android-app](sources/assets/moko-widgets-8-android-slider.png)|![ios-app](sources/assets/moko-widgets-8-ios-slider.png)|

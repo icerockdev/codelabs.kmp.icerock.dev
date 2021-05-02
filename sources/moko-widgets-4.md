@@ -1,7 +1,6 @@
 summary: MOKO Widgets #4 - действия на экранах
 id: moko-widgets-4
-categories: moko
-environments: kotlin-mobile-mpp
+categories: russian,moko,moko-widgets
 status: published
 Feedback Link: https://github.com/icerockdev/kmp-codelabs/issues
 Analytics Account: UA-81805223-5
@@ -297,7 +296,7 @@ class InputPhoneScreen(
 
 |android app|ios app|
 |---|---|
-|![android-app](assets/moko-widgets-4-android-message.png)|![ios-app](assets/moko-widgets-4-ios-message.png)|
+|![android-app](sources/assets/moko-widgets-4-android-message.png)|![ios-app](sources/assets/moko-widgets-4-ios-message.png)|
 
 ## Показ диалога с обработкой результата
 Duration: 15

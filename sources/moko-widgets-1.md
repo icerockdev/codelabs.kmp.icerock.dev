@@ -1,7 +1,6 @@
 summary: MOKO Widgets #1 - hello world
 id: moko-widgets-1
-categories: moko
-environments: kotlin-mobile-mpp
+categories: russian,moko,moko-widgets
 status: published
 Feedback Link: https://github.com/icerockdev/kmp-codelabs/issues
 Analytics Account: UA-81805223-5
@@ -33,7 +32,7 @@ Duration: 10
 
 |android app|ios app|
 |---|---|
-|![android-app](assets/moko-widgets-1-android.png)|![ios-app](assets/moko-widgets-1-ios.png)|
+|![android-app](sources/assets/moko-widgets-1-android.png)|![ios-app](sources/assets/moko-widgets-1-ios.png)|
 
 ## Знакомимся с начальным кодом
 Duration: 5
@@ -232,4 +231,4 @@ class App : BaseApplication() {
 
 |android app|ios app|
 |---|---|
-|![android-app](assets/moko-widgets-1-android-end.png)|![ios-app](assets/moko-widgets-1-ios-end.png)|
+|![android-app](sources/assets/moko-widgets-1-android-end.png)|![ios-app](sources/assets/moko-widgets-1-ios-end.png)|

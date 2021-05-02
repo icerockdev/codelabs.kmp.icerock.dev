@@ -1,7 +1,6 @@
 summary: MOKO Widgets #2 - роутинг
 id: moko-widgets-2
-categories: moko
-environments: kotlin-mobile-mpp
+categories: russian,moko,moko-widgets
 status: published
 Feedback Link: https://github.com/icerockdev/kmp-codelabs/issues
 Analytics Account: UA-81805223-5
@@ -17,10 +16,10 @@ Duration: 5
 
 |android app|ios app|
 |---|---|
-|![android-app](assets/moko-widgets-1-android-end.png)|![ios-app](assets/moko-widgets-1-ios-end.png)|
+|![android-app](sources/assets/moko-widgets-1-android-end.png)|![ios-app](sources/assets/moko-widgets-1-ios-end.png)|
 
 На этом уроке мы добавим навигацию между экранами. Схема переходов будет следующая:
-![navigation-scheme](assets/moko-widgets-2-navigation-sample.jpg)
+![navigation-scheme](sources/assets/moko-widgets-2-navigation-sample.jpg)
 Будут разобраны переходы:
 - Обычный переход вперед;
 - Переход назад;
@@ -38,7 +37,7 @@ Duration: 2
 Duration: 2
 
 Согласно схеме экранов процесс авторизации состоит из 2 экранов, после чего переход выполняется на главную.
-![navigation-scheme](assets/moko-widgets-2-navigation-sample.jpg)
+![navigation-scheme](sources/assets/moko-widgets-2-navigation-sample.jpg)
 
 ## Авторизация - экран ввода телефона
 Duration: 30
@@ -368,13 +367,13 @@ Duration: 5
 
 |input phone|input code|main|
 |---|---|---|
-|![auth-android-1](assets/moko-widgets-2-auth-android-1.png)|![auth-android-2](assets/moko-widgets-2-auth-android-2.png)|![auth-android-3](assets/moko-widgets-2-auth-android-3.png)|
+|![auth-android-1](sources/assets/moko-widgets-2-auth-android-1.png)|![auth-android-2](sources/assets/moko-widgets-2-auth-android-2.png)|![auth-android-3](sources/assets/moko-widgets-2-auth-android-3.png)|
 
 ### iOS
 
 |input phone|input code|main|
 |---|---|---|
-|![auth-ios-1](assets/moko-widgets-2-auth-ios-1.png)|![auth-ios-2](assets/moko-widgets-2-auth-ios-2.png)|![auth-ios-3](assets/moko-widgets-2-auth-ios-3.png)|
+|![auth-ios-1](sources/assets/moko-widgets-2-auth-ios-1.png)|![auth-ios-2](sources/assets/moko-widgets-2-auth-ios-2.png)|![auth-ios-3](sources/assets/moko-widgets-2-auth-ios-3.png)|
 
 ## Code of App
 Duration: 30

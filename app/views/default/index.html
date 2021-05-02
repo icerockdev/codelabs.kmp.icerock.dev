@@ -150,28 +150,28 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           </paper-tabs>
         </div>
 
-        {% if view.id == 'default' %}
-        <paper-dropdown-menu
-          label="Choose an event"
-          class="dropdown-filter"
-          no-label-float
-          noink no-animations
-        >
-          <paper-listbox
-            id="eventList"
-            slot="dropdown-content"
-            class="dropdown-content"
-          >
-            {%- for view in views -%}
-              {%- if view.id != 'default' && !view.hidden -%}
-                <a href="/{{view.url}}/" tabindex="-1">
-                  <paper-item>{{view.title}}</paper-item>
-                </a>
-              {%- endif -%}
-            {%- endfor %}
-          </paper-listbox>
-        </paper-dropdown-menu>
-        {% endif %}
+<!--        {% if view.id == 'default' %}-->
+<!--        <paper-dropdown-menu-->
+<!--          label="Choose an event"-->
+<!--          class="dropdown-filter"-->
+<!--          no-label-float-->
+<!--          noink no-animations-->
+<!--        >-->
+<!--          <paper-listbox-->
+<!--            id="eventList"-->
+<!--            slot="dropdown-content"-->
+<!--            class="dropdown-content"-->
+<!--          >-->
+<!--            {%- for view in views -%}-->
+<!--              {%- if view.id != 'default' && !view.hidden -%}-->
+<!--                <a href="/{{view.url}}/" tabindex="-1">-->
+<!--                  <paper-item>{{view.title}}</paper-item>-->
+<!--                </a>-->
+<!--              {%- endif -%}-->
+<!--            {%- endfor %}-->
+<!--          </paper-listbox>-->
+<!--        </paper-dropdown-menu>-->
+<!--        {% endif %}-->
 
         {%- if showcats -%}
         <paper-dropdown-menu

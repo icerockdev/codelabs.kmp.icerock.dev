@@ -1,7 +1,6 @@
 summary: MOKO Widgets #6 - платформенные экраны
 id: moko-widgets-6
-categories: moko
-environments: kotlin-mobile-mpp
+categories: russian,moko,moko-widgets
 status: published
 Feedback Link: https://github.com/icerockdev/kmp-codelabs/issues
 Analytics Account: UA-81805223-5
@@ -136,7 +135,7 @@ class App : BaseApplication() {
 
 Теперь можно открыть приложение и на главном экране вкладка `Info` будет оформлена так, как мы сделали в платформенной реализации.
 
-![android-app](assets/moko-widgets-6-android-info.png)
+![android-app](sources/assets/moko-widgets-6-android-info.png)
 
 ## Реализация экрана на iOS
 Duration: 15
@@ -205,13 +204,13 @@ end
 - `mpp-library/src/iosMain/bundle/InfoViewController.xib`
 
 Создаем в группе `mppLibraryIos`:
-![xcode](assets/moko-widgets-6-ios-xcode.png)
+![xcode](sources/assets/moko-widgets-6-ios-xcode.png)
 
 Positive
 : На вопрос о создании Objective-C Bridging Header ответьте "Нет"
 
 Для таргета `mppLibraryIos`:
-![target](assets/moko-widgets-6-ios-target.png)
+![target](sources/assets/moko-widgets-6-ios-target.png)
 
 Positive
 : После создания обоих файлов нужно повторно выполнить `pod install` чтобы файлы были корректно подключены к проекту.
@@ -248,23 +247,23 @@ Positive
 
 1. Укажем в `File's Owner` наш класс `InfoViewController`:
 
-![xib owner](assets/moko-widgets-6-ios-xib-owner.png)
+![xib owner](sources/assets/moko-widgets-6-ios-xib-owner.png)
 
 2. Добавим кнопку на корневую `View` и настроим связи - центрирование по контейнеру:
 
-![xib button constraints](assets/moko-widgets-6-ios-button-constraints.png)
+![xib button constraints](sources/assets/moko-widgets-6-ios-button-constraints.png)
 
 3. Настроим внешний вид кнопки - заголовок, цвет текста, цвет фона:
 
-![xib button attributes](assets/moko-widgets-6-ios-button-attributes.png)
+![xib button attributes](sources/assets/moko-widgets-6-ios-button-attributes.png)
 
 4. Укажем связь `View` и `File's Owner` - корневая `view` привязывается к аутлету `view`, действие `onProfileButtonTap` привязывается к кнопке на событие `Touch Up Inside`:
 
-![xib outlets](assets/moko-widgets-6-ios-outlets.png)
+![xib outlets](sources/assets/moko-widgets-6-ios-outlets.png)
 
 5. Далее попробуем собрать фреймворк - для этого в схемах включим отображение схему `mppLibraryIos` и, выбрав ее, произведем сборку:
 
-![ios scheme](assets/moko-widgets-6-ios-scheme.png)
+![ios scheme](sources/assets/moko-widgets-6-ios-scheme.png)
 
 Если все было успешно собрано, значит можно переходить к подключению нативного фреймворка в Kotlin.
 
@@ -285,7 +284,7 @@ cocoaPods {
 
 После добавления настройки нужно вызвать `Gradle Sync` и в панели управления Gradle мы сможем вызвать задачу `cinteropCocoapodMppLibraryIosIosX64`:
 
-![xib outlets](assets/moko-widgets-6-ios-cinterop.png)
+![xib outlets](sources/assets/moko-widgets-6-ios-cinterop.png)
 
 После завершения работы задачи `cinteropCocoapodMppLibraryIosIosX64` требуется сделать `Gradle Sync`, чтобы IDE корректно считала сгенерированные данной задачей klib'ы с нативными классами.
 
@@ -310,4 +309,4 @@ actual class PlatformInfoScreen actual constructor(
 
 На этом все готово и можно запустить iOS приложение, в котором увидим:
 
-![ios info page](assets/moko-widgets-6-ios-info.png)
+![ios info page](sources/assets/moko-widgets-6-ios-info.png)

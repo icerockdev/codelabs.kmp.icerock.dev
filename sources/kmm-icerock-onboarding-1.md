@@ -1,3 +1,11 @@
+summary: Погружение в KMM в IceRock №1
+id: kmm-icerock-onboarding-1
+categories: russian,kmm-icerock-onboarding,moko
+status: published
+authors: Andrey Kovalev, Aleksey Lobynya, Aleksey Mikhailov
+tags: onboarding,kmm,ios,android,moko
+feedback link: https://github.com/icerockdev/kmp-codelabs/issues
+
 ### Вводная часть
 
 Привет! Если ты это читаешь, значит ты начинаешь погружаться в процессы мультиплатформенной разработки в IceRock. 

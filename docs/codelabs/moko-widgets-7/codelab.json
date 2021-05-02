@@ -3,7 +3,7 @@
   "format": "html",
   "prefix": "https://storage.googleapis.com",
   "mainga": "UA-49880327-14",
-  "updated": "2020-02-18T19:31:21+07:00",
+  "updated": "2021-05-02T13:09:15+07:00",
   "id": "moko-widgets-7",
   "duration": 40,
   "title": "MOKO Widgets #7 - lists on widgets",
@@ -14,7 +14,7 @@
     "published"
   ],
   "category": [
-    "moko"
+    "moko-widgets"
   ],
   "tags": [
     "kotlin-mobile-mpp"
