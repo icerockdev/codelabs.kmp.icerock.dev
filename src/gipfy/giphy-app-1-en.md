@@ -102,7 +102,7 @@ To change Android icons you have to move content of `android` directory of this 
     </application>
 </manifest>
 ```
-To change icons on iOS you have to replace `ios-app/assets.xcassets/AppIcon.appiconset` directory by the archive's version. 
+To change icons on iOS you have to replace `ios-app/src/Assets.xcassets/AppIcon.appiconset` directory by the archive's version. 
 
 ### Change launch screen 
 There is a launch screen on iOS and to replace it you have to modify `ios-app/src/Resources/LaunchScreen.storyboard` file. For example, let's just change a text like on screenshot: 
