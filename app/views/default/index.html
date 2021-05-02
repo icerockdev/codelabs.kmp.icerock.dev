@@ -115,28 +115,27 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <header id="banner" {% if view.id != 'default' -%}down{%- else %}down$="[[_toBoolean(selectedFilter)]]"{%- endif %}>
       <div class="site-width">
         {% if view.id == 'default' %}
-        <h2 class="banner-title">Welcome to Codelabs!</h2>
-        <div class="banner-description"
-             data-filter-selected$="{% raw %}[[_toBoolean(selectedFilter)]]{% endraw %}">
-          <p class="banner-info">
-            Codelabs provide a guided, tutorial, hands-on
-            coding experience. Most codelabs will step you through the process
-            of building a small application, or adding a new feature to an
-            existing application.
-            <br>
-            <a href="https://github.com/googlecodelabs/tools">Codelab tools on GitHub</a>
-          </p>
-        {%- else -%}
-          <div class="banner-description">
-            <img id="logo" src="{{view.logoUrl}}" alt="Event logo">
-            <div class="banner-meta">
-              <h3>{{view.title}}</h3>
-              {% if view.description -%}
-                <p>{{view.description}}</p>
-              {%- endif %}
-            </div>
-        {%- endif %}
+          <h2 class="banner-title">Welcome to Codelabs!</h2>
+          <div class="banner-description"
+               data-filter-selected$="{% raw %}[[_toBoolean(selectedFilter)]]{% endraw %}">
+            <p class="banner-info">
+              Codelabs provide a guided, tutorial, hands-on
+              coding experience. Most codelabs will step you through the process
+              of building a small application, or adding a new feature to an
+              existing application.
+              <br>
+              <a href="https://github.com/googlecodelabs/tools">Codelab tools on GitHub</a>
+            </p>
           </div>
+        {%- else -%}
+          <h2>{{view.title}}</h2>
+          <div class="banner-description"
+               data-filter-selected$="{% raw %}[[_toBoolean(selectedFilter)]]{% endraw %}">
+            {% if view.description -%}
+            <p class="banner-info">{{view.description}}</p>
+            {%- endif %}
+          </div>
+        {%- endif %}
       </div>
     </header>
 
@@ -150,51 +149,53 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           </paper-tabs>
         </div>
 
-        {% if view.id == 'default' %}
-        <paper-dropdown-menu
-          label="Choose an event"
-          class="dropdown-filter"
-          no-label-float
-          noink no-animations
-        >
-          <paper-listbox
-            id="eventList"
-            slot="dropdown-content"
-            class="dropdown-content"
+        <div id="filters-controls">
+          {% if view.id == 'default' && views|length > 1 %}
+          <paper-dropdown-menu
+            label="Language"
+            class="dropdown-filter"
+            no-label-float
+            noink no-animations
           >
-            {%- for view in views -%}
-              {%- if view.id != 'default' && !view.hidden -%}
-                <a href="/{{view.url}}/" tabindex="-1">
-                  <paper-item>{{view.title}}</paper-item>
-                </a>
-              {%- endif -%}
-            {%- endfor %}
-          </paper-listbox>
-        </paper-dropdown-menu>
-        {% endif %}
-
-        {%- if showcats -%}
-        <paper-dropdown-menu
-          label="Filter by category"
-          class="dropdown-filter"
-          no-label-float
-          noink no-animations
-        >
-          <paper-listbox
-            id="categorylist"
-            slot="dropdown-content"
-            class="dropdown-content"
-            on-iron-activate="onCategoryActivate"
-            attr-for-selected="filter"
-          >
-              {% for category in categories -%}
-                {%- if categoryHasShowableCodelabs(category, codelabs) -%}
-                  <paper-item filter="{{category}}">{{category}}</paper-item>
+            <paper-listbox
+              id="eventList"
+              slot="dropdown-content"
+              class="dropdown-content"
+            >
+              {%- for view in views -%}
+                {%- if view.id != 'default' && !view.hidden -%}
+                  <a href="/{{view.url}}/" tabindex="-1">
+                    <paper-item>{{view.title}}</paper-item>
+                  </a>
                 {%- endif -%}
               {%- endfor %}
-          </paper-listbox>
-        </paper-dropdown-menu>
-        {%- endif -%}
+            </paper-listbox>
+          </paper-dropdown-menu>
+          {% endif %}
+
+          {%- if showcats -%}
+          <paper-dropdown-menu
+            label="Filter by category"
+            class="dropdown-filter"
+            no-label-float
+            noink no-animations
+          >
+            <paper-listbox
+              id="categorylist"
+              slot="dropdown-content"
+              class="dropdown-content"
+              on-iron-activate="onCategoryActivate"
+              attr-for-selected="filter"
+            >
+                {% for category in categories -%}
+                  {%- if categoryHasShowableCodelabs(category, codelabs) -%}
+                    <paper-item filter="{{category}}">{{category}}</paper-item>
+                  {%- endif -%}
+                {%- endfor %}
+            </paper-listbox>
+          </paper-dropdown-menu>
+          {%- endif -%}
+        </div>
       </div>
 
       <card-sorter id="cards" class="site-width">

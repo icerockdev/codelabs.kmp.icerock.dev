@@ -22,6 +22,7 @@ $ npm install
 like `gulp`, you may want to add `./node_modules/.bin/` to your `$PATH` for convenience:
 
 ```text
+$ export PATH="~/go/bin/:$PATH"
 $ export PATH="./node_modules/.bin/:$PATH"
 ```
 
@@ -30,6 +31,12 @@ This does pose a mild security risk, so please do so at your own risk.
 
 ## Development
 
+### Build
+
+```shell
+./build.sh
+```
+
 ### Serve
 
 To serve the site in dev mode, run `gulp serve`, passing a path to a directory
@@ -37,7 +44,7 @@ with the codelabs content as an argument. This will compile all the views and
 codelabs into the `build/` directory and start a web server to serve that
 content.
 
-```text
+```shell
 $ gulp serve
 ```
 

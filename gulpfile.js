@@ -62,6 +62,8 @@ const BASE_URL = 'https://codelabs.kmp.icerock.dev';
 // flag.
 const CODELABS_DIR = 'codelabs';
 
+const FILES_DIR = 'files';
+
 // CODELABS_ENVIRONMENT is the environment for which to build codelabs.
 const CODELABS_ENVIRONMENT = args.codelabsEnv || 'web';
 
@@ -92,7 +94,7 @@ const VIEWS_FILTER = args.viewsFilter || '*';
 
 // clean:build removes the build directory
 gulp.task('clean:build', (callback) => {
-  return del('build')
+  return del(['build/*', '!build/.git'])
 });
 
 // clean:dist removes the dist directory
@@ -123,6 +125,16 @@ gulp.task('build:scss', () => {
   return gulp.src('app/**/*.scss')
     .pipe(sass(opts.sass()))
     .pipe(gulp.dest('build'));
+});
+
+gulp.task('build:files', () => {
+  return gulp.src('files/*')
+      .pipe(gulp.dest('build/files'));
+});
+
+gulp.task('build:cname', () => {
+  return gulp.src('CNAME')
+      .pipe(gulp.dest('build'));
 });
 
 // build:css builds all the css files into the dist dir
@@ -231,6 +243,8 @@ gulp.task('build:vulcanize', () => {
 gulp.task('build', gulp.series(
   'clean',
   'build:codelabs',
+  'build:cname',
+  'build:files',
   'build:css',
   'build:scss',
   'build:html',
@@ -778,8 +792,15 @@ const filterCodelabs = (view, codelabs) => {
   // Compute distinct categories.
   var categories = {};
   for (var i in codelabs) {
-    var cat = levelledCategory(codelabs[i], view.catLevel);
-    categories[cat.name] = true;
+    // var cat = levelledCategory(codelabs[i], view.catLevel);
+    // categories[cat.name] = true;
+    var cats = codelabs[i].category;
+    for (var cati in cats) {
+      var cat = cats[cati];
+      if (cat.search("lang-") === -1) {
+        categories[cat] = true;
+      }
+    }
   }
 
   // sort the codelabs.
