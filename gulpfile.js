@@ -94,7 +94,7 @@ const VIEWS_FILTER = args.viewsFilter || '*';
 
 // clean:build removes the build directory
 gulp.task('clean:build', (callback) => {
-  return del('build')
+  return del(['build/*', '!build/.git'])
 });
 
 // clean:dist removes the dist directory
