@@ -1,4 +1,3 @@
-summary: IceRock KMM onboarding #3
 id: kmm-icerock-onboarding-3-ru
 categories: lang-ru,kmm-icerock-onboarding,moko
 status: published
@@ -6,7 +5,7 @@ authors: Andrey Kovalev, Aleksey Lobynya, Aleksey Mikhailov
 tags: onboarding,kmm,ios,android,moko
 feedback link: https://github.com/icerockdev/kmp-codelabs/issues
 
-# IceRock KMM onboarding #3
+# IceRock KMM onboarding #3 - реализация фичи авторизации
 
 ## Пишем ViewModel
 
