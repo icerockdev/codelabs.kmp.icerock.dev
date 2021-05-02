@@ -22,7 +22,6 @@ jobs:
         run: npm install
       - name: Install Codelabs command line tool
         run: go get github.com/googlecodelabs/tools/claat
-      - name: Build
-        run: |
-          ./build.sh
-          ./node_modules/.bin/gulp build
+      - name: Publish
+        run: ./publish-to-github-pages.sh
+
