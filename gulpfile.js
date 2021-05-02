@@ -778,8 +778,15 @@ const filterCodelabs = (view, codelabs) => {
   // Compute distinct categories.
   var categories = {};
   for (var i in codelabs) {
-    var cat = levelledCategory(codelabs[i], view.catLevel);
-    categories[cat.name] = true;
+    // var cat = levelledCategory(codelabs[i], view.catLevel);
+    // categories[cat.name] = true;
+    var cats = codelabs[i].category;
+    for (var cati in cats) {
+      var cat = cats[cati];
+      if (cat.search("lang-") === -1) {
+        categories[cat] = true;
+      }
+    }
   }
 
   // sort the codelabs.

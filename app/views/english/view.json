@@ -1,0 +1,15 @@
+{
+  "title": "English",
+  "description": "Обучение разработки мобильных приложений Android, iOS с Kotlin Multiplatform Mobile",
+  "tags": [
+  ],
+  "categories": [
+    "lang-en"
+  ],
+  "exclude": [
+  ],
+  "logoUrl": "/images/icons/web.svg",
+  "toolbarBgColor": "#37474F",
+  "sort": "mainCategory",
+  "pins": []
+}

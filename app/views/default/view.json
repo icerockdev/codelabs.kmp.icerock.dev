@@ -1,15 +1,13 @@
 {
   "title": "Kotlin Multiplatform Codelabs",
-  "description": "Обучение разработки мобильных приложений Android, iOS с общим кодом через Kotlin Multiplatform",
-  "tags": [],
+  "description": "",
+  "tags": [
+  ],
   "categories": [
-    "multiplatform",
-    "moko"
   ],
   "exclude": [
-    "^lang-.*"
   ],
-  "logoUrl": "/images/logo.png",
+  "logoUrl": "/images/icons/web.svg",
   "toolbarBgColor": "#37474F",
   "sort": "mainCategory",
   "pins": []
