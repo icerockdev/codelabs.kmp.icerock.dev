@@ -1,7 +1,6 @@
 summary: Создание multiplatform модуля для нативных Android, iOS приложений
-id: kmp-mobile-from-zero
-categories: multiplatform
-environments: kotlin-mobile-mpp
+id: kmp-mobile-from-zero-ru
+categories: lang-ru,basics
 status: published
 Feedback Link: https://github.com/icerockdev/kmp-codelabs/issues
 Analytics Account: UA-81805223-5

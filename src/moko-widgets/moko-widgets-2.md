@@ -1,7 +1,6 @@
 summary: MOKO Widgets #2 - роутинг
-id: moko-widgets-2
-categories: moko
-environments: kotlin-mobile-mpp
+id: moko-widgets-2-ru
+categories: lang-ru,moko,moko-widgets
 status: published
 Feedback Link: https://github.com/icerockdev/kmp-codelabs/issues
 Analytics Account: UA-81805223-5

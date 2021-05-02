@@ -1,7 +1,6 @@
 summary: Создание приложения на базе moko-template
-id: giphy-app-1
-categories: multiplatform
-environments: moko-template
+id: giphy-app-1-ru
+categories: lang-ru, moko, moko-template
 status: published
 Feedback Link: https://github.com/icerockdev/kmp-codelabs/issues
 Analytics Account: UA-81805223-5
@@ -101,7 +100,7 @@ iOS - в Xcode в настройках проекта указать `Display na
 Для замены на iOS требуется заменить директорию `ios-app/src/Assets.xcassets/AppIcon.appiconset` на версию из архива.
 
 ### Изменение загрузочного экрана
-Загрузочный экран есть на iOS и меняется он через Xcode в файле `ios-app/src/Resources/LaunchScreen.storyboard`. Для примера просто заменим текст, как на скриншоте:
+Загрузочный экран есть на iOS и меняется он через Xcode в файле `ios-app/src/ReLaunchScreen.storyboard`. Для примера просто заменим текст, как на скриншоте:
 ![change launch screen](assets/giphy-1-3.png)
 
 ## Дальнейшие шаги

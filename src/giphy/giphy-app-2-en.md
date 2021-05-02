@@ -1,7 +1,6 @@
 summary: Gif list development 
-id: giphy-app-2
-categories: multiplatform
-environments: moko-template
+id: giphy-app-2-en
+categories: lang-en,moko,moko-template
 status: published
 Feedback Link: https://github.com/icerockdev/kmp-codelabs/issues
 Analytics Account: UA-81805223-5
@@ -26,10 +25,10 @@ Positive
 
 ### Replace OpenAPI spec
 
-Replace file `mpp-library/domain/src/openapi.yml` by the content from [OpenAPI spec of GIPHY service](/files/giphy-openapi.yml). After it please do `Gradle Sync` and as the result you will see some errors in the `newsapi` code. Let's update code by new API. 
+Replace file `mpp-library/domain/src/openapi.yml` by the content from [OpenAPI spec of GIPHY service](/giphy/files/giphy-openapi.yml). After it please do `Gradle Sync` and as the result you will see some errors in the `newsapi` code. Let's update code by new API. 
 
 Positive
-: You can find generated files here `mpp-library/domain/build/generate-resources/main/src/main/kotlin`
+: You can find generated files here `mpp-library/domain/build/generate-remain/src/main/kotlin`
 
 ### Replace news by gifs in domain module
 You have to update the following classes after replacing OpenAPI spec in `domain` module:
