@@ -23,5 +23,7 @@ jobs:
       - name: Install Codelabs command line tool
         run: go get github.com/googlecodelabs/tools/claat
       - name: Publish
-        run: ./publish-to-github-pages.sh ${{ secrets.GITHUB_TOKEN }}
+        run: ./publish-to-github-pages.sh
+        env:
+          INPUT_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
