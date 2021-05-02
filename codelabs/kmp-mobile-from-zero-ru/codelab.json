@@ -1,0 +1,24 @@
+{
+  "environment": "web",
+  "format": "html",
+  "prefix": "https://storage.googleapis.com",
+  "mainga": "UA-49880327-14",
+  "updated": "2021-05-02T11:15:12Z",
+  "id": "kmp-mobile-from-zero-ru",
+  "duration": 50,
+  "title": "Добавление к существующим Android, iOS проектам общей библиотеки",
+  "summary": "Создание multiplatform модуля для нативных Android, iOS приложений",
+  "source": "./src/basics/lesson1.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "lang-ru",
+    "basics"
+  ],
+  "tags": [],
+  "feedback": "https://github.com/icerockdev/kmp-codelabs/issues",
+  "ga": "UA-81805223-5",
+  "url": "kmp-mobile-from-zero-ru"
+}

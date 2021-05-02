@@ -1,0 +1,31 @@
+{
+  "environment": "web",
+  "format": "html",
+  "prefix": "https://storage.googleapis.com",
+  "mainga": "UA-49880327-14",
+  "updated": "2021-05-02T11:15:12Z",
+  "id": "kmm-icerock-onboarding-1-ru",
+  "duration": 95,
+  "title": "IceRock KMM onboarding #1",
+  "authors": "Andrey Kovalev, Aleksey Lobynya, Aleksey Mikhailov",
+  "summary": "Погружение в KMM в IceRock #1",
+  "source": "./src/kmm-icerock-onboarding/kmm-icerock-onboarding-1.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "lang-ru",
+    "kmm-icerock-onboarding",
+    "moko"
+  ],
+  "tags": [
+    "android",
+    "ios",
+    "kmm",
+    "moko",
+    "onboarding"
+  ],
+  "feedback": "https://github.com/icerockdev/kmp-codelabs/issues",
+  "url": "kmm-icerock-onboarding-1-ru"
+}
