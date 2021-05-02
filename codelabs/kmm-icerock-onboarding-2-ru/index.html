@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
   <meta name="theme-color" content="#4F7DC9">
   <meta charset="UTF-8">
-  <title>MOKO Onboarding #2 - ViewModel</title>
+  <title>IceRock KMM onboarding #2 - знакомство с устройством проекта</title>
   <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
   <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
   <link rel="stylesheet" href="https://storage.googleapis.com/codelab-elements/codelab-elements.css">
@@ -23,213 +23,199 @@
   <google-codelab-analytics gaid="UA-49880327-14"></google-codelab-analytics>
   <google-codelab codelab-gaid=""
                   id="kmm-icerock-onboarding-2-ru"
-                  title="MOKO Onboarding #2 - ViewModel"
+                  title="IceRock KMM onboarding #2 - знакомство с устройством проекта"
                   environment="web"
-                  feedback-link="https://github.com/icerockdev/kmp-codelabs/issues">
+                  feedback-link="">
     
-      <google-codelab-step label="Пишем ViewModel" duration="5">
-        <p>Теперь перейдем к написанию общей логики нашей фичи. Предположим нам нужно написать типичную фичу авторизации. Экран в таком случае у нас будет не сложный: два поля ввода, для логина и пароля, и кнопка логина. Также нам понадобится лоадер, который мы будем показывать при отправлении запроса на сервер и сообщение об ошибке, на случай если что-то пойдет не так.</p>
-<h2 is-upgraded>Расположение ViewModel</h2>
-<p>Так как ViewModel реализует общую логику приложения, она находится в общем коде приложения. Для каждой фичи в mpp-library создается отдельный модуль, значит наша ViewModel авторизации будет находится в своем отдельном модуле feature/auth</p>
-<p>В новом проекте уже можно увидеть заготовку для нашей ViewModel авторизации</p>
-<pre><code language="language-kotlin" class="language-kotlin">class AuthViewModel(
-        override val eventsDispatcher: EventsDispatcher&lt;EventsListener&gt;,
-) : ViewModel(), EventsDispatcherOwner&lt;AuthViewModel.EventsListener&gt; {
+      <google-codelab-step label="Построение навигации в iOS приложении" duration="20">
+        <p>Прежде чем идти дальше немного остановимся на том, как построена навигация в iOS приложение и какие подходы при работе с ней мы используем.</p>
+<p>В основе навигации лежат координаторы. Каждый координатор покрывает логически связанный блок функционала, который чаще всего состоит из нескольких экранов. При этом между собой они независимы и отвечают только за цепочку переходов только внутри себя. Также имеют возможность получать настройку действия, которое должно быть выполнено после завершения блока ответственности координатора.</p>
+<p>Например.</p>
+<p>Предположим, что у нас есть приложение, в котором имеется авторизация, просмотр списка новостей, с возможностью перехода к детальному виду каждой новости, а со списка новостей можно попасть в раздел настроек для конфигурации отображения новостей. Это разобьётся на 4 координатора:</p>
+<ol type="1">
+<li>AppCoordinator  <ol type="1">
+<li>Стартовый координатор. Всегда является первой входной точкой, определяет, куда должен выполниться дальнейший переход при запуске приложения</li>
+<li>Если юзер не авторизован - запустит координатор авторизации и в качестве completionHandler-а укажет ему переход на новости в случае успешной авторизации</li>
+<li>Если юзер уже авторизован - запустит координатор просмотра новостей</li>
+</ol>
+</li>
+<li>AuthCoordinator  <ol type="1">
+<li>Запустит процесс авторизации</li>
+<li>Будет совершать переходы по всем требуемым шагам - например ввод логина/пароля, смс-кода, установки никнейма и т.п.</li>
+<li>По итогу успешной авторизации вызовет переданный ему на вход completionHandler.</li>
+</ol>
+</li>
+<li>NewsCoordinator  <ol type="1">
+<li>Отвечает за показ списка новостей</li>
+<li>Реализовывает переход в детали конкретной новости внутри этого же координатора</li>
+<li>При переходе в настройки создаёт координатор настроек, с качестве completionHandler-а может передать ему логику обновления своего списка новостей. Если в настройках изменились параметры  <ul>
+<li>обновляет список</li>
+</ul>
+</li>
+</ol>
+</li>
+<li>SettingsCoordinator  <ol type="1">
+<li>Отвечает за работу с экраном настроек</li>
+<li>При завершении работы и применении настроек вызывает completion, чтобы новости обновились</li>
+</ol>
+</li>
+</ol>
+<p>Именно координаторы реализуют интерфейс EventListener-ов вьюмоделей, о которых будет чуть ниже. Так как вызов переходов завязан на бизнес-логику приложения, то инициатором этих переходов являются именно вьюмодели. Поэтому координаторы выполняют связующую роль между тем, что происходит в логике приложений и тем, как это должно отражаться пользователю.</p>
+<p>Чтобы работать с координаторами было проще, используется базовый класс, от которого наследуются остальные. Добавим его к нашему проекту.</p>
+<p>Создадим в ios-проекте папку src/Coordinators и в ней файлик BaseCoordinator. Для начала докинем туда пару протоколов:</p>
+<pre><code language="language-swift" class="language-swift">protocol ChildCoordinable {
 
-    interface EventsListener
+    var childCoordinators: [Coordinator] { get set }
+
+    func addDependency(_ coordinator: Coordinator)
+
+    func removeDependency(_ coordinator: Coordinator?)
+
 }
 </code></pre>
-<p>Что такое eventsDispatcher? Это инструмент который служит для связи ViewModel и нативного экрана, если в ViewModel произошло событие, которое требует отображения на экране, либо некоторой нативной обработки мы уведомляем об этом нативную часть через eventsDispatcher. Для примера такими событиями могут быть: Показ диалога или переход на другой экран</p>
-<p>Все что нам осталось это написать саму логику авторизации :)</p>
-<h2 is-upgraded>Пишем логику для AuthViewModel</h2>
-<p>Начнем с полей ввода: нам нужно две мутабельные лайвдаты для ввода логина и пароля</p>
-<pre><code language="language-kotlin" class="language-kotlin">    val loginField: MutableLiveData&lt;String&gt; = MutableLiveData&lt;String&gt;(&#34;&#34;)
-    val passwordField: MutableLiveData&lt;String&gt; = MutableLiveData&lt;String&gt;(&#34;&#34;)
-</code></pre>
-<p>Для этих полей ввода нам также потребуется валидация, ее мы пробросим через конструктор ViewModel, так как она может переиспользоваться на разных экранах. Для отображения ошибки валидации так-же создадим две лайв даты.</p>
-<pre><code language="language-kotlin" class="language-kotlin">class AuthViewModel(
-    override val eventsDispatcher: EventsDispatcher&lt;EventsListener&gt;,
-    private val loginValidation: (String) -&gt; StringDesc?,
-    private val passwordValidation: (String) -&gt; StringDesc?
-) : ViewModel(), EventsDispatcherOwner&lt;AuthViewModel.EventsListener&gt; {
+<p>ChildCoordinable - необходим для корректной работы с зависимостями от дочерних координаторов. Необходимо не забывать добавлять зависимости на новый координаторы, очищать зависимость на конкретный координатор и запоминать список тех координаторов, которые являются дочерними к текущему.</p>
+<pre><code language="language-swift" class="language-swift">protocol Coordinator: class {
 
-    val loginField: MutableLiveData&lt;String&gt; = MutableLiveData&lt;String&gt;(&#34;&#34;)
-    val passwordField: MutableLiveData&lt;String&gt; = MutableLiveData&lt;String&gt;(&#34;&#34;)
+    var completionHandler: (() -&gt; Void)? { get set }
 
-    val loginValidationError: LiveData&lt;StringDesc?&gt; = loginField.map { login -&gt;
-        loginValidation(login)
-    }
-    val passwordValidationError: LiveData&lt;StringDesc?&gt; = passwordField.map { password -&gt;
-        passwordValidation(password)
-    }
     
-    interface EventsListener
+
+    func start()
+
 }
 </code></pre>
-<p>Для удобства имеет смысл выделять все валидаторы в отдельный класс Validation</p>
-<pre><code language="language-kotlin" class="language-kotlin">class AuthViewModel(
-    override val eventsDispatcher: EventsDispatcher&lt;EventsListener&gt;,
-    private val validation: Validation
-) : ViewModel(), EventsDispatcherOwner&lt;AuthViewModel.EventsListener&gt; {
-    
-    ...
-    
-    val loginValidationError: LiveData&lt;StringDesc?&gt; = loginField.map { login -&gt;
-        validation.validateLogin(login)
-    }
-    val passwordValidationError: LiveData&lt;StringDesc?&gt; = passwordField.map { password -&gt;
-        validation.validatePassword(password)
-    }
-</code></pre>
-<p>После того как пользователдь ввел свои логин и пароль, нам потребуется обработать нажатие кнопки логина. Для этого напишем функцию onLoginTap. При нажатии кнопки логина, мы должны отправить на сервер запрос с необходимыми данными.</p>
-<p>Но в перую очередь нам нужно показать пользователю прогресс бар чтобы он не заскучал в ожидании ответа. Добавим приватную MutableLiveData для флага показа лоадера, и публичную LiveData которую сможет получить натив.</p>
-<p>При нажатии кнопки запустим короутину и установим флаг загрузки true</p>
-<pre><code language="language-kotlin" class="language-kotlin">    val _isLoading = MutableLiveData&lt;Boolean&gt;(false)
-    val isLoading: LiveData&lt;Boolean&gt; = _isLoading.readOnly()
+<p>Coordinator - сам протокол координатора. По сути он должен иметь ровно две вещи - completionHandler, который вызовется при завершении его логической зоны ответственности. И функцию start. При её вызове он начинает запускать свой флоу таким образом, каким считает нужным.</p>
+<p>И далее сам класс базового координатора, который реализует оба этих протокола:</p>
+<pre><code language="language-swift" class="language-swift">class BaseCoordinator: NSObject, Coordinator, ChildCoordinable, UINavigationControllerDelegate {
 
-    fun onLoginTap() {
-        viewModelScope.launch {
-            _isLoading.value = true
+    var childCoordinators: [Coordinator] = []
+
+    var completionHandler: (() -&gt; Void)?
+
+    
+
+    let window: UIWindow
+
+    
+
+    weak var navigationController: UINavigationController?
+
+    
+
+    init(window: UIWindow) {
+
+        self.window = window
+
+    }
+
+    
+
+    func start() {
+
+        
+
+    }
+
+    
+
+    func addDependency(_ coordinator: Coordinator) {
+
+        for element in childCoordinators where element === coordinator {
+
+            return
+
         }
+
+        childCoordinators.append(coordinator)
+
     }
-</code></pre>
-<p>Далее нам требуется отправить запрос на сервер, этим занимается не сама ViewModel а связанный с эти функционалом репозиторий. Котороый нам нужно пробросить в ViewModel через параметры конструктора</p>
-<pre><code language="language-kotlin" class="language-kotlin">    private val repository: AuthRepository
-</code></pre>
-<p>Сам вызов suspend функкции репозитория нам нужно обернуть в try-catch, так как нам может вернуться Exception. Например если пользователь ввел неверный логин/пароль, у пользователя пропал интернет или если сервер просто решил отдохнуть.</p>
-<p>Для отображения произошедшей ошибки нам и пригодится eventsDispatcher. Добавим в EventsListener нашей ViewModel обработку нового события showError</p>
-<pre><code language="language-kotlin" class="language-kotlin">    interface EventsListener {
-        fun showError(error: StringDesc)
+
+    
+
+    func removeDependency(_ coordinator: Coordinator?) {
+
+        guard
+
+            childCoordinators.isEmpty == false,
+
+            let coordinator = coordinator
+
+        else { return }
+
+        
+
+        for (index, element) in childCoordinators.enumerated() where element === coordinator {
+
+            
+
+            childCoordinators.remove(at: index)
+
+            break
+
+            
+
+        }
+
     }
-</code></pre>
-<p>Также нам потребуется мапер, который сможет из полученого исключения сделать красивое сообщение об ошибке, добавим его через конструктор нашей ViewModel</p>
-<pre><code language="language-kotlin" class="language-kotlin">    private val errorMapper: (Exception) -&gt; StringDesc
-</code></pre>
-<p>Наконец обработаем ошибку и не забудем убрать прогресс бар не зависимо от того какой результат мы получили от репозитория</p>
-<pre><code language="language-kotlin" class="language-kotlin">    try {
-        repository.login(loginField.value, passwordField.value)
-    } catch (exception: Exception) {
-        eventsDispatcher.dispatchEvent { showError(errorMapper(exception)) }
-    } finally {
-        _isLoading.value = false
+
+    
+
+    func currentViewController() -&gt; UIViewController? {
+
+        return self.navigationController?.topViewController?.presentedViewController ?? self.navigationController?.topViewController ?? self.navigationController
+
     }
-</code></pre>
-<p>Все что осталось это добавить переход на следующий экран при успешном логине. Для этого добавим обработчик события перехода на main экран в EventsListener</p>
-<pre><code language="language-kotlin" class="language-kotlin">    interface EventsListener {
-        fun showError(error: StringDesc)
-        fun routeToMain()
+
+    
+
+    func popBack() {
+
+        self.navigationController?.popViewController(animated: true)
+
     }
-</code></pre>
-<p>И вызов этого события через eventsDispatcher в блоке try</p>
-<pre><code language="language-kotlin" class="language-kotlin">    try {
-        repository.login(loginField.value, passwordField.value)
-        eventsDispatcher.dispatchEvent { routeToMain() }
-    }
-</code></pre>
-<p>На этом наша AuthViewModel фактически готова к использованию. Хотя кое-что в ней еще можно улучшить</p>
-<h2 is-upgraded>Принцип связи общей и нативной частей</h2>
-<p>В наших проектах используется следующий принцип:</p>
-<ul>
-<li>Вся общая логика разбита на фичи и находится в mpp-library/feature</li>
-<li>Нативная часть андроида приложения находится в app, внутри не бьется нв модули но фичи разбиты по разным пакетам, аналогично разбиению в mpp-library</li>
-<li>Нативная часть ios приложения находится в ios-app</li>
-<li>Важную часть в связи нативного и общего кода играет SharedFactory, она расположена в mpp-library/src/commonMain и содержит в себе фабрики отдельных фичей, репозитории</li>
-<li>Реализаций фабрик фичей и репозиториев необходимых для их работы также расположены в mpp-library/src/commonMain, каждая фабрика фичи умеет создавать все необходимые ViewModel для своей фичи</li>
-</ul>
-<p>На андроид проекте мы помещаем SharedFactory в AppComponent</p>
-<pre><code language="language-kotlin" class="language-kotlin">object AppComponent {
-    lateinit var factory: SharedFactory
+
 }
 </code></pre>
-<p>и инициализируем в методе onCreate нашей Application, после этого обращаемся к ней тогда, когда нам нужно создать какую-либо ViewModel</p>
-<h2 is-upgraded>Навигация</h2>
-<h3 is-upgraded>Android</h3>
-<p>Для навигации в андроид приложении мы используем NavController.</p>
-<p>Есть одна RootActivity. А все экраны приложения представляют собой фрагменты, навигация между которыми реализована через NavController</p>
-<p>Для реализации в gradle андроид app нужно добавить</p>
-<pre><code>    implementation(Deps.Libs.Android.navigatonFragment)
-    implementation(Deps.Libs.Android.navigatonUI)
-</code></pre>
-<p>Реализуем простую RootActivity</p>
-<pre><code language="language-kotlin" class="language-kotlin">class RootActivity : AppCompatActivity() {
+<p>Для инициализации необходим только window. Также можно указать NavigationController с предыдущего координатора, для сохранения общей навигации.</p>
+<p>Добавление и удаление зависимостей нужны для корректной очистки связей и памяти при построении цепочек координаторов.</p>
+<p>Также есть вспомогательные методы, которые позволяют получить текущий контроллер - currentViewController и совершить переход назад - popBack.</p>
+<p>От проекта к проекту базовый координатор может изменяться, обеспечивая дополнительные нужды проекта.</p>
+<p>Теперь, когда у нас есть базовый координатор, создадим на его основе стартовый координатор приложения. Создаём рядом с AppDelegate файл для него, называем AppCoordinator:</p>
+<pre><code language="language-swift" class="language-swift">import Foundation
 
-    private lateinit var navController: NavController
-    private lateinit var binding: ActivityRootBinding
+import UIKit
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = ActivityRootBinding.inflate(LayoutInflater.from(this))
-        setContentView(binding.root)
-        initNavController()
+class AppCoordinator: BaseCoordinator {
+
+    // MARK:** - Overrides**
+
+    override func start() {
+
+        let vc = UIViewController()
+
+        vc.view.backgroundColor = UIColor.green
+
+        self.window.rootViewController = vc
+
     }
 
-    private fun initNavController() {
-        val host =
-                supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
-        navController = host.navController
-    }
-}
-
-</code></pre>
-<p>и простую верстку</p>
-<pre><code language="language-xml" class="language-xml">&lt;FrameLayout xmlns:android=&#34;http://schemas.android.com/apk/res/android&#34;
-    xmlns:app=&#34;http://schemas.android.com/apk/res-auto&#34;
-    android:id=&#34;@+id/root_container&#34;
-    android:layout_width=&#34;match_parent&#34;
-    android:layout_height=&#34;match_parent&#34;&gt;
-
-    &lt;fragment
-        android:id=&#34;@+id/nav_host_fragment&#34;
-        android:name=&#34;androidx.navigation.fragment.NavHostFragment&#34;
-        android:layout_width=&#34;match_parent&#34;
-        android:layout_height=&#34;match_parent&#34;
-        app:defaultNavHost=&#34;true&#34;
-        app:navGraph=&#34;@navigation/root_navigation&#34; /&gt;
-&lt;/FrameLayout&gt;
-</code></pre>
-<p>Далее для переходов между фрагментами будем использовать сгенерированый класс Directions и navController фрагмента. Например</p>
-<pre><code language="language-kotlin" class="language-kotlin">   val dir = AuthFragmentDirections.actionAuthToRequestResetPassword()
-   navController?.navigate(dir)
-</code></pre>
-<h2 is-upgraded>Создание нативного экрана авторизации</h2>
-<p>Пришло время написать нативную реализацию экрана.</p>
-<p>Сам экран представляет из себя фрагмент, который мы прибиндим к нашей AuthViewModel, для верстки нам понадобится два поля ввода и сообщения об шибках под ними</p>
-<p>кнопка для логина</p>
-<p>и прогресс бар на время загрузки</p>
-<p>Теперь, когда у нас есть готовая верстка перейдем к созданию самого фрагмента</p>
-<pre><code language="language-kotlin" class="language-kotlin">class AuthFragment :
-    MvvmEventsFragment&lt;FragmentAuthBinding, AuthViewModel, AuthViewModel.EventsListener&gt;(),
-    AuthViewModel.EventsListener {
-</code></pre>
-<p>класс AuthFragment наследуется от MvvmEventsFragment из dev.icerock.moko:mvvm-viewbinding в дженерике мы указываем ему сгенерированный класс верстки, класс вьюмодели, и класс лстенера для eventDispatcher MvvmEventsFragment сам подпишется на eventDispatcher вьюмодели, в отличие от MvvmFragment При наследовании от MvvmEventsFragment нам нужно реализовать</p>
-<ul>
-<li>viewModelClass указать класс используемой viewModel</li>
-<li>viewBindingInflate создать экземпляр сгенерированного из верстки класса FragmentAuthBinding</li>
-<li>viewModelFactory реализовать фэктори для создания необходимой ViewModel  <pre><code language="language-kotlin" class="language-kotlin">override val viewModelClass: Class&lt;AuthViewModel&gt; = AuthViewModel::class.java
-
-
-override fun viewBindingInflate(
-    inflater: LayoutInflater,
-    container: ViewGroup?
-): FragmentAuthBinding {
-    return FragmentAuthBinding.inflate(layoutInflater, container, false)
-}
-
-
-override fun viewModelFactory(): ViewModelProvider.Factory = ViewModelFactory {
-    AppComponent.factory.authFactory.createAuthViewModel(eventsDispatcherOnMain())
 }
 </code></pre>
-Помимо этого нужно реализовать функции интерфейса AuthViewModel.EventsListener от которого мы отнаследовались, что-бы фрагмент мог реагировать на события которые будет отправлять viewModel  <h2 is-upgraded>Дружим ViewController и ViewModel</h2>
-  // Описать создание VM через фабрику, добавить базовый MVVM контроллер, допилить AuthController, сделать пустой биндинг и перейти к описанию  <h2 is-upgraded>Обработка действий пользователя и передача данных от натива к общей части</h2>
-  // Заводим филды во вьюмодели, публичный метод для обработчика кнопки с принтом в консоль, показываем, как биндиться к филдам, биндим доступность кнопки, биндим текст лейбла к лайвдате  <h2 is-upgraded>Реализация логики и передача событий и команд от общей части к нативной</h2>
-  // Дополняем EventListener для VM авторизации, в ней роут на новости и showError ПОКАЗАТЬ ЧТО СБОРКА ЛОМАЕТСЯ, объяснить, как влияют правки общие на соседнюю платформу. Замокать без репозитория на уровне VM проверку логина/пароля.  <h2 is-upgraded>Локализация и ресурсы</h2>
-  // Рассказать про моко-ресурсы, завести табличку, добавить строк, добавить интерфейс строк в VM, пробросить при реализации, изменить текста ошибок на StringDesc локализованный.  <h2 is-upgraded>Сохранение в локальное хранилище.</h2>
-  // Добавить логику запоминания токена в локальном хранилище. Показать, как с сеттингсами работать.  <h2 is-upgraded>Построение экранов</h2>
-  // Раздел для описания разных подходов к вёрстке экранов  <h3 is-upgraded>Нативная вёрстка</h3>
-  // Сослаться на авторизацию, объяснить про вёрстку на чистом нативе с биндингами  <h2 is-upgraded>Обработка ошибок</h2>
-  // моко-еррорс</li>
-</ul>
+<p>Пусть он пока будет совсем простой, создающий контроллер зелёного цвета и делает его главным экраном window.</p>
+<p>Теперь нам надо познакомить AddDelegate с его координатором. Идём в AppDelegate.swift</p>
+<p>Добавим ему ссылку на координатор приложения:</p>
+<p>private (set) var coordinator: AppCoordinator!</p>
+<p>А в didFinishLaunchingWithOptions после создания SharedFactory добавим создание координатора и вызов старта:</p>
+<pre><code language="language-swift" class="language-swift">self.coordinator = AppCoordinator(
+
+            window: self.window!
+
+        )
+
+self.coordinator.start()
+</code></pre>
+<p>Готово. Собираем, запускаем и видим наш зелёный контроллер:</p>
+<p>Теперь дальнейшая логика переходов зависит от текущего контроллера и действий юзера на нём. Но зелёным прямоугольником мир не спасёшь и юзера не авторизуешь. Поэтому пора переходить к созданию нашей первой фичи.</p>
 
 
       </google-codelab-step>

@@ -40,8 +40,8 @@
 <aside class="special"><p>Фича списка уже присутствует в шаблоне, поэтому логику не придется реализовывать. Для большего понимания как устроена фича следует ознакомиться с <a href="https://github.com/icerockdev/moko-template#list-module-scheme" target="_blank">схемой модуля</a> и посмотреть код в <code>mpp-library:feature:list</code>.</p>
 </aside>
 <h2 is-upgraded>Замена OpenAPI спецификации</h2>
-<p>Заменим содержимое файла <code>mpp-library/domain/src/openapi.yml</code> содержимым из <a href="/giphy/files/giphy-openapi.yml" target="_blank">OpenAPI спецификации сервиса GIPHY</a>. После этого можно вызвать <code>Gradle Sync</code> и по завершению мы увидим что появились ошибки в коде, который работал с <code>newsapi</code>. Нужно обновить этот код под новую API.</p>
-<aside class="special"><p>Сгенерированные файлы находятся по пути <code>mpp-library/domain/build/generate-remain/src/main/kotlin</code></p>
+<p>Заменим содержимое файла <code>mpp-library/domain/src/openapi.yml</code> содержимым из <a href="/files/giphy-openapi.yml" target="_blank">OpenAPI спецификации сервиса GIPHY</a>. После этого можно вызвать <code>Gradle Sync</code> и по завершению мы увидим что появились ошибки в коде, который работал с <code>newsapi</code>. Нужно обновить этот код под новую API.</p>
+<aside class="special"><p>Сгенерированные файлы находятся по пути <code>mpp-library/domain/build/generate-resources/main/src/main/kotlin</code></p>
 </aside>
 <h2 is-upgraded>Замена новостей на гифки в domain модуле</h2>
 <p>После замены OpenAPI спецификации в <code>domain</code> модуле требуется обновить следующие классы:</p>
