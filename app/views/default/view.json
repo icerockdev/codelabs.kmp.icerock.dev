@@ -1,21 +1,13 @@
 {
   "title": "Kotlin Multiplatform Codelabs",
-  "description": "Обучение разработки мобильных приложений Android, iOS с Kotlin Multiplatform Mobile",
+  "description": "",
   "tags": [
   ],
   "categories": [
-    "russian",
-    "english",
-    "kmm-icerock-onboarding",
-    "moko",
-    "moko-template",
-    "moko-widgets",
-    "basics"
   ],
   "exclude": [
-    "^lang-.*"
   ],
-  "logoUrl": "/images/logo.png",
+  "logoUrl": "/images/icons/web.svg",
   "toolbarBgColor": "#37474F",
   "sort": "mainCategory",
   "pins": []
