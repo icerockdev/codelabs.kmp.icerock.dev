@@ -98,7 +98,7 @@ iOS - в Xcode в настройках проекта указать `Display na
     </application>
 </manifest>
 ```
-Для замены на iOS требуется заменить директорию `ios-app/assets.xcassets/AppIcon.appiconset` на версию из архива.
+Для замены на iOS требуется заменить директорию `ios-app/src/Assets.xcassets/AppIcon.appiconset` на версию из архива.
 
 ### Изменение загрузочного экрана
 Загрузочный экран есть на iOS и меняется он через Xcode в файле `ios-app/src/Resources/LaunchScreen.storyboard`. Для примера просто заменим текст, как на скриншоте:
