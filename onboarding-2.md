@@ -149,22 +149,125 @@ class AuthViewModel(
 
 На этом наша AuthViewModel фактически готова к использованию. Хотя кое-что в ней еще можно улучшить
 
+### Принцип связи общей и нативной частей
+
+В наших проектах используется следующий принцип:
+- Вся общая логика разбита на фичи и находится в mpp-library/feature
+- Нативная часть андроида приложения находится в app, внутри не бьется нв модули но фичи разбиты по разным пакетам, аналогично разбиению в mpp-library
+- Нативная часть ios приложения находится в ios-app
+- Важную часть в связи нативного и общего кода играет SharedFactory, 
+  она расположена в mpp-library/src/commonMain и содержит в себе фабрики отдельных фичей, репозитории
+- Реализаций фабрик фичей и репозиториев необходимых для их работы также расположены в mpp-library/src/commonMain,
+каждая фабрика фичи умеет создавать все необходимые ViewModel для своей фичи
+  
+На андроид проекте мы помещаем SharedFactory в AppComponent
+```kotlin
+object AppComponent {
+    lateinit var factory: SharedFactory
+}
+```
+и инициализируем в методе onCreate нашей Application, после этого обращаемся к ней тогда, когда нам нужно создать какую-либо ViewModel 
+
+### Навигация
+#### Android
+
+Для навигации в андроид приложении мы используем NavController.
+
+Есть одна RootActivity. А все экраны приложения представляют собой фрагменты, навигация между которыми реализована через NavController
+
+Для реализации в gradle андроид app нужно добавить
+```
+    implementation(Deps.Libs.Android.navigatonFragment)
+    implementation(Deps.Libs.Android.navigatonUI)
+```
+Реализуем простую RootActivity
+```kotlin
+class RootActivity : AppCompatActivity() {
+
+    private lateinit var navController: NavController
+    private lateinit var binding: ActivityRootBinding
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        binding = ActivityRootBinding.inflate(LayoutInflater.from(this))
+        setContentView(binding.root)
+        initNavController()
+    }
+
+    private fun initNavController() {
+        val host =
+                supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+        navController = host.navController
+    }
+}
+
+```
+и простую верстку 
+```xml
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/root_container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <fragment
+        android:id="@+id/nav_host_fragment"
+        android:name="androidx.navigation.fragment.NavHostFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:defaultNavHost="true"
+        app:navGraph="@navigation/root_navigation" />
+</FrameLayout>
+```
+Далее для переходов между фрагментами будем использовать сгенерированый класс Directions и navController фрагмента. Например
+```kotlin
+   val dir = AuthFragmentDirections.actionAuthToRequestResetPassword()
+   navController?.navigate(dir)
+```
+
+### Создание нативного экрана авторизации
+Пришло время написать нативную реализацию экрана.
+
+Сам экран представляет из себя фрагмент, который мы прибиндим к нашей AuthViewModel, для верстки нам понадобится два поля ввода и сообщения об шибках под ними
+
+кнопка для логина
+
+и прогресс бар на время загрузки
+
+Теперь, когда у нас есть готовая верстка перейдем к созданию самого фрагмента
+```kotlin
+class AuthFragment :
+    MvvmEventsFragment<FragmentAuthBinding, AuthViewModel, AuthViewModel.EventsListener>(),
+    AuthViewModel.EventsListener {
+```
+класс AuthFragment наследуется от MvvmEventsFragment из dev.icerock.moko:mvvm-viewbinding в дженерике мы указываем ему сгенерированный класс верстки, класс вьюмодели, и класс лстенера для eventDispatcher
+MvvmEventsFragment сам подпишется на eventDispatcher вьюмодели, в отличие от MvvmFragment
+При наследовании от MvvmEventsFragment нам нужно реализовать 
+- viewModelClass указать класс используемой viewModel
+- viewBindingInflate создать экземпляр сгенерированного из верстки класса FragmentAuthBinding
+- viewModelFactory реализовать фэктори для создания необходимой ViewModel
+```kotlin
+    override val viewModelClass: Class<AuthViewModel> = AuthViewModel::class.java
+
+    override fun viewBindingInflate(
+        inflater: LayoutInflater,
+        container: ViewGroup?
+    ): FragmentAuthBinding {
+        return FragmentAuthBinding.inflate(layoutInflater, container, false)
+    }
+
+    override fun viewModelFactory(): ViewModelProvider.Factory = ViewModelFactory {
+        AppComponent.factory.authFactory.createAuthViewModel(eventsDispatcherOnMain())
+    }
+```
+
+
 ### Дружим ViewController и ViewModel
 
 // Описать создание VM через фабрику, добавить базовый MVVM контроллер, допилить AuthController, сделать пустой биндинг и перейти к описанию
 
 
-### 
-
-
-### Принцип связи общей и нативной частей
-
-
-// Пояснить, что есть что и где находится в общих чертах, дальше перейти к деталям
-
-
-### 
-
+###
 
 ### Обработка действий пользователя и передача данных от натива к общей части
 
