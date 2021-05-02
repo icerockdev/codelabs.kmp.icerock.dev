@@ -62,6 +62,8 @@ const BASE_URL = 'https://codelabs.kmp.icerock.dev';
 // flag.
 const CODELABS_DIR = 'codelabs';
 
+const FILES_DIR = 'files';
+
 // CODELABS_ENVIRONMENT is the environment for which to build codelabs.
 const CODELABS_ENVIRONMENT = args.codelabsEnv || 'web';
 
@@ -123,6 +125,16 @@ gulp.task('build:scss', () => {
   return gulp.src('app/**/*.scss')
     .pipe(sass(opts.sass()))
     .pipe(gulp.dest('build'));
+});
+
+gulp.task('build:files', () => {
+  return gulp.src('files')
+      .pipe(gulp.dest('build'));
+});
+
+gulp.task('build:cname', () => {
+  return gulp.src('CNAME')
+      .pipe(gulp.dest('build'));
 });
 
 // build:css builds all the css files into the dist dir
@@ -231,6 +243,8 @@ gulp.task('build:vulcanize', () => {
 gulp.task('build', gulp.series(
   'clean',
   'build:codelabs',
+  'build:cname',
+  'build:files',
   'build:css',
   'build:scss',
   'build:html',
