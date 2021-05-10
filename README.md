@@ -15,15 +15,15 @@ The project requires the following major dependencies:
 With Node installed, run `npm install` in the root of the `site` (this folder):
 
 ```text
-$ npm install
+npm install
 ```
 
 (Optional) npm installs binstubs at `./node_modules/.bin/`. When running tasks
 like `gulp`, you may want to add `./node_modules/.bin/` to your `$PATH` for convenience:
 
 ```text
-$ export PATH="~/go/bin/:$PATH"
-$ export PATH="./node_modules/.bin/:$PATH"
+export PATH="~/go/bin/:$PATH"
+export PATH="./node_modules/.bin/:$PATH"
 ```
 
 This does pose a mild security risk, so please do so at your own risk.
@@ -45,7 +45,7 @@ codelabs into the `build/` directory and start a web server to serve that
 content.
 
 ```shell
-$ gulp serve
+gulp serve
 ```
 
 The output will include the address where the server is running
