@@ -3,13 +3,13 @@
   "format": "html",
   "prefix": "https://storage.googleapis.com",
   "mainga": "UA-49880327-14",
-  "updated": "2021-05-10T06:45:22Z",
+  "updated": "2021-05-10T16:50:40Z",
   "id": "kmm-icerock-onboarding-1-ru",
-  "duration": 32,
+  "duration": 90,
   "title": "IceRock KMM onboarding #1 - разворачивание проекта",
   "authors": "Andrey Kovalev, Aleksey Lobynya, Aleksey Mikhailov",
   "summary": "",
-  "source": "./src/kmm-icerock-onboarding/kmm-icerock-onboarding-1.md",
+  "source": "./src/kmm-icerock-onboarding/lesson-1/kmm-icerock-onboarding-1.md",
   "theme": "",
   "status": [
     "published"
