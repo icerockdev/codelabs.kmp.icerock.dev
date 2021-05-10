@@ -226,8 +226,8 @@ IDE не может завершить Gradle Sync) - в таких случая
 Он предоставляет возможность ставить брейкпоинты в Kotlin коде из Xcode:
 TODO IMAGE HERE
 
-Для установки просто
-скачайте [актуальную версию с master](https://github.com/touchlab/xcode-kotlin/archive/refs/heads/main.zip)
+Для установки просто скачайте 
+[актуальную версию с master](https://github.com/touchlab/xcode-kotlin/archive/refs/heads/main.zip)
 , разархивируйте и запустите
 
 ```bash
