@@ -13,9 +13,9 @@ git clone -b gh-pages "${remote_repo}" build
 ./node_modules/.bin/gulp build
 rm build/codelabs
 cp -R codelabs build/codelabs
-cd build
+cd build || exit 1
 git config --local user.email "action@github.com"
 git config --local user.name "GitHub Action"
 git add .
-git commit -m "Update versions" -a
+git commit -m "Deploy from $(git rev-parse --short HEAD)" -a
 git push "${remote_repo}" HEAD:gh-pages
