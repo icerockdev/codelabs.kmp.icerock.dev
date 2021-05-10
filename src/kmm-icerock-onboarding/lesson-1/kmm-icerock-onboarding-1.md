@@ -224,7 +224,7 @@ IDE не может завершить Gradle Sync) - в таких случая
 [Xcode Kotlin плагин для Xcode](https://github.com/touchlab/xcode-kotlin).
 
 Он предоставляет возможность ставить брейкпоинты в Kotlin коде из Xcode:
-TODO IMAGE HERE
+![xcode kotlin breakpoint](assets/xcode-kotlin-breakpoint.png)
 
 Для установки просто скачайте
 [актуальную версию с master](https://github.com/touchlab/xcode-kotlin/archive/refs/heads/main.zip)
@@ -413,6 +413,15 @@ iOS приложения через Xcode.
 После настроек жмем `Apply` для сохранения, выбираем конфигурацию `ios-app` и запускаем приложение.
 
 ![android studio run ios](assets/android-studio-run-ios.png)
+
+### Write-Compile-Debug cycle
+
+Цикл разработки "пишем код" -> "компилируем" -> "запускаем" требует меньше действий чем описано
+выше. После первичной установки зависимостей для проверки изменений в коде достаточно просто
+нажимать `Run` в Xcode / Android Studio - интеграция через CocoaPods автоматически произведет
+компиляцию и Kotlin модуля, поэтому изменения в коде общей библиотеки и в коде ios проекта будут
+учтены в новом билде. Запуск `pod install` может потребоваться повторно в случаях когда добавлюятся
+новые нативные CocoaPods зависимости в `Podfile`. 
 
 ## Отладка Android
 
