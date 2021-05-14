@@ -89,6 +89,9 @@
 <pre><code language="language-bash" class="language-bash">export ANDROID_SDK_ROOT=~/Library/android-sdk
 </code></pre>
 <p>После этого даже при отсутствии файла <code>local.properties</code> SDK будет успешно найдено.</p>
+<aside class="warning"><p>Начиная с Android Studio 4.2 сразу после установки необходимо отключить флаг в <code>Preferences</code> -&gt; <code>Experimental</code> -&gt; <code>Do not build Gradle task during Gradle sync</code> (с включенным флагом задачи на сборку модулей не появятся во вкладке <code>Gradle</code>)</p>
+</aside>
+<p class="image-container"><img alt="android studio 4.2 experimental flag" src="img/a3d20ed352ac1397.png"></p>
 <h2 is-upgraded>CocoaPods (iOS)</h2>
 <p>Для работы с зависимостями на iOS мы используем CocoaPods, а также Kotlin модуль подключается в Xcode проект через CocoaPods интеграцию. Поэтому требуется установить актуальную версию CocoaPods.</p>
 <p>Подробная документация о установке <a href="https://cocoapods.org/#install" target="_blank">доступна на официальном сайте</a>.</p>
