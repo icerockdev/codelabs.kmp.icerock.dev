@@ -187,6 +187,11 @@ export ANDROID_SDK_ROOT=~/Library/android-sdk
 
 После этого даже при отсутствии файла `local.properties` SDK будет успешно найдено.
 
+Negative
+: Начиная с Android Studio 4.2 сразу после установки необходимо отключить флаг в `Preferences` -> `Experimental` -> `Do not build Gradle task during Gradle sync` (с включенным флагом задачи на сборку модулей не появятся во вкладке `Gradle`)
+
+![android studio 4.2 experimental flag](assets/android-studio-gradle-experimental-flag.png)
+
 ### CocoaPods (iOS)
 
 Для работы с зависимостями на iOS мы используем CocoaPods, а также Kotlin модуль подключается в
