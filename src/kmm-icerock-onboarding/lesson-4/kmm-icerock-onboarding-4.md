@@ -93,15 +93,25 @@ include(":mpp-library:feature:listSample") //добавляем наш новы�
 
 Чтобы ссылаться на этот модуль, необходимо завести его в структуре зависимостей в файле ./buildSrc/src/main/kotlin/Deps.kt. Как и авторизацию, добавим его в список фичей:
 ```kotlin
+    object Modules {
+        object Feature {
+            val auth = MultiPlatformModule(
+                name = ":mpp-library:feature:auth",
+                exported = true
+            )
+            
+            //добавляем новым полем в класс
             val listSample = MultiPlatformModule(
                 name = ":mpp-library:feature:listSample",
                 exported = true
             )
+        }
+    }
 ```
 флаг exported указывает что при сборке этот модуль попадет в платформенный фреймворк и будет доступен со стороны iOS (//TODO: пояснить когда не надо указывать его)
 
 Теперь можно сослаться на модуль фичи из основного в ./mpp-library/build.gradle.kts:
-```kts
+```kotlin
 val mppModules = listOf(
     Deps.Modules.Feature.auth,
     Deps.Modules.Feature.listSample //Добавляем наш модуль
