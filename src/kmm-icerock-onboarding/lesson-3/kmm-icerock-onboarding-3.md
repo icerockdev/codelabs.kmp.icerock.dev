@@ -11,18 +11,28 @@ feedback link: https://github.com/icerockdev/kmp-codelabs/issues
 
 Duration: 10
 
-Теперь перейдем к написанию общей логики нашей фичи. Предположим нам нужно написать типичную фичу авторизации. Экран в
-таком случае у нас будет не сложный: два поля ввода, для логина и пароля, и кнопка логина. Также нам понадобится лоадер,
-который мы будем показывать при отправлении запроса на сервер и сообщение об ошибке, на случай если что-то пойдет не
-так.
+Теперь перейдем к написанию нашей первой фичи. Начинать мы будем с очень распространённой задачи — реализации авторизации в приложении. 
+Экран у нас будет несложный: два поля ввода — для логина и пароля, а также кнопка логина. Для отображения состояния загрузки нам понадобится лоадер,
+который мы будем показывать при отправлении запроса на сервер и сообщение об ошибке, на случай если что-то пойдет не так. Лоадер и показ диалога ошибки мы будем реализовывать стандартными нативными средствами.
 
 ### Расположение ViewModel
 
-Так как ViewModel реализует общую логику приложения, она находится в общем коде приложения. Для каждой фичи в
-mpp-library создается отдельный модуль, значит наша ViewModel авторизации будет находится в своем отдельном модуле
+Так как ViewModel реализует общую логику, которая является одинаковой для iOS и Android, то она находится в общем коде приложения. Для каждой фичи в
+mpp-library создается отдельный одноимённый модуль, значит наша ViewModel авторизации будет находиться в модуле:
+
 feature/auth
 
-В новом проекте уже можно увидеть заготовку для нашей ViewModel авторизации
+Сразу из коробки в boilerplate проекте уже можно увидеть заготовку для нашей ViewModel авторизации. Подробнее об устройстве проекта можно прочитать здесь !!! ВСТАВИТЬ ССЫЛКУ НА ИТОГОВОЕ РАСПОЛОЖЕНИЕ СТАТЬИ С УСТРОЙСТВОМ ПРОЕКТА !!!
+
+Positive
+: Чтобы быстро найти нужный файл можно воспользоваться хоткеем для поиска по файлам в Android Studio. Для этого используем либо двойное нажатие на Shift, либо сочетание Cmd + Shift + O. 
+Это полезный инструмент, т.к. довольно часто бывает необходимость быстро найти конкретный файл и быстро перейти в него.
+
+Найдём нашу ViewModel в поиске:
+
+![viewmodel search](assets/android-studio-vm-search.png)
+
+Перейдём в найденный файл и увидим там заготовку под ViewModel авторизации:
 
 ```kotlin
 class AuthViewModel(
@@ -33,36 +43,141 @@ class AuthViewModel(
 }
 ```
 
-Что такое eventsDispatcher? Это инструмент который служит для связи ViewModel и нативного экрана, если в ViewModel
-произошло событие, которое требует отображения на экране, либо некоторой нативной обработки мы уведомляем об этом
-нативную часть через eventsDispatcher. Для примера такими событиями могут быть: Показ диалога или переход на другой
-экран
+Как можем видеть - в ней практически ничего нет, кроме одного параметра в конструкторе - eventsDispatcher'а.
+
+Negative
+: Проверить, бьётся ли с кодлабой с описанием. Если там уже есть про диспатчеры, то убрать это отсюда.
+
+Что такое eventsDispatcher и для чего он нужен? Это инструмент, который служит для связи ViewModel и нативной стороны. 
+Если в ViewModel произошло событие и об этом необходимо сообщить на сторону нативного приложения (например, для отображения сообщения, вызова перехода, 
+обновления экрана, либо некоторой нативной обработки) мы уведомляем об этом нативную часть через eventsDispatcher.
+
+Набор событий которые можно вызывать со стороны общего кода определяется интерфейсом EventsListener. Чуть дальше мы как раз добавим сюда новые методы.
 
 Все что нам осталось это написать саму логику авторизации :)
 
 ## Добавляем поля ввода
 
-Duration: 5
+Duration: 15
 
 ### Используем MutableLiveData для ввода данных
 
-Начнем с полей ввода: нам нужно две мутабельные лайвдаты для ввода логина и пароля
+Начнем с полей ввода: нам нужно две мутабельные лайвдаты для ввода логина и пароля.
+
+Для начала добавим в блок импортов следующую строку:
+
+```kotlin
+import dev.icerock.moko.mvvm.livedata.MutableLiveData
+```
+
+После этого добавляем наши поля в класс вьюмодели:
 
 ```kotlin
 val loginField: MutableLiveData<String> = MutableLiveData<String>("")
 val passwordField: MutableLiveData<String> = MutableLiveData<String>("")
 ```
 
+Positive
+: Если не добавлять импорт, а сразу вставить поля, то MutableLiveData будет светиться красным, т.к. в рамках ViewModel этот класс неизвестен.
+При этом если Android Studio видит, что это за класс и нужен только импорт, то можно сделать это хоткеем — достаточно нажать на красное название
+неимпортированного класса и нажать alt + Enter. Тогда данный импорт пропишется автоматически в блоке импортов. 
+
+Эти поля должны быть публичными. Их мы будем использовать для передачи вводимых пользователем данных с нативной части в общую. Также обращаем внимание,
+что необходимо явно указать их тип - MutableLiveData<String>. Это хороший тон, который увеличивает читаемость кода и обеспечивает дополнительный контроль
+публичных типов данных.
+
+По итогу после всех этих действий ViewModel должна иметь следующий вид и никаких ошибок быть не должно:
+
+```kotlin
+package org.example.library.feature.auth.presentation
+
+import dev.icerock.moko.mvvm.dispatcher.EventsDispatcher
+import dev.icerock.moko.mvvm.dispatcher.EventsDispatcherOwner
+import dev.icerock.moko.mvvm.livedata.MutableLiveData
+import dev.icerock.moko.mvvm.viewmodel.ViewModel
+
+class AuthViewModel(
+    override val eventsDispatcher: EventsDispatcher<EventsListener>,
+) : ViewModel(), EventsDispatcherOwner<AuthViewModel.EventsListener> {
+
+    val loginField: MutableLiveData<String> = MutableLiveData<String>("")
+    val passwordField: MutableLiveData<String> = MutableLiveData<String>("")
+
+    interface EventsListener
+}
+```
+
 ### Валидация вводимых значений
 
 Для этих полей ввода нам также потребуется валидация, ее мы пробросим через конструктор ViewModel, так как она может
-переиспользоваться на разных экранах. Для отображения ошибки валидации так-же создадим две лайв даты.
+переиспользоваться на разных экранах.
+
+Валидация — это некое правило, которое принимает на вход значение (в нашем случае - String, т.к. вводим данные в строках), 
+выполняет его проверку на соответствие требованиям. По итогу либо возвращается nil, если никаких ошибок нет, либо возвращается StringDesc, который
+и содержит локализованное описание ошибки.
+
+Positive
+: Детально тут останавливаться на типе StringDesc не будем. Это специальный класс, использующийся для мультиплатформенной 
+локализации строк через MOKO-Resources. 
+Описание и readme можно посмотреть в [репозитории MOKO-Resources](https://github.com/icerockdev/moko-resources)
+
+Добавим в конструктор две лямбды, по одной на каждое поле. На вход они будут принимать строку, а возвращать опциональный StringDesc:
 
 ```kotlin
 class AuthViewModel(
         override val eventsDispatcher: EventsDispatcher<EventsListener>,
         private val loginValidation: (String) -> StringDesc?,
         private val passwordValidation: (String) -> StringDesc?
+)
+```
+
+IDE подскажет, что не хватает импорта для StringDesc - добавляем и его:
+
+```kotlin
+import dev.icerock.moko.resources.desc.StringDesc
+```
+
+Отлично, теперь наша ViewModel умеет принимать правила для валидации своих полей. Как же передавать их пользователю? Добавим публичные LiveData<StringDesc?>
+для этого. Также две, для каждого поля. Они будут завязаны на уже имеющиеся у нас мутабельные поля. На каждое изменение значения в логине или пароле
+нам необходимо вызывать соответствующую валидацию. Для этого мы используем маппинг значений от MutableLiveData:
+
+```kotlin
+    val loginValidationError: LiveData<StringDesc?> = loginField.map { login ->
+        loginValidation(login)
+    }
+    val passwordValidationError: LiveData<StringDesc?> = passwordField.map { password ->
+        passwordValidation(password)
+    }
+```
+
+Для работы маппинга и возможности использования LiveData нужно также добавить их в импорт:
+
+```kotlin
+import dev.icerock.moko.mvvm.livedata.LiveData
+import dev.icerock.moko.mvvm.livedata.map
+```
+
+Positive
+: Разница в использовании MutableLiveData и LiveData. Значения в первой можно изменять напрямую. У второй — только подписаться на изменение.
+Необходимо обращать внимание, что среди публичных лайвдат наружу не торчат те, которые нельзя изменять с нативной стороны.
+
+Получим следующее состояние ViewModel:
+
+```kotlin
+package org.example.library.feature.auth.presentation
+
+import dev.icerock.moko.mvvm.dispatcher.EventsDispatcher
+import dev.icerock.moko.mvvm.dispatcher.EventsDispatcherOwner
+import dev.icerock.moko.mvvm.livedata.MutableLiveData
+import dev.icerock.moko.mvvm.livedata.LiveData
+import dev.icerock.moko.mvvm.livedata.map
+import dev.icerock.moko.mvvm.viewmodel.ViewModel
+import dev.icerock.moko.resources.desc.StringDesc
+
+class AuthViewModel(
+    override val eventsDispatcher: EventsDispatcher<EventsListener>,
+    private val loginValidation: (String) -> StringDesc?,
+    private val passwordValidation: (String) -> StringDesc?
 ) : ViewModel(), EventsDispatcherOwner<AuthViewModel.EventsListener> {
 
     val loginField: MutableLiveData<String> = MutableLiveData<String>("")
@@ -79,23 +194,7 @@ class AuthViewModel(
 }
 ```
 
-Для удобства имеет смысл выделять все валидаторы в отдельный класс Validation
-
-```kotlin
-class AuthViewModel(
-        override val eventsDispatcher: EventsDispatcher<EventsListener>,
-        private val validation: Validation
-) : ViewModel(), EventsDispatcherOwner<AuthViewModel.EventsListener> {
-
-    ...
-
-    val loginValidationError: LiveData<StringDesc?> = loginField.map { login ->
-        validation.validateLogin(login)
-    }
-    val passwordValidationError: LiveData<StringDesc?> = passwordField.map { password ->
-        validation.validatePassword(password)
-    }
-```
+Далее переходим к коду для обработки действий пользователя.
 
 ## Логика обработки действий
 
@@ -136,7 +235,7 @@ fun onLoginTap() {
 
 ### Вызываем запрос
 
-// Тут вместо репозитория пока просто suspend функцию добавить
+// Тут вместо репозитория пока просто suspend функцию добавить. Репозиторий будет создан, описан и пропрощен ниже
 
 Далее нам требуется отправить запрос на сервер, этим занимается не сама ViewModel а связанный с эти функционалом
 репозиторий. Котороый нам нужно пробросить в ViewModel через параметры конструктора
@@ -195,12 +294,22 @@ interface EventsListener {
 
 ```kotlin
     try {
-    repository.login(loginField.value, passwordField.value)
-    eventsDispatcher.dispatchEvent { routeToMain() }
-}
+        repository.login(loginField.value, passwordField.value)
+        eventsDispatcher.dispatchEvent { routeToMain() }
+    } catch (exception: Exception) { 
+        eventsDispatcher.dispatchEvent { showError(errorMapper(exception)) }
+    }
 ```
 
 На этом наша AuthViewModel фактически готова к использованию.
+
+// Тут показываем, что есть ошибка при сборке в AuthFactory. В след. шаге идём чинить
+
+## Дорабатываем фабрику
+
+Duration: 15
+
+// Сначала просто анонимными объектами реализуем всё, что нужно сделать, для успешной сборки
 
 ## Репозиторий авторизации
 
