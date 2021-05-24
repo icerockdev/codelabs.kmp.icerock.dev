@@ -15,7 +15,7 @@ feedback link: https://github.com/icerockdev/kmp-codelabs/issues
 
 ## Добавляем в проект новую пустую фичу
 
-Duration: 25
+Duration: 30
 
 ### Создаем новый модуль в mpp-library
 
@@ -108,7 +108,7 @@ include(":mpp-library:feature:listSample") //добавляем наш новы�
         }
     }
 ```
-флаг exported указывает что при сборке этот модуль попадет в платформенный фреймворк и будет доступен со стороны iOS (//TODO: пояснить когда не надо указывать его)
+флаг exported указывает что при сборке этот модуль попадет в платформенный фреймворк и будет доступен со стороны iOS, можно не указывать для модулей код которых не будет вызываться непосредственно с нативной части приложения
 
 Теперь можно сослаться на модуль фичи из основного в ./mpp-library/build.gradle.kts:
 ```kotlin
@@ -147,11 +147,80 @@ import org.example.library.feature.listSample.di.ListSampleFactory //можем 
 
 ### Создаем новый UIViewController на iOS, связываем  его с ViewModel
 
+Выполняем нужную нам таску гредла из mpp-library/cocoapods/sync (в примере собиралась отладочная версия на симулятор):
+![gradle cocoapods task](assets/gradle-cocoapods-task.png)
+
+Открываем XCode, в проекте по пути ./ios-app/src/Features создаем директорию для нашей фичи следующей структуры:
+```
+.
+|____ListSample
+| |____Coordinator
+| | |____ListSampleCoordinator.swift
+| |____ViewController
+| | |____ListSampleViewController.xib
+| | |____ListSampleViewController.swift
+```
+Пару файлов для контроллера рекомендуется создавать через XCode в диалоге New File -> Cocoa Touch class:
+![new cocoa touch class](assets/cocoa-touch-class.png)
+
+и выбрав в диалоге наследование от UIViewController и отметку о создании связанного XIB файла:
+![new uiviewcontroller](assets/create-controller-and-xib.png)
+
+Класс контроллера должен наследоваться от BaseViewController с указанием класса вьюмодели:
+```swift
+import UIKit
+import MultiPlatformLibrary
+
+class ListSampleViewController: BaseViewController<ListSampleViewModel> {
+
+    override func bindViewModel(_ viewModel: ListSampleViewModel) {
+        super.bindViewModel(viewModel)
+        print("ListSample: ready to bind")
+    }
+}
+```
+
+*В generic-классе BaseViewController заложена вспомогательная логика по очистке вьюмодели когда, событиях клавиатуры и многого другого, может пополняться полезными функциями от проекта к проекту*
+
+В файле ListSampleCoordinator создаем контроллер, вьюмодель и показываем контроллер как корневой у текущего окна:
+```swift
+import UIKit
+import MultiPlatformLibrary
+
+class ListSampleCoordinator: BaseCoordinator, ListSampleViewModelEventsListener {
+    override func start() {
+        let viewController = ListSampleViewController()
+        let viewModel = self.factory.listSampleFactory.createListViewModel(
+            eventsDispatcher: EventsDispatcher(listener: self))
+        viewController.bindViewModel(viewModel)
+        beginInNewNavigation(viewController)
+    }
+}
+```
+
+*//TODO:  Оставить ссылку где можно подробнее посмотреть на координаторы*
+
+Теперь осталось вызывать координатор фичи с предыдущего экрана или корня приложения. Вызовем из корня, для чего заменим метод start() в AppCoordinator:
+```swift
+class AppCoordinator: BaseCoordinator {
+    override func start() {
+        addDependency(
+            ListSampleCoordinator(window: self.window, factory: self.factory),
+            completion: nil
+        ).start()
+    }
+}
+```
+
+Теперь после запуска приложения будет пустой экран и текст "ListSample: ready to bind" в консоли
+
 ### Создаем новый фрагемент/активность(?) на Android, связываем  его с ViewModel
 
-## Дополняем в фичу простой вариант списка юнитов
+//TODO: Дополнить андроидную часть
 
-Duration: 15
+## Добавляем в фичу простой вариант списка юнитов
+
+Duration: 25
 ### Пояснение про moko-units
 
 ### Добавляем базовый функционал в common-коде
