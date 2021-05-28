@@ -43,7 +43,7 @@ Duration: 30
 Здесь:
 - вложенные директории org/example/library/feature/listSimple должны соответствовать имени пакета ([//TODO: ссылка на "почему так?"]())
 - в директории di будет распологаться весь код внешнего создания вьюмодели доступный внешним модулям, сейчас это фабрика вьюмодели
-- в директории presentation будет именно ViewModel-логика, то есть сами классы вьюмоделей и возможно что-нибудь вспомогательное для них, доступное только в рамках модуля фичи
+- в директории presentation будет именно **ViewModel**-логика, то есть сами классы вьюмоделей и возможно что-нибудь вспомогательное для них, доступное только в рамках модуля фичи
 
 Cтартовое состояние файлов такое же как в начале третьей кодлабы, только заменены имена классов и пакетов:
 
@@ -163,10 +163,10 @@ import org.example.library.feature.listSample.di.ListSampleFactory //можем 
 Пару файлов для контроллера рекомендуется создавать через XCode в диалоге New File -> Cocoa Touch class:
 ![new cocoa touch class](assets/cocoa-touch-class.png)
 
-и выбрав в диалоге наследование от UIViewController и отметку о создании связанного XIB файла:
+и выбрав в диалоге наследование от **UIViewController** и отметку о создании связанного XIB файла:
 ![new uiviewcontroller](assets/create-controller-and-xib.png)
 
-Класс контроллера должен наследоваться от BaseViewController с указанием класса вьюмодели:
+Класс контроллера должен наследоваться от **BaseViewController** с указанием класса вьюмодели:
 ```swift
 import UIKit
 import MultiPlatformLibrary
@@ -180,9 +180,9 @@ class ListSampleViewController: BaseViewController<ListSampleViewModel> {
 }
 ```
 
-*В generic-классе BaseViewController заложена вспомогательная логика по очистке вьюмодели когда, событиях клавиатуры и многого другого, может пополняться полезными функциями от проекта к проекту*
+*В generic-классе **BaseViewController** заложена вспомогательная логика по очистке вьюмодели когда, событиях клавиатуры и многого другого, может пополняться полезными функциями от проекта к проекту*
 
-В файле ListSampleCoordinator создаем контроллер, вьюмодель и показываем контроллер как корневой у текущего окна:
+В файле **ListSampleCoordinator** создаем контроллер, вьюмодель и показываем контроллер как корневой у текущего окна:
 ```swift
 import UIKit
 import MultiPlatformLibrary
@@ -200,7 +200,7 @@ class ListSampleCoordinator: BaseCoordinator, ListSampleViewModelEventsListener 
 
 *//TODO:  Оставить ссылку где можно подробнее посмотреть на координаторы*
 
-Теперь осталось вызывать координатор фичи с предыдущего экрана или корня приложения. Вызовем из корня, для чего заменим метод start() в AppCoordinator:
+Теперь осталось вызывать координатор фичи с предыдущего экрана или корня приложения. Вызовем из корня, для чего заменим метод start() в **AppCoordinator**:
 ```swift
 class AppCoordinator: BaseCoordinator {
     override func start() {
@@ -218,16 +218,162 @@ class AppCoordinator: BaseCoordinator {
 
 //TODO: Дополнить андроидную часть
 
-## Добавляем в фичу простой вариант списка юнитов
+
+
+## Добавляем в фичу простой вариант списка 
+
+Для примера реализуем список настроек состоящих из названия и переключателя вкл/выкл
 
 Duration: 25
-### Пояснение про moko-units
 
-### Добавляем базовый функционал в common-коде
+### Основная идея moko-units
 
-###  Верстаем и привязываемся к данным на стороне iOS
+С развитием KMM нужно было как-то перенести на уровень **ViewModel** управление списками, сделать его настройку простой и стандартной а реализацию переиспользуемой хотя бы между фичами одного проекта. В итоге пришли к следующей схеме:
 
-###  Верстаем и привязываемся к данным на стороне Android
+1. На стороне **ViewModel** объявляем какие элементы списка нужны будут нашей ( интерфейс \*UnittFactory, только тип элемента и данные)
+2. На стороне платформы реализуем интерфейс \*UnittFactory и предоставляем конструкторы этих элементов
+3. На стороне **ViewModel** руководствуясь бизнес логикой генерируем массив элементов списка
+4. На нативной стороне по предоставленному массиву заполянем UI
+
+### Состав moko-units
+
+Если описывать кратко, то возможности самой moko-units следующии:
+
+1. Со стороны common-кода объявлены два пустых expect-интерфейса **CollectionUnitItem** и **TableUnitItem**
+2. Со стороны iosMain/kotlin кода есть actual-объявления этих интерфейсов с  методами и параметрами необходимыми для создания ячеек коллекций и строк таблиц (`reusableIdentifier`), регистрации в таблице/коллекции (`fun register(...)`) , привязки \*UnitItem к ячейкам/строкам (`fun bind()`) и сравнения между собой (`val itemId: Long`)
+3. //TODO: Про андроид непонятно, здесь кажется без expect/actual, все платформенное
+4. Со стороны iosMain/kotlin есть реализации источников данных для таблиц/коллекции, умеющих работать с экземплярами этих интерфейсов.
+5. Со стороны iosMain/swift есть вспомогательные протоколы и расширения, позволяющие реализовать создание \*UnitItem уже для конкретного пользоввательского класса ячейки и создать источник данных для нее
+6. //TODO: Что со стороны андроида?
+
+### Верстаем iOS
+
+В ListViewController.xib добавляем **UITableView** на весь экран:
+![new uiviewcontroller](assets/add-uitableview.png)
+
+и выставляем outlet для нее в **ListViewController.swift**:
+```swift
+    @IBOutlet private weak var sampleTableView: UITableView!
+```
+
+В группе фичи создаем подгруппу **Cells** и по аналогии с контроллером добавляем в нее новый **Cocoa Touch Class** отнаследованный от **UITableViewCell**
+![new uiviewcontroller](assets/add-uitableviewcell.png)
+![new uiviewcontroller](assets/tree-uitableviewcell.png)
+
+Добавляем в xib ячейки необходимые элементы, их outlet'ы в класс и настраиваем действие на valueChanged:
+![new uiviewcontroller](assets/layout-uitableviewcell.png)
+
+```swift
+    import UIKit
+
+class SampleTableViewCell: UITableViewCell {
+
+    @IBOutlet var someLabel: UILabel!
+    @IBOutlet var someSwitch: UISwitch!
+    
+    @IBAction func onSwitchValueChanged(_ sender: UISwitch) {
+        //TODO: Implement action
+    }
+}
+```
+
+На этом верстка готова
+
+### Верстаем Android
+
+//TODO: Сделать по аналогии
+
+### Добавляем фабрику юнитов в common-коде
+
+Для начала подключаем библитеку moko-units в зависимости нашей фичи. `mpp-library/feature/lisSample/build.gradle.kts`:
+```kotlin
+  ... 
+  commonMainImplementation(Deps.Libs.MultiPlatform.mokoResources.common)
+  commonMainImplementation(Deps.Libs.MultiPlatform.mokoUnits.common)
+}
+```
+и выполняем синхронизацию gradle-проекта
+
+Далее нужно по пути listSample/src/commonMain/org.example.library.feature.listSample/di  добавить файл **ListSampleUnitFactory.kt** с интерфейсом для фабрики юнитов и перечислить в методе создания юнита все что нам потребуется для настройки строки в списке:
+```kotlin
+package org.example.library.feature.listSample.di
+
+import dev.icerock.moko.units.TableUnitItem
+
+interface ListSampleUnitFactory {
+    fun createSettingsUnit(
+        id: Int,            //нужен будет для сравнения строк списка между собой
+        name: String,       //прямо присвоится в поле
+        boolValue: Boolean, //положение переключателя
+        onValueChanged: ((Boolean) -> Unit) //лямбду которую надо вызвать при переключении
+    ): TableUnitItem
+}
+```
+
+Теперь добавляем этот интерфейс как обязательный параметр в конструкторе **ListSampleViewModel**:
+```kotlin
+class ListSampleViewModel(
+    override val eventsDispatcher: EventsDispatcher<EventsListener>,
+    private val unitFactory: ListSampleUnitFactory
+) : ViewModel(), EventsDispatcherOwner<ListSampleViewModel.EventsListener> {
+```
+и соответственно в параметры метода **ListSampleFactory.createListViewModel**:
+```kotlin
+class ListSampleFactory {
+    fun createListViewModel(
+        eventsDispatcher: EventsDispatcher<ListSampleViewModel.EventsListener>,
+        unitFactory: ListSampleUnitFactory
+    ) = ListSampleViewModel(
+        eventsDispatcher = eventsDispatcher,
+        unitFactory = unitFactory
+    )
+}
+```
+Теперь после пересборки common-части со стороны платформ нельзя будет создать объект вьюмодели не передав ему реализацию фабрики юнитов
+
+###  Реализуем фабрику юнитов на стороне iOS
+
+Прежде всего нужно будет в классе ячейки импортировать MultiplatformLibraryUnits и реализовать протокол Fillable (для ячеек удовлетворяющих этому протоколу заготовлены готовые функции создания юнитов):
+```swift
+import UIKit
+import MultiPlatformLibraryUnits
+
+class SampleTableViewCell: UITableViewCell, Fillable {
+		//Протокол требует определить тип данных для настройки ячейки
+    typealias DataType = CellModel
+
+    struct CellModel {
+        let title: String
+        let switchValue: Bool
+        let switchAction: ((Bool) -> Void)
+    }
+    
+    //Для сохранения действия локально
+    private var switchAction: ((Bool) -> Void)?
+    
+    @IBOutlet var someLabel: UILabel!
+    @IBOutlet var someSwitch: UISwitch!
+    
+    @IBAction func onSwitchValueChanged(_ sender: UISwitch) {
+        switchAction?(sender.isOn)
+    }
+    
+    //Протокол требует определить метод заполнения ячейки по типу данных
+    func fill(_ data: CellModel) {
+        self.switchAction = data.switchAction
+        self.someLabel.text = data.title
+        self.someSwitch.setOn(data.switchValue, animated: true)
+    }
+}
+```
+Теперь можно реализовать саму фабрику юнитов. 
+
+###  Реализуем фабрику юнитов на стороне Android
+
+### Добавляем список юнитов в common-code
+
+### Добавляем обновление списка
+
 
 ##  Расширяем возможности фичи, учитываем дополнительные состояния данных
 
