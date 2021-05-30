@@ -156,7 +156,7 @@ Positive
 : В случаях, когда нужно сделать пару полей, одно из которых — приватное изменяемое, а другое — его публичный неизменяемый аналог, 
 используются одинаковые имена, а перед приватным добавляется нижнее подчёркивание
 
-Готово! С этому публичному полю isLoading теперь можно прибиндиться с натива для отслеживания необходимости показать/скрыть лоадер.
+Готово! К этому публичному полю isLoading теперь можно прибиндиться с натива для отслеживания необходимости показать/скрыть лоадер.
 
 Но лоадер нужен тогда, когда есть что вызывать. Поэтому мы плавно переходим дальше.
 
@@ -235,7 +235,7 @@ protected actual val viewModelScope: CoroutineScope = createViewModelScope()
 Больше ошибки нет. Можем запустить syncMultiPlatformLibraryDebugFrameworkIosX64 и убедиться, что всё собирается успешно.
 Пора теперь перейти на нативную сторону, создать экран и проверить, что поля заполняются и методы отрабатывают.
 
-## Создание экрана авторизации в нативной части со стороны iOS
+## iOS: Создание экрана авторизации
 
 Duration: 30
 
@@ -418,130 +418,142 @@ class AppCoordinator: BaseCoordinator {
 логика? Где брать вьюмодель? Как она узнает, что юзер что-то ввёл? Как координатор поймёт, что ему нужно вызывать
 дальнейший переход, ведь контроллер, который мы создали, даже не знает о том, что какой-то там координатор существует?
 
-Чтобы понять, как это работает переходим к созданию экземпляра вьюмодели, передаче её контроллеру и дальнейшей привязке.
+Чтобы понять, как это работает переходим к созданию экземпляра вьюмодели, передаче её контроллеру для привязки.
 
-## Привязка к ViewModel
+## iOS: Привязка к ViewModel
 
-Создаём вьюмодель, наследуем контроллер от MVVM-контроллера, биндим поля, запускаем, жмакаем кнопки - работает, логи пишутся.
+### Биндинг для ViewController-а
 
-!!!!!!
+Контроллер отвечает за обработку действий пользователя — ввод данных, нажатие кнопки. Чтобы это реализовать, нам необходимо связать получившийся ViewController и ViewModel.
+Так как операция эта довольно частая, то для её упрощения был создан специальный базовый класс для ViewController-ов, которые должны работать на базе ViewModel.
+Называется он MVVMController и лежит в папке src/Common. Главной его особенностью для нас является то, что он может работать с любым типом ViewModel, передающейся
+через Generic. При этом он сохраняет свой экземпляр ViewModel и корректно очищает в нужный момент. А также у него уже есть основной метод для привязки - bindViewModel.
+Именно его мы будем переопределять для привязки конкретной нужной ViewModel.
 
-После этого переходим во вьюмодель, начинаем добавлять туда репозиторий авторизации
+Positive
+: Рядом с этим классом также лежит BaseViewController - это чуть более расширенная версия MVVMController-а, т.к. в неё добавлены заготовки под обработку клавиатуры и
+лоадеров. Конкретная реализация зависит от проекта. При использовании на проекте удобно использовать базовый контроллер, донастроить его под нужды 
+проекта и экономить на этом время разработки, добавляя, к тому же, единообразия в реализации разных экранов.
 
-## Обработка ошибки
+Перейдём к нашему контроллеру авторизации и унаследуем его от MVVM-контроллера, работающего на базе AuthViewModel.
 
-Сам вызов suspend функции репозитория нам нужно обернуть в try-catch, так как нам может вернуться Exception. Например,
-если пользователь ввел неверный логин/пароль, у пользователя пропал интернет или если сервер просто решил отдохнуть.
+Для этого добавим импорт библиотеки мультиплатформы, т.к. нам нужна AuthViewModel:
 
-Для отображения произошедшей ошибки нам и пригодится eventsDispatcher. Добавим в EventsListener нашей ViewModel
-обработку нового события showError
-
-```kotlin
-interface EventsListener {
-    fun showError(error: StringDesc)
-}
+```swift
+import MultiPlatformLibrary
 ```
 
-Также нам потребуется мапер, который сможет из полученого исключения сделать красивое сообщение об ошибке, добавим его
-через конструктор нашей ViewModel
+и заменим базовый тип с обычного UIViewController на MVVMController с AuthViewModel:
 
-```kotlin
-    private val errorMapper: (Exception) -> StringDesc
+```swift
+class AuthViewController: MVVMController<AuthViewModel>
 ```
 
-Наконец обработаем ошибку и не забудем убрать прогресс бар не зависимо от того какой результат мы получили от
-репозитория
+Отлично, теперь можно приступать к привязке ViewModel. Нам необходимо:
 
-```kotlin
-try {
-    repository.login(loginField.value, passwordField.value)
-} catch (exception: Exception) {
-    eventsDispatcher.dispatchEvent { showError(errorMapper(exception)) }
-} finally {
-    _isLoading.value = false
-}
-```
+1. Привязать текстовые поля к соответствующим полям ViewModel
+2. По нажатию на кнопку вызывать метод onLoginTap у ViewModel
 
-### Обрабатываем успешный результат
+Добавляем переопределение метода биндинга:
 
-Все что осталось это добавить переход на следующий экран при успешном логине. Для этого добавим обработчик события
-перехода на main экран в EventsListener
+```swift
+// MARK:** - MVVM
 
-```kotlin
-interface EventsListener {
-    fun showError(error: StringDesc)
-    fun routeToMain()
-}
-```
+    override func bindViewModel(_ viewModel: AuthViewModel) {
+        super.bindViewModel(viewModel) // 1. Обязательно вызываем реализацию родителя. Там происходит загрузка view и сохранение viewModel
 
-И вызов этого события через eventsDispatcher в блоке try
-
-```kotlin
-    try {
-        repository.login(loginField.value, passwordField.value)
-        eventsDispatcher.dispatchEvent { routeToMain() }
-    } catch (exception: Exception) { 
-        eventsDispatcher.dispatchEvent { showError(errorMapper(exception)) }
+        // 2. для каждой LiveData выполняем привяку строки к текстовому полю
+        viewModel.loginField.bindStringTwoWayToTextFieldText(textField: loginTextField)
+        viewModel.passwordField.bindStringTwoWayToTextFieldText(textField: passwordTextField)
     }
 ```
 
-На этом наша AuthViewModel фактически готова к использованию.
+Здесь используется двухсторонний биндинг — TwoWay. Это означает, что он будет работать в обе стороны. Если пользователь изменяет данные в полях — информация об этом
+будет прилетать во ViewModel. Также если и в рамках логики внутри ViewModel потребуется изменить значения в полях (например сбросить пароль при неудачной авторизации) 
+и данные в лайвдатах будут изменены — они также изменятся и на UI в нативе. 
 
-// Тут показываем, что есть ошибка при сборке в AuthFactory. В след. шаге идём чинить
+С кнопкой всё проще — так как MVVMController умеет хранить ссылку на ViewModel, то достаточно просто вызвать нужный метод внутри IBAction обработчика кнопки:
 
-## Дорабатываем фабрику
-
-Duration: 15
-
-// Сначала просто анонимными объектами реализуем всё, что нужно сделать, для успешной сборки
-
-## Репозиторий авторизации
-
-!!!!!!!
-
-Добавить информацию, что Domain устарел, описать почему, описать про Shared factory, описать, почему не надо делать общий модуль shared
-
-!!!!!!!
-
-
-
-### Роль репозитория
-
-// Описать, что это, где хранится, для чего нужен
-
-### Создаём интерфейс репозитория и реализацию
-
-// Показать, как создать интерфейс репозитория, где создать реализацию
-
-### Делаем мок реализации
-
-// Замокировать реализацию запроса, объяснить, почему мок нужно делать именно на уровне репозитория
-
-## Принцип связи общей и нативной частей
-
-В наших проектах используется следующий принцип:
-
-- Вся общая логика разбита на фичи и находится в mpp-library/feature
-- Нативная часть андроида приложения находится в app, внутри не бьется нв модули но фичи разбиты по разным пакетам,
-  аналогично разбиению в mpp-library
-- Нативная часть ios приложения находится в ios-app
-- Важную часть в связи нативного и общего кода играет SharedFactory, она расположена в mpp-library/src/commonMain и
-  содержит в себе фабрики отдельных фичей, репозитории
-- Реализаций фабрик фичей и репозиториев необходимых для их работы также расположены в mpp-library/src/commonMain,
-  каждая фабрика фичи умеет создавать все необходимые ViewModel для своей фичи
-
-На андроид проекте мы помещаем SharedFactory в AppComponent
-
-```kotlin
-object AppComponent {
-    lateinit var factory: SharedFactory
+```swift
+@IBAction func onLoginButtonAction(_ sender: UIButton) {
+    viewModel?.onLoginTap()
 }
 ```
 
-и инициализируем в методе onCreate нашей Application, после этого обращаемся к ней тогда, когда нам нужно создать
-какую-либо ViewModel
+Теперь осталось лишь создать экземпляр ViewModel авторизации и передать её в этот биндинг.
 
-## Создание нативной части со стороны Android
+### Создание ViewModel
+
+Как мы помним — переходами у нас управляют координаторы. Они же знают про SharedFactory, которая умеет создавать вьюмодели. Воспользуемся этими знаниями и создадим AuthViewModel
+при переходе на экран авторизации.
+
+Возвращаемся в AuthCoordinator.
+
+Сперва добавим импорт MultiplatformLibrary:
+
+```swift
+import MultiPlatformLibrary
+```
+
+А затем перейдём к созданию AuthViewModel. Сам координатор знает про общую фабрику - SharedFactory. Внутри неё содержатся отдельные фабрики разных фичей, чтобы зависимости
+у фичей были разделены, и фабрика конкретной фичи знала только про методы создания, относящиеся именно к ней. У нас же пока только одна фабрика — фабрика авторизации.
+Обратимся к ней и запросим создание нужной ViewModel:
+
+```swift
+
+override func start() {
+    let authViewModel = factory.authFactory.createAuthViewModel(
+        eventsDispatcher: EventsDispatcher.init(listener: self)
+    )
+
+    let vc = AuthViewController()
+    self.window.rootViewController = vc
+}
+```
+
+С нативной стороны эта ViewModel требует для инициализации всего один параметр - EventsDispatcher, реализующий протокол AuthViewModelEventsListener.
+Это необходимо для передачи действий и событий от ViewModel к нативной стороне. У нас пока нет каких-либо событий и этот протокол пустой. Но
+всё же реализовать его мы обязаны, чтобы соблюдалось соответствие типов. Добавим к координатору extension, реализующий AuthViewModelEventsListener:
+
+```swift
+extension AuthCoordinator: AuthViewModelEventsListener {
+
+}
+```
+
+После этого нам останется лишь вызвать метод биндинга у созданного контроллера и передать туда созданную ViewModel. В конечном итоге метод старта будет
+выглядеть так:
+
+```swift
+override func start() {
+    let authViewModel = factory.authFactory.createAuthViewModel(
+        eventsDispatcher: EventsDispatcher.init(listener: self)
+    )
+
+    let vc = AuthViewController()
+    vc.bindViewModel(authViewModel)
+    self.window.rootViewController = vc
+}
+```
+
+Вот и всё. Можно запускать приложение и проверить, как работает экран авторизации. Введём в поля данные и нажмём на кнопку авторизации:
+
+![ios-auth-filled](assets/ios-simulator-auth-test.png)
+
+Получим сообщение в лог в Xcode:
+
+![xcode_auth_log](assets/xcode-auth-log.png)
+
+Positive
+: На примере последних двух шагов мы как раз увидели, какой объём работы требуется исключительно с нативной стороны при типовых
+кейсах реализации фичей. Основные моменты — это создание перехода/координатора для нового экрана, создать контроллер, описать привязки
+UI-элементов, добавить необходимые вызовы публичных методов и создать ViewModel, которую пробросить в биндинг. При этом сама ViewModel
+может делаться другим разработчиком. Как мы видим — не обязательно знать деталей её реализации и внутренней логики. Со стороны натива
+достаточно будет только публичного интерфейса.
+
+## Android: Создание экрана авторизации
+
+Duration: 20
 
 ### Создание нативного экрана авторизации
 
@@ -631,7 +643,7 @@ class AuthFragment :
         AuthViewModel.EventsListener {
 ```
 
-класс AuthFragment наследуется от MvvmEventsFragment из dev.icerock.moko:mvvm-viewbinding в дженерике мы указываем ему
+Класс AuthFragment наследуется от MvvmEventsFragment из dev.icerock.moko:mvvm-viewbinding в дженерике мы указываем ему
 сгенерированный класс верстки, класс вьюмодели, и класс лстенера для eventDispatcher MvvmEventsFragment сам подпишется
 на eventDispatcher вьюмодели, в отличие от MvvmFragment При наследовании от MvvmEventsFragment нам нужно реализовать
 
@@ -642,12 +654,12 @@ class AuthFragment :
 ```kotlin
     override val viewModelClass: Class<AuthViewModel> = AuthViewModel::class.java
 
-override fun viewBindingInflate(
+    override fun viewBindingInflate(
         inflater: LayoutInflater,
         container: ViewGroup?
-): FragmentAuthBinding {
-    return FragmentAuthBinding.inflate(layoutInflater, container, false)
-}
+    ): FragmentAuthBinding {
+        return FragmentAuthBinding.inflate(layoutInflater, container, false)
+    }
 
 override fun viewModelFactory(): ViewModelProvider.Factory = ViewModelFactory {
     AppComponent.factory.authFactory.createAuthViewModel(eventsDispatcherOnMain())
@@ -673,35 +685,27 @@ override fun routeToMain() {
 }
 ```
 
+## Android: Привязка ViewModel
+
+Duration: 10
+
 ### Байндинг фрагмента к ViewModel
 
 Теперь нам нужно связать наши поля и кнопки с AuthViewModel. Для этого в методе onViewCreated мы можем использовать уже
-заранее написаные методы bind
+заранее написанные методы bind
 
 Привязываем мутабл лайвдаты логина и пароля к view
 
 ```kotlin
     viewModel.loginField.bindTwoWayToEditTextText(viewLifecycleOwner, binding.login)
-viewModel.passwordField.bindTwoWayToEditTextText(viewLifecycleOwner, binding.login)
-```
-
-Привязываем лайвдаты ошибок к соответствующим TextView
-
-```kotlin
-    val context = requireContext()
-viewModel.loginValidationError.bind(viewLifecycleOwner) {
-    binding.loginValidation.text = it?.toString(context)
-}
-viewModel.passwordValidationError.bind(viewLifecycleOwner) {
-    binding.passwordValidation.text = it?.toString(context)
-}
+    viewModel.passwordField.bindTwoWayToEditTextText(viewLifecycleOwner, binding.login)
 ```
 
 и осталось привязать видимость прогресс бара
 
 ```kotlin
     viewModel.isLoading.bindToViewVisibleOrGone(viewLifecycleOwner, binding.loading)
-viewModel.isButtonEnabled.bindToViewEnabled(viewLifecycleOwner, binding.buttonLogin)
+    viewModel.isButtonEnabled.bindToViewEnabled(viewLifecycleOwner, binding.buttonLogin)
 ```
 
 Теперь наш фрагмент может отображать данные из viewModel, и передавать ей то что введено в поля ввода. Осталось добавить
@@ -712,6 +716,123 @@ viewModel.isButtonEnabled.bindToViewEnabled(viewLifecycleOwner, binding.buttonLo
     viewModel.onLoginTap()
 }
 ```
+
+## Репозиторий авторизации
+
+!!!!!!!
+
+Добавить информацию, что Domain устарел, описать почему, описать про Shared factory, описать, почему не надо делать общий модуль shared
+
+!!!!!!!
+
+
+
+### Роль репозитория
+
+// Описать, что это, где хранится, для чего нужен
+
+### Создаём интерфейс репозитория и реализацию
+
+// Показать, как создать интерфейс репозитория, где создать реализацию
+
+### Делаем мок реализации
+
+// Замокировать реализацию запроса, объяснить, почему мок нужно делать именно на уровне репозитория
+
+
+
+## Обработка результата авторизации
+
+!!!!! Тут добавляем успешный, неуспешный результат, показываем, как ломается сборка при изменениях общего кода
+
+
+Сам вызов suspend функции репозитория нам нужно обернуть в try-catch, так как нам может вернуться Exception. Например,
+если пользователь ввел неверный логин/пароль, у пользователя пропал интернет или если сервер просто решил отдохнуть.
+
+Для отображения произошедшей ошибки нам и пригодится eventsDispatcher. Добавим в EventsListener нашей ViewModel
+обработку нового события showError
+
+```kotlin
+interface EventsListener {
+    fun showError(error: StringDesc)
+}
+```
+
+Также нам потребуется мапер, который сможет из полученого исключения сделать красивое сообщение об ошибке, добавим его
+через конструктор нашей ViewModel
+
+```kotlin
+    private val errorMapper: (Exception) -> StringDesc
+```
+
+Наконец обработаем ошибку и не забудем убрать прогресс бар не зависимо от того какой результат мы получили от
+репозитория
+
+```kotlin
+try {
+    repository.login(loginField.value, passwordField.value)
+} catch (exception: Exception) {
+    eventsDispatcher.dispatchEvent { showError(errorMapper(exception)) }
+} finally {
+    _isLoading.value = false
+}
+```
+
+### Обрабатываем успешный результат
+
+Все что осталось это добавить переход на следующий экран при успешном логине. Для этого добавим обработчик события
+перехода на main экран в EventsListener
+
+```kotlin
+interface EventsListener {
+    fun showError(error: StringDesc)
+    fun routeToMain()
+}
+```
+
+И вызов этого события через eventsDispatcher в блоке try
+
+```kotlin
+    try {
+        repository.login(loginField.value, passwordField.value)
+        eventsDispatcher.dispatchEvent { routeToMain() }
+    } catch (exception: Exception) { 
+        eventsDispatcher.dispatchEvent { showError(errorMapper(exception)) }
+    }
+```
+
+На этом наша AuthViewModel фактически готова к использованию.
+
+
+
+## Принцип связи общей и нативной частей
+
+Negative
+: Уточнить у Лёши М, это может всё уже быть в статье, которая была 2й кодлабой
+
+В наших проектах используется следующий принцип:
+
+- Вся общая логика разбита на фичи и находится в mpp-library/feature
+- Нативная часть андроида приложения находится в app, внутри не бьется нв модули но фичи разбиты по разным пакетам,
+  аналогично разбиению в mpp-library
+- Нативная часть ios приложения находится в ios-app
+- Важную часть в связи нативного и общего кода играет SharedFactory, она расположена в mpp-library/src/commonMain и
+  содержит в себе фабрики отдельных фичей, репозитории
+- Реализаций фабрик фичей и репозиториев необходимых для их работы также расположены в mpp-library/src/commonMain,
+  каждая фабрика фичи умеет создавать все необходимые ViewModel для своей фичи
+
+На андроид проекте мы помещаем SharedFactory в AppComponent
+
+```kotlin
+object AppComponent {
+    lateinit var factory: SharedFactory
+}
+```
+
+и инициализируем в методе onCreate нашей Application, после этого обращаемся к ней тогда, когда нам нужно создать
+какую-либо ViewModel
+
+
 
 На iOS также SharedFactory помещается в AppComponent. Для этого в классе AppComponent есть статическое поле factory:
 
@@ -816,54 +937,6 @@ class RootActivity : AppCompatActivity() {
 navController?.navigate(dir)
 ```
 
-### Создание нативного экрана авторизации
-
-#### Android
-
-Пришло время написать нативную реализацию экрана.
-
-Сам экран представляет из себя фрагмент, который мы прибиндим к нашей AuthViewModel, для верстки нам понадобится два
-поля ввода и сообщения об шибках под ними
-
-кнопка для логина
-
-и прогресс бар на время загрузки
-
-Теперь, когда у нас есть готовая верстка перейдем к созданию самого фрагмента
-
-```kotlin
-class AuthFragment :
-        MvvmEventsFragment<FragmentAuthBinding, AuthViewModel, AuthViewModel.EventsListener>(),
-        AuthViewModel.EventsListener {
-```
-
-класс AuthFragment наследуется от MvvmEventsFragment из dev.icerock.moko:mvvm-viewbinding в дженерике мы указываем ему
-сгенерированный класс верстки, класс вьюмодели, и класс лстенера для eventDispatcher MvvmEventsFragment сам подпишется
-на eventDispatcher вьюмодели, в отличие от MvvmFragment При наследовании от MvvmEventsFragment нам нужно реализовать
-
-- viewModelClass указать класс используемой viewModel
-- viewBindingInflate создать экземпляр сгенерированного из верстки класса FragmentAuthBinding
-- viewModelFactory реализовать фэктори для создания необходимой ViewModel
-
-```kotlin
-    override val viewModelClass: Class<AuthViewModel> = AuthViewModel::class.java
-
-override fun viewBindingInflate(
-        inflater: LayoutInflater,
-        container: ViewGroup?
-): FragmentAuthBinding {
-    return FragmentAuthBinding.inflate(layoutInflater, container, false)
-}
-
-override fun viewModelFactory(): ViewModelProvider.Factory = ViewModelFactory {
-    AppComponent.factory.authFactory.createAuthViewModel(eventsDispatcherOnMain())
-}
-```
-
-#### iOS
-
-
-
 ### Реализация логики и передача событий и команд от общей части к нативной
 
 // Дополняем EventListener для VM авторизации, в ней роут на новости и showError
@@ -879,8 +952,7 @@ override fun viewModelFactory(): ViewModelProvider.Factory = ViewModelFactory {
 ### Сохранение в локальное хранилище.
 
 // Добавить логику запоминания токена в локальном хранилище. Показать, как с сеттингсами работать.
-
-###        
+ 
 
 ### Построение экранов
 
@@ -904,7 +976,6 @@ Duration: 5
 
 
 ## ЧЕРНОВИК НА БУДУЩЕЕ
-
 
 ### Валидация вводимых значений
 
