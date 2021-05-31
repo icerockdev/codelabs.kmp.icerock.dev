@@ -12,6 +12,8 @@ git clone -b gh-pages "${remote_repo}" build
 cp -R build/codelabs codelabs
 ./build.sh
 ./node_modules/.bin/gulp build
+rm build/codelabs
+cp -R codelabs build/codelabs
 source_commit=$(git rev-parse --short HEAD)
 cd build || exit 1
 git config --local user.email "action@github.com"
