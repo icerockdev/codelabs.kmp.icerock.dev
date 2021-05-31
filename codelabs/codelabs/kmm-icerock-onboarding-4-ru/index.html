@@ -1,0 +1,338 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>IceRock KMM onboarding #4 - реализация фичи списка</title>
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://storage.googleapis.com/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <google-codelab-analytics gaid="UA-49880327-14"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="kmm-icerock-onboarding-4-ru"
+                  title="IceRock KMM onboarding #4 - реализация фичи списка"
+                  environment="web"
+                  feedback-link="https://github.com/icerockdev/kmp-codelabs/issues">
+    
+      <google-codelab-step label="Вводная" duration="0">
+        <p>В этой кодлабе мы рассмотрим как реализовать фичи списка по принятому в IceRock стандарту, используя наши библиотеки <a href="https://github.com/icerockdev/moko-units" target="_blank">moko-units</a> и <a href="https://github.com/icerockdev/moko-mvvm" target="_blank">moko-mvvm</a> Основнная особенность нашего подхода - на нативных платформах используются UITableView/UICollectionView и RecyclerView, тогда как вся логика по построению списка этих элементов и наполнению данными реализуется в common коде.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Добавляем в проект новую пустую фичу" duration="30">
+        <h2 is-upgraded>Создаем новый модуль в mpp-library</h2>
+<p>Для начала, по аналогии с <a href="https://codelabs.kmp.icerock.dev/codelabs/kmm-icerock-onboarding-3-ru/index.html" target="_blank">третьей кодлабой</a> по пути <code>mpp-library/feature/</code> создаем директорию для нашего модуля следующей структуры:</p>
+<pre><code language="language-tree" class="language-tree">.
+|____build.gradle.kts
+|____src
+| |____commonMain
+| | |____kotlin
+| | | |____org
+| | | | |____example
+| | | | | |____library
+| | | | | | |____feature
+| | | | | | | |____listSample
+| | | | | | | | |____di
+| | | | | | | | | |____ListSampleFactory.kt
+| | | | | | | | |____presentation
+| | | | | | | | | |____ListSampleViewModel.kt
+| |____androidMain
+| | |____AndroidManifest.xml
+</code></pre>
+<p>Здесь:</p>
+<ul>
+<li>вложенные директории org/example/library/feature/listSimple должны соответствовать имени пакета ([//TODO: ссылка на &#34;почему так?&#34;]())</li>
+<li>в директории di будет распологаться весь код внешнего создания вьюмодели доступный внешним модулям, сейчас это фабрика вьюмодели</li>
+<li>в директории presentation будет именно <strong>ViewModel</strong>-логика, то есть сами классы вьюмоделей и возможно что-нибудь вспомогательное для них, доступное только в рамках модуля фичи</li>
+</ul>
+<p>Cтартовое состояние файлов такое же как в начале третьей кодлабы, только заменены имена классов и пакетов:</p>
+<p>ListSampleViewModel.kt:</p>
+<pre><code language="language-kotlin" class="language-kotlin">package org.example.library.feature.listSample.presentation
+
+import dev.icerock.moko.mvvm.dispatcher.EventsDispatcher
+import dev.icerock.moko.mvvm.dispatcher.EventsDispatcherOwner
+import dev.icerock.moko.mvvm.viewmodel.ViewModel
+
+class ListSampleViewModel(
+    override val eventsDispatcher: EventsDispatcher&lt;EventsListener&gt;,
+) : ViewModel(), EventsDispatcherOwner&lt;ListSampleViewModel.EventsListener&gt; {
+    interface EventsListener	//пока что пустой интерфейс
+}
+</code></pre>
+<p>ListSampleFactory.kt;</p>
+<pre><code language="language-kotlin" class="language-kotlin">package org.example.library.feature.listSample.di
+
+import dev.icerock.moko.mvvm.dispatcher.EventsDispatcher
+import org.example.library.feature.listSample.presentation.ListSampleViewModel
+
+class ListSampleFactory {
+    fun createListViewModel(
+        eventsDispatcher: EventsDispatcher&lt;ListSampleViewModel.EventsListener&gt;
+    ) = ListSampleViewModel(
+        eventsDispatcher = eventsDispatcher
+    )
+}
+</code></pre>
+<p>AndroidManifest.xml:</p>
+<pre><code language="language-xml" class="language-xml">&lt;?xml version=&#34;1.0&#34; encoding=&#34;utf-8&#34;?&gt;
+&lt;manifest package=&#34;org.example.library.feature.listSample&#34; /&gt;
+</code></pre>
+<p>Теперь нужно указать что наш модуль участвует в gradle-проекте. Добавляем его в <code>settings.gradle</code> в корне проекта:</p>
+<pre><code language="language-gradle" class="language-gradle">include(&#34;:mpp-library:feature:auth&#34;)
+include(&#34;:mpp-library:feature:listSample&#34;) //добавляем наш новый модуль
+</code></pre>
+<p>Чтобы ссылаться на этот модуль, необходимо завести его в структуре зависимостей в файле ./buildSrc/src/main/kotlin/Deps.kt. Как и авторизацию, добавим его в список фичей:</p>
+<pre><code language="language-kotlin" class="language-kotlin">    object Modules {
+        object Feature {
+            val auth = MultiPlatformModule(
+                name = &#34;:mpp-library:feature:auth&#34;,
+                exported = true
+            )
+            
+            //добавляем новым полем в класс
+            val listSample = MultiPlatformModule(
+                name = &#34;:mpp-library:feature:listSample&#34;,
+                exported = true
+            )
+        }
+    }
+</code></pre>
+<p>флаг exported указывает что при сборке этот модуль попадет в платформенный фреймворк и будет доступен со стороны iOS, можно не указывать для модулей код которых не будет вызываться непосредственно с нативной части приложения</p>
+<p>Теперь можно сослаться на модуль фичи из основного в ./mpp-library/build.gradle.kts:</p>
+<pre><code language="language-kotlin" class="language-kotlin">val mppModules = listOf(
+    Deps.Modules.Feature.auth,
+    Deps.Modules.Feature.listSample //Добавляем наш модуль
+)
+</code></pre>
+<p>Осталось выполнить синхронизацию gradle, плагин для студии предлагает сделать после каждого изменения gradle-файлов: <img alt="gradle-sync" src="img/28f050fe89d4288f.png"></p>
+<p>В итоге наш модуль доступен в основном коде mpp-library, как и для авторизации реализуем фабрику вьюмодели в ./mpp-library/SharedFactory.kt:</p>
+<pre><code language="language-kotlin" class="language-kotlin">...
+import org.example.library.feature.auth.di.AuthFactory
+import org.example.library.feature.listSample.di.ListSampleFactory //можем добавить импорт самостоятельно, но IDE сама предложит это сделать при упоминании в коде классов из этого модуля
+
+...
+
+   // init factories here
+    val authFactory: AuthFactory by lazy {
+        AuthFactory()
+    }
+
+    // listSample factory setup
+    val listSampleFactory: ListSampleFactory by lazy {
+        ListSampleFactory()
+    }
+
+    init {
+    ...
+</code></pre>
+<p>На этом базовый каркас заготовки фичи со стороны общего кода готов</p>
+<h2 is-upgraded>Создаем новый UIViewController на iOS, связываем  его с ViewModel</h2>
+<p>Выполняем нужную нам таску гредла из mpp-library/cocoapods/sync (в примере собиралась отладочная версия на симулятор): <img alt="gradle cocoapods task" src="img/df3b6c74ddbbf1ad.png"></p>
+<p>Открываем XCode, в проекте по пути ./ios-app/src/Features создаем директорию для нашей фичи следующей структуры:</p>
+<pre><code>.
+|____ListSample
+| |____Coordinator
+| | |____ListSampleCoordinator.swift
+| |____ViewController
+| | |____ListSampleViewController.xib
+| | |____ListSampleViewController.swift
+</code></pre>
+<p>Пару файлов для контроллера рекомендуется создавать через XCode в диалоге New File -&gt; Cocoa Touch class: <img alt="new cocoa touch class" src="img/b4a8db3cfa36550c.png"></p>
+<p>и выбрав в диалоге наследование от <strong>UIViewController</strong> и отметку о создании связанного XIB файла: <img alt="new uiviewcontroller" src="img/ef2ddb72cc205e59.png"></p>
+<p>Класс контроллера должен наследоваться от <strong>BaseViewController</strong> с указанием класса вьюмодели:</p>
+<pre><code language="language-swift" class="language-swift">import UIKit
+import MultiPlatformLibrary
+
+class ListSampleViewController: BaseViewController&lt;ListSampleViewModel&gt; {
+
+    override func bindViewModel(_ viewModel: ListSampleViewModel) {
+        super.bindViewModel(viewModel)
+        print(&#34;ListSample: ready to bind&#34;)
+    }
+}
+</code></pre>
+<p>*В generic-классе <strong>BaseViewController</strong> заложена вспомогательная логика по очистке вьюмодели когда, событиях клавиатуры и многого другого, может пополняться полезными функциями от проекта к проекту*</p>
+<p>В файле <strong>ListSampleCoordinator</strong> создаем контроллер, вьюмодель и показываем контроллер как корневой у текущего окна:</p>
+<pre><code language="language-swift" class="language-swift">import UIKit
+import MultiPlatformLibrary
+
+class ListSampleCoordinator: BaseCoordinator, ListSampleViewModelEventsListener {
+    override func start() {
+        let viewController = ListSampleViewController()
+        let viewModel = self.factory.listSampleFactory.createListViewModel(
+            eventsDispatcher: EventsDispatcher(listener: self))
+        viewController.bindViewModel(viewModel)
+        beginInNewNavigation(viewController)
+    }
+}
+</code></pre>
+<p><em>//TODO:  Оставить ссылку где можно подробнее посмотреть на координаторы</em></p>
+<p>Теперь осталось вызывать координатор фичи с предыдущего экрана или корня приложения. Вызовем из корня, для чего заменим метод start() в <strong>AppCoordinator</strong>:</p>
+<pre><code language="language-swift" class="language-swift">class AppCoordinator: BaseCoordinator {
+    override func start() {
+        addDependency(
+            ListSampleCoordinator(window: self.window, factory: self.factory),
+            completion: nil
+        ).start()
+    }
+}
+</code></pre>
+<p>Теперь после запуска приложения будет пустой экран и текст &#34;ListSample: ready to bind&#34; в консоли</p>
+<h2 is-upgraded>Создаем новый фрагемент/активность(?) на Android, связываем  его с ViewModel</h2>
+<p>//TODO: Дополнить андроидную часть</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Добавляем в фичу простой вариант списка" duration="25">
+        <p>Для примера реализуем список настроек состоящих из названия и переключателя вкл/выкл</p>
+<h2 is-upgraded>Основная идея moko-units</h2>
+<p>С развитием KMM нужно было как-то перенести на уровень <strong>ViewModel</strong> управление списками, сделать его настройку простой и стандартной а реализацию переиспользуемой хотя бы между фичами одного проекта. В итоге пришли к следующей схеме:</p>
+<ol type="1">
+<li>На стороне <strong>ViewModel</strong> объявляем какие элементы списка нужны будут нашей ( интерфейс *UnittFactory, только тип элемента и данные)</li>
+<li>На стороне платформы реализуем интерфейс *UnittFactory и предоставляем конструкторы этих элементов</li>
+<li>На стороне <strong>ViewModel</strong> руководствуясь бизнес логикой генерируем массив элементов списка</li>
+<li>На нативной стороне по предоставленному массиву заполянем UI</li>
+</ol>
+<h2 is-upgraded>Состав moko-units</h2>
+<p>Если описывать кратко, то возможности самой moko-units следующии:</p>
+<ol type="1">
+<li>Со стороны common-кода объявлены два пустых expect-интерфейса <strong>CollectionUnitItem</strong> и <strong>TableUnitItem</strong></li>
+<li>Со стороны iosMain/kotlin кода есть actual-объявления этих интерфейсов с  методами и параметрами необходимыми для создания ячеек коллекций и строк таблиц (<code>reusableIdentifier</code>), регистрации в таблице/коллекции (<code>fun register(...)</code>) , привязки *UnitItem к ячейкам/строкам (<code>fun bind()</code>) и сравнения между собой (<code>val itemId: Long</code>)</li>
+<li>//TODO: Про андроид непонятно, здесь кажется без expect/actual, все платформенное</li>
+<li>Со стороны iosMain/kotlin есть реализации источников данных для таблиц/коллекции, умеющих работать с экземплярами этих интерфейсов.</li>
+<li>Со стороны iosMain/swift есть вспомогательные протоколы и расширения, позволяющие реализовать создание *UnitItem уже для конкретного пользоввательского класса ячейки и создать источник данных для нее</li>
+<li>//TODO: Что со стороны андроида?</li>
+</ol>
+<h2 is-upgraded>Верстаем iOS</h2>
+<p>В ListViewController.xib добавляем <strong>UITableView</strong> на весь экран: <img alt="new uiviewcontroller" src="img/deb01bed33959dd3.png"></p>
+<p>и выставляем outlet для нее в <strong>ListViewController.swift</strong>:</p>
+<pre><code language="language-swift" class="language-swift">    @IBOutlet private weak var sampleTableView: UITableView!
+</code></pre>
+<p>В группе фичи создаем подгруппу <strong>Cells</strong> и по аналогии с контроллером добавляем в нее новый <strong>Cocoa Touch Class</strong> отнаследованный от <strong>UITableViewCell</strong><img alt="new uiviewcontroller" src="img/d5835b25dc225c42.png"><img alt="new uiviewcontroller" src="img/61ee7f27449fec13.png"></p>
+<p>Добавляем в xib ячейки необходимые элементы, их outlet&#39;ы в класс и настраиваем действие на valueChanged: <img alt="new uiviewcontroller" src="img/8a7d76ad8503324c.png"></p>
+<pre><code language="language-swift" class="language-swift">    import UIKit
+
+class SampleTableViewCell: UITableViewCell {
+
+    @IBOutlet var someLabel: UILabel!
+    @IBOutlet var someSwitch: UISwitch!
+    
+    @IBAction func onSwitchValueChanged(_ sender: UISwitch) {
+        //TODO: Implement action
+    }
+}
+</code></pre>
+<p>На этом верстка готова</p>
+<h2 is-upgraded>Верстаем Android</h2>
+<p>//TODO: Сделать по аналогии</p>
+<h2 is-upgraded>Добавляем фабрику юнитов в common-коде</h2>
+<p>Для начала подключаем библитеку moko-units в зависимости нашей фичи. <code>mpp-library/feature/lisSample/build.gradle.kts</code>:</p>
+<pre><code language="language-kotlin" class="language-kotlin">  ... 
+  commonMainImplementation(Deps.Libs.MultiPlatform.mokoResources.common)
+  commonMainImplementation(Deps.Libs.MultiPlatform.mokoUnits.common)
+}
+</code></pre>
+<p>и выполняем синхронизацию gradle-проекта</p>
+<p>Далее нужно по пути listSample/src/commonMain/org.example.library.feature.listSample/di  добавить файл <strong>ListSampleUnitFactory.kt</strong> с интерфейсом для фабрики юнитов и перечислить в методе создания юнита все что нам потребуется для настройки строки в списке:</p>
+<pre><code language="language-kotlin" class="language-kotlin">package org.example.library.feature.listSample.di
+
+import dev.icerock.moko.units.TableUnitItem
+
+interface ListSampleUnitFactory {
+    fun createSettingsUnit(
+        id: Int,            //нужен будет для сравнения строк списка между собой
+        name: String,       //прямо присвоится в поле
+        boolValue: Boolean, //положение переключателя
+        onValueChanged: ((Boolean) -&gt; Unit) //лямбду которую надо вызвать при переключении
+    ): TableUnitItem
+}
+</code></pre>
+<p>Теперь добавляем этот интерфейс как обязательный параметр в конструкторе <strong>ListSampleViewModel</strong>:</p>
+<pre><code language="language-kotlin" class="language-kotlin">class ListSampleViewModel(
+    override val eventsDispatcher: EventsDispatcher&lt;EventsListener&gt;,
+    private val unitFactory: ListSampleUnitFactory
+) : ViewModel(), EventsDispatcherOwner&lt;ListSampleViewModel.EventsListener&gt; {
+</code></pre>
+<p>и соответственно в параметры метода <strong>ListSampleFactory.createListViewModel</strong>:</p>
+<pre><code language="language-kotlin" class="language-kotlin">class ListSampleFactory {
+    fun createListViewModel(
+        eventsDispatcher: EventsDispatcher&lt;ListSampleViewModel.EventsListener&gt;,
+        unitFactory: ListSampleUnitFactory
+    ) = ListSampleViewModel(
+        eventsDispatcher = eventsDispatcher,
+        unitFactory = unitFactory
+    )
+}
+</code></pre>
+<p>Теперь после пересборки common-части со стороны платформ нельзя будет создать объект вьюмодели не передав ему реализацию фабрики юнитов</p>
+<h2 is-upgraded>Реализуем фабрику юнитов на стороне iOS</h2>
+<p>Прежде всего нужно будет в классе ячейки импортировать MultiplatformLibraryUnits и реализовать протокол Fillable (для ячеек удовлетворяющих этому протоколу заготовлены готовые функции создания юнитов):</p>
+<pre><code language="language-swift" class="language-swift">import UIKit
+import MultiPlatformLibraryUnits
+
+class SampleTableViewCell: UITableViewCell, Fillable {
+		//Протокол требует определить тип данных для настройки ячейки
+    typealias DataType = CellModel
+
+    struct CellModel {
+        let title: String
+        let switchValue: Bool
+        let switchAction: ((Bool) -&gt; Void)
+    }
+    
+    //Для сохранения действия локально
+    private var switchAction: ((Bool) -&gt; Void)?
+    
+    @IBOutlet var someLabel: UILabel!
+    @IBOutlet var someSwitch: UISwitch!
+    
+    @IBAction func onSwitchValueChanged(_ sender: UISwitch) {
+        switchAction?(sender.isOn)
+    }
+    
+    //Протокол требует определить метод заполнения ячейки по типу данных
+    func fill(_ data: CellModel) {
+        self.switchAction = data.switchAction
+        self.someLabel.text = data.title
+        self.someSwitch.setOn(data.switchValue, animated: true)
+    }
+}
+</code></pre>
+<p>Теперь можно реализовать саму фабрику юнитов.</p>
+<h2 is-upgraded>Реализуем фабрику юнитов на стороне Android</h2>
+<h2 is-upgraded>Добавляем список юнитов в common-code</h2>
+<h2 is-upgraded>Добавляем обновление списка</h2>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Расширяем возможности фичи, учитываем дополнительные состояния данных" duration="15">
+        
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://storage.googleapis.com/codelab-elements/native-shim.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/prettify.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+
+</body>
+</html>

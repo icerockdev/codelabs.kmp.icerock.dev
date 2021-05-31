@@ -1,0 +1,24 @@
+{
+  "environment": "web",
+  "format": "html",
+  "prefix": "https://storage.googleapis.com",
+  "mainga": "UA-49880327-14",
+  "updated": "2021-05-31T12:00:43Z",
+  "id": "moko-contribution-ru",
+  "duration": 27,
+  "title": "MOKO contribution guide",
+  "summary": "Как вносить изменения в moko библиотеки самостоятельно",
+  "source": "./src/moko/moko-contribution.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "lang-ru",
+    "moko"
+  ],
+  "tags": [],
+  "feedback": "https://github.com/icerockdev/kmp-codelabs/issues",
+  "ga": "UA-81805223-5",
+  "url": "moko-contribution-ru"
+}
