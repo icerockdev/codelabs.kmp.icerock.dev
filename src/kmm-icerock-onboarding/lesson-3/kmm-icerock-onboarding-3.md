@@ -486,9 +486,70 @@ class ListSampleViewController: BaseViewController<ListSampleViewModel> {
 
 ###  Реализуем фабрику юнитов на стороне Android
 
-### Добавляем список юнитов в common-code
-
 ### Добавляем обновление списка
+
+Теперь сделаем наш список элементов динамическим, для этого сначала заменим тип свойств в **ListSampleViewModel** на MutableLiveData и LiveData:
+
+```kotlin
+    //Создаем тестовый список элементов
+    private val _settingsData: MutableLiveData<List<SettingsItem>> = MutableLiveData(
+        listOf(
+            SettingsItem(id = 1, name = "Param 1", boolValue = false)
+        )
+    )
+
+    //Транслируем их в юниты
+    val settingUnitsData: LiveData<List<TableUnitItem>> = _settingsData
+        .readOnly()
+        .map { settings ->
+            settings.map { this.mapSettingsToUnit(it) }
+    }
+```
+
+И добавил некоторый интерактив на переключение настроек (здесь в примере выключение настройки убирает все последующие за ней из списка)
+
+```kotlin
+...
+           onValueChanged = { newValue ->
+                onSettingChanges(settings, newValue)
+            }
+        )
+    }
+
+    //Оставляем только первую серию включенных настроек и добавляем в конец следующий выключенный пункт
+    private fun onSettingChanges(changedSetting: SettingsItem, newValue: Boolean) {
+        val newSettings = _settingsData.value.map { currentSetting ->
+            if (currentSetting.id == changedSetting.id) {
+                currentSetting.copy(boolValue = newValue)
+            } else {
+                currentSetting
+            }
+        }
+        val trueSettings = newSettings.takeWhile { it.boolValue }
+        val lastSettingId = (trueSettings.lastOrNull()?.id ?: 0) + 1
+        val resultSettings = trueSettings.plusElement(
+            SettingsItem(
+                lastSettingId,
+                "Param ${lastSettingId}",
+                boolValue = false)
+        )
+        _settingsData.value = resultSettings
+    }
+```
+
+После пересборки мультиплатформы надо будет со стороны iOS в контроллере поменять передачу юнитов в источник данных:
+
+```swift
+        //Присваиваем элементы списка
+        viewModel.settingUnitsData.addObserver { [weak tableDataSource] data in
+            tableDataSource?.unitItems = data as? [TableUnitItem]
+        }
+```
+
+Вот такой результат после запуска:
+![units-in-action](assets/units-in-action.gif)
+
+
 
 
 ##  Расширяем возможности фичи, учитываем дополнительные состояния данных
