@@ -549,6 +549,20 @@ class ListSampleViewController: BaseViewController<ListSampleViewModel> {
 Вот такой результат после запуска:
 ![units-in-action](assets/units-in-action.gif)
 
+Для анимированного перестроения элементов можно подключить pod:
+
+```ruby
+  pod 'MultiPlatformLibraryUnits/Differ',
+    :git => 'https://github.com/icerockdev/moko-units.git', :tag => 'release/0.5.1'
+```
+
+И поменять конструктор источника данных:
+
+```swift
+        tableDataSource = TableUnitsSourceKt.diffable(for: sampleTableView)
+
+```
+
 
 
 
