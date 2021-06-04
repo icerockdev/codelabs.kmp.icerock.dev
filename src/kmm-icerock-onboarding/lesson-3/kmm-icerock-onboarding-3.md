@@ -19,7 +19,7 @@ Duration: 30
 
 ### Создаем новый модуль в mpp-library
 
-Для начала, по аналогии с [третьей кодлабой](https://codelabs.kmp.icerock.dev/codelabs/kmm-icerock-onboarding-3-ru/index.html) по пути `mpp-library/feature/` создаем директорию для нашего модуля следующей структуры:
+Для начала, по аналогии с [второй кодлабой](https://codelabs.kmp.icerock.dev/codelabs/kmm-icerock-onboarding-2-ru/index.html) по пути `mpp-library/feature/` создаем директорию для нашего модуля следующей структуры:
 
 ```tree
 .
@@ -91,7 +91,7 @@ include(":mpp-library:feature:auth")
 include(":mpp-library:feature:listSample") //добавляем наш новый модуль
 ```
 
-Чтобы ссылаться на этот модуль, необходимо завести его в структуре зависимостей в файле ./buildSrc/src/main/kotlin/Deps.kt. Как и авторизацию, добавим его в список фичей:
+Чтобы ссылаться на этот модуль необходимо завести его в структуре зависимостей в файле ./buildSrc/src/main/kotlin/Deps.kt. Как и авторизацию, добавим его в список фичей:
 ```kotlin
     object Modules {
         object Feature {
@@ -118,10 +118,10 @@ val mppModules = listOf(
 )
 ```
 
-Осталось выполнить синхронизацию gradle, плагин для студии предлагает сделать после каждого изменения gradle-файлов:
+Осталось выполнить синхронизацию gradle, плагин для студии предлагает сделать это после каждого изменения gradle-файлов:
 ![gradle-sync](assets/gradle-sync.png)
 
-В итоге наш модуль доступен в основном коде mpp-library, как и для авторизации реализуем фабрику вьюмодели в ./mpp-library/SharedFactory.kt:
+В итоге наш модуль доступен в основном коде mpp-library, теперь как и для фичи авторизации реализуем фабрику вьюмодели в ./mpp-library/SharedFactory.kt:
 ```kotlin
 ...
 import org.example.library.feature.auth.di.AuthFactory
@@ -180,7 +180,7 @@ class ListSampleViewController: BaseViewController<ListSampleViewModel> {
 }
 ```
 
-*В generic-классе **BaseViewController** заложена вспомогательная логика по очистке вьюмодели когда, событиях клавиатуры и многого другого, может пополняться полезными функциями от проекта к проекту*
+*В generic-классе **BaseViewController** заложена вспомогательная логика по очистке вьюмодели, событиях клавиатуры и многого другого, может пополняться полезными функциями от проекта к проекту*
 
 В файле **ListSampleCoordinator** создаем контроллер, вьюмодель и показываем контроллер как корневой у текущего окна:
 ```swift
@@ -198,7 +198,7 @@ class ListSampleCoordinator: BaseCoordinator, ListSampleViewModelEventsListener 
 }
 ```
 
-*//TODO:  Оставить ссылку где можно подробнее посмотреть на координаторы*
+*//TODO:  Оставить ссылку где можно подробнее почитать про координаторы*
 
 Теперь осталось вызывать координатор фичи с предыдущего экрана или корня приложения. Вызовем из корня, для чего заменим метод start() в **AppCoordinator**:
 ```swift
@@ -264,7 +264,7 @@ Duration: 25
 ![new uiviewcontroller](assets/layout-uitableviewcell.png)
 
 ```swift
-    import UIKit
+import UIKit
 
 class SampleTableViewCell: UITableViewCell {
 
@@ -329,7 +329,46 @@ class ListSampleFactory {
     )
 }
 ```
-Теперь после пересборки common-части со стороны платформ нельзя будет создать объект вьюмодели не передав ему реализацию фабрики юнитов
+Теперь после пересборки common-части со стороны платформ нельзя будет создать объект вьюмодели не передав ему реализацию фабрики юнитов а в классе **ListSampleViewModel** можно завести список моделей и список соответствующих им юнитов:
+
+```kotlin
+  ...
+) : ViewModel(), EventsDispatcherOwner<ListSampleViewModel.EventsListener> {
+
+		//Объявляем класс для элемента настроек, по необходимости можно вынести его в отдельный файл/модуль
+    data class SettingsItem(
+        val id: Int,
+        val name: String,
+        val boolValue: Boolean
+    )
+    
+    //Создаем тестовый список элементов
+    private val _settingsList: List<SettingsItem> = listOf(
+        SettingsItem(id = 1, name = "Param 1", boolValue = true),
+        SettingsItem(id = 2, name = "Param 2", boolValue = false),
+        SettingsItem(id = 3, name = "Param 3", boolValue = false),
+        SettingsItem(id = 4, name = "Param 4", boolValue = true)
+    )
+    
+    //Транслируем их в юниты
+    val settingUnitsList: List<TableUnitItem> = _settingsList.map {
+        this.mapSettingsToUnit(it)
+    }
+
+    //Функция для маппинга
+    fun mapSettingsToUnit(settings: SettingsItem): TableUnitItem {
+        return unitFactory.createSettingsUnit(
+            id = settings.id,
+            name = settings.name,
+            boolValue = settings.boolValue,
+            onValueChanged = { newValue ->
+                println("cell: ${settings.id} toggled to ${newValue}")
+            }
+        )
+    }
+```
+
+На это со стороны common-кода самый простой вариант статичного списка готов, позже усложним его
 
 ###  Реализуем фабрику юнитов на стороне iOS
 
@@ -367,6 +406,83 @@ class SampleTableViewCell: UITableViewCell, Fillable {
 }
 ```
 Теперь можно реализовать саму фабрику юнитов. 
+
+Рядом с файлами ячеек (директория Cells) добавляем реализацию фабрики юнитов **ListSampleUnitFactoryImpl.swift**:
+
+```swift
+import MultiPlatformLibrary
+import MultiPlatformLibraryUnits
+
+class ListSampleUnitFactoryImpl: ListSampleUnitFactory {
+    func createSettingsUnit(
+        id: Int32,
+        name: String,
+        boolValue: Bool,
+        onValueChanged: @escaping (KotlinBoolean) -> Void) -> TableUnitItem {
+      
+        //Прокидываем параметры в ячейку и связываем лямбды
+        return UITableViewCellUnit<SampleTableViewCell>(
+            data: SampleTableViewCell.DataType(
+                title: name,
+                switchValue: boolValue,
+                switchAction: { newValue in
+                    onValueChanged(KotlinBoolean(value: newValue))
+                }),
+            itemId: Int64(id))
+    }
+}
+```
+
+Здесь используется вспомогательный класс UITableViewCellUnit из moko-units, которому в качестве generic-параметра нужен класс Fillable-ячейки
+
+Теперь в классе координаторе передаем в конструктор вьюмодели экземпляр фабрики юнитов:
+
+```swift
+        let viewModel = self.factory.listSampleFactory.createListViewModel(
+            eventsDispatcher: EventsDispatcher(listener: self),
+            unitFactory: ListSampleUnitFactoryImpl()
+        )
+```
+
+
+
+ И в классе контроллера добавляем источник данных для таблицы и задаем ему список юнитов:
+
+```swift
+import UIKit
+import MultiPlatformLibrary
+import MultiPlatformLibraryUnits
+
+class ListSampleViewController: BaseViewController<ListSampleViewModel> {
+
+    @IBOutlet private weak var sampleTableView: UITableView!
+    //TableUnitsSource - протокол которому можно дать массив из [TableUnitItem], для него есть готовые реализации в moko-units
+    private var tableDataSource: TableUnitsSource?
+    
+    override func bindViewModel(_ viewModel: ListSampleViewModel) {
+        super.bindViewModel(viewModel)
+        //Создаем дефолтный вариант источника данных
+        //(вызывает UITableView.reload для обновления ячеек)
+        tableDataSource = TableUnitsSourceKt.default(for: sampleTableView)
+        
+        //Присваиваем элементы списка
+        tableDataSource?.unitItems = viewModel.settingUnitsList
+        print("ListSample: ready to bind")
+    }
+}
+```
+
+Теперь при запуске приложения увидим экран со списком настроек:
+![first tableview](assets/ios-basic-list.png)
+
+и сообщения в логе при их переключении:
+```
+	cell: 3 toggled to true
+	cell: 2 toggled to true
+	cell: 1 toggled to false
+	cell: 4 toggled to false
+```
+
 
 ###  Реализуем фабрику юнитов на стороне Android
 
