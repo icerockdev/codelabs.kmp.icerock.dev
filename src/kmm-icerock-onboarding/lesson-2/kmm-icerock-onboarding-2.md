@@ -1,6 +1,9 @@
-id: kmm-icerock-onboarding-2-ru categories: lang-ru,kmm-icerock-onboarding,moko status: published authors: Andrey
-Kovalev, Aleksey Lobynya, Aleksey Mikhailov tags: onboarding,kmm,ios,android,moko feedback
-link: https://github.com/icerockdev/kmp-codelabs/issues
+id: kmm-icerock-onboarding-2-ru 
+categories: lang-ru,kmm-icerock-onboarding,moko 
+status: published 
+authors: Andrey Kovalev, Aleksey Lobynya, Aleksey Mikhailov 
+tags: onboarding,kmm,ios,android,moko 
+feedback link: https://github.com/icerockdev/kmp-codelabs/issues
 
 # IceRock KMM onboarding #2 - реализация фичи авторизации
 
