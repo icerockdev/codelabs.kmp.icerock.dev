@@ -32,7 +32,7 @@
 <h2 is-upgraded>Расположение ViewModel</h2>
 <p>Так как ViewModel реализует общую логику, которая является одинаковой для iOS и Android, то она находится в общем коде приложения. Для каждой фичи в mpp-library создается отдельный одноимённый модуль, значит наша ViewModel авторизации будет находиться в модуле:</p>
 <p>feature/auth</p>
-<p>Сразу из коробки в boilerplate проекте уже можно увидеть заготовку для нашей ViewModel авторизации. Подробнее об устройстве проекта можно прочитать здесь !!! ВСТАВИТЬ ССЫЛКУ НА ИТОГОВОЕ РАСПОЛОЖЕНИЕ СТАТЬИ С УСТРОЙСТВОМ ПРОЕКТА !!!</p>
+<p>Сразу из коробки в boilerplate проекте уже можно увидеть заготовку для нашей ViewModel авторизации.</p>
 <aside class="special"><p>Чтобы быстро найти нужный файл можно воспользоваться хоткеем для поиска по файлам в Android Studio. Для этого используем либо двойное нажатие на Shift, либо сочетание Cmd + Shift + O. Это полезный инструмент, т.к. довольно часто бывает необходимость быстро найти конкретный файл и быстро перейти в него.</p>
 </aside>
 <p>Найдём нашу ViewModel в поиске:</p>
@@ -46,8 +46,7 @@
 }
 </code></pre>
 <p>Как можем видеть - в ней практически ничего нет, кроме одного параметра в конструкторе - eventsDispatcher&#39;а.</p>
-<aside class="warning"><p>Проверить, бьётся ли с кодлабой с описанием. Если там уже есть про диспатчеры, то убрать это отсюда.</p>
-</aside>
+<p>// TODO: Добавить акцент, что он для одноразовых событий. Чтобы не было путаницы с тем, что его можно для обновления текстов использовать. сделать Positive/Negative примеры</p>
 <p>Что такое eventsDispatcher и для чего он нужен? Это инструмент, который служит для связи ViewModel и нативной стороны. Если в ViewModel произошло событие и об этом необходимо сообщить на сторону нативного приложения (например, для отображения сообщения, вызова перехода, обновления экрана, либо некоторой нативной обработки) мы уведомляем об этом нативную часть через eventsDispatcher.</p>
 <p>Набор событий которые можно вызывать со стороны общего кода определяется интерфейсом EventsListener. Чуть дальше мы как раз добавим сюда новые методы.</p>
 <p>Все что нам осталось это написать саму логику авторизации :)</p>
@@ -67,6 +66,7 @@ val passwordField: MutableLiveData&lt;String&gt; = MutableLiveData&lt;String&gt;
 </code></pre>
 <aside class="special"><p>Если не добавлять импорт, а сразу вставить поля, то MutableLiveData будет светиться красным, т.к. в рамках ViewModel этот класс неизвестен. При этом если Android Studio видит, что это за класс и нужен только импорт, то можно сделать это хоткеем — достаточно нажать на красное название неимпортированного класса и нажать alt + Enter. Тогда данный импорт пропишется автоматически в блоке импортов.</p>
 </aside>
+<p>// TODO: Переделать формулировку, указывать явно только тогда, когда справа тип непонятен. Уточнить, что надо аккуратнее с публичными свойствами, т.к. андроид сразу это подсветит, а на ios без пересбоки не увидим и можно сломать.</p>
 <p>Эти поля должны быть публичными. Их мы будем использовать для передачи вводимых пользователем данных с нативной части в общую. Также обращаем внимание, что необходимо явно указать их тип - MutableLiveData. Это хороший тон, который увеличивает читаемость кода и обеспечивает дополнительный контроль публичных типов данных.</p>
 <p>По итогу после всех этих действий ViewModel должна иметь следующий вид и никаких ошибок быть не должно:</p>
 <pre><code language="language-kotlin" class="language-kotlin">package org.example.library.feature.auth.presentation
@@ -77,7 +77,7 @@ import dev.icerock.moko.mvvm.livedata.MutableLiveData
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
 
 class AuthViewModel(
-    override val eventsDispatcher: EventsDispatcher&lt;EventsListener&gt;,
+        override val eventsDispatcher: EventsDispatcher&lt;EventsListener&gt;,
 ) : ViewModel(), EventsDispatcherOwner&lt;AuthViewModel.EventsListener&gt; {
 
     val loginField: MutableLiveData&lt;String&gt; = MutableLiveData&lt;String&gt;(&#34;&#34;)
@@ -95,7 +95,7 @@ class AuthViewModel(
         <h2 is-upgraded>Обработка нажатия кнопки входа</h2>
 <p>После того как пользователь ввел свои логин и пароль, нам потребуется обработать нажатие кнопки логина. Для этого напишем функцию onLoginTap. При нажатии кнопки логина, мы должны отправить на сервер запрос с необходимыми данными. Пока для простоты мы добавим печать сообщения о нажатии кнопки. Получим простой публичный метод у ViewModel:</p>
 <pre><code language="language-kotlin" class="language-kotlin">fun onLoginTap() {
-  println(&#34;Button tapped!&#34;)
+    println(&#34;Button tapped!&#34;)
 }
 </code></pre>
 <h2 is-upgraded>Отображение прогресса загрузки</h2>
@@ -114,7 +114,6 @@ import dev.icerock.moko.mvvm.livedata.readOnly
 <aside class="special"><p>В случаях, когда нужно сделать пару полей, одно из которых — приватное изменяемое, а другое — его публичный неизменяемый аналог, используются одинаковые имена, а перед приватным добавляется нижнее подчёркивание</p>
 </aside>
 <p>Готово! К этому публичному полю isLoading теперь можно прибиндиться с натива для отслеживания необходимости показать/скрыть лоадер.</p>
-<p>Но лоадер нужен тогда, когда есть что вызывать. Поэтому мы плавно переходим дальше.</p>
 
 
       </google-codelab-step>
@@ -130,9 +129,9 @@ import dev.icerock.moko.mvvm.livedata.readOnly
 </code></pre>
 <p>И добавим вызов этой функции в методе обработки нажатия кнопки:</p>
 <pre><code language="language-kotlin" class="language-kotlin">fun onLoginTap() {
-        println(&#34;Button tapped!&#34;)
-        sendAuthRequest()
-    }
+    println(&#34;Button tapped!&#34;)
+    sendAuthRequest()
+}
 </code></pre>
 <p>И мы получим ошибку от IDE:</p>
 <aside class="warning"><p>Suspend function ‘sendAuthRequest&#39; should be called only from a coroutine or another suspend function</p>
@@ -142,7 +141,7 @@ import dev.icerock.moko.mvvm.livedata.readOnly
 <p>Но там ведь даже запроса никакого нет и ничего асинхронного, просто печать в лог? Почему ошибка? - Потому что мы указали, что это suspend-функция. Это хороший вспомогательный механизм, помогающий себя контролировать и отличать простые синхронные методы от асинхронных. Даже несмотря на то, что пока тут никакого асинхронного кода нет внутри, мы знаем, что эта функция должна быть асинхронной. Поэтому сразу помечаем её как suspend, и тут нам IDE c компилятором подскажут, что так с ней работать нельзя.</p>
 <p>Где же взять этот пресловутый скоуп? А он у нас уже есть. Просто находится для удобства в базовом классе ViewModel. Если посмотрим внимательно на наш класс, то увидим, что AuthViewModel наследуется от ViewModel:</p>
 <pre><code language="language-kotlin" class="language-kotlin">class AuthViewModel(
-    override val eventsDispatcher: EventsDispatcher&lt;EventsListener&gt;,
+        override val eventsDispatcher: EventsDispatcher&lt;EventsListener&gt;,
 ) : ViewModel()
 </code></pre>
 <p>А в нём как раз и лежит нужный нам скоуп:</p>
@@ -150,11 +149,11 @@ import dev.icerock.moko.mvvm.livedata.readOnly
 </code></pre>
 <p>Возвращаемся к нашей обработке кнопки и переделаем вызов метода авторизации, поместив его на viewModelScope:</p>
 <pre><code language="language-kotlin" class="language-kotlin">    fun onLoginTap() {
-        println(&#34;Button tapped!&#34;)
-        viewModelScope.launch {
-            sendAuthRequest()
-        }
+    println(&#34;Button tapped!&#34;)
+    viewModelScope.launch {
+        sendAuthRequest()
     }
+}
 </code></pre>
 <p>Больше ошибки нет. Можем запустить syncMultiPlatformLibraryDebugFrameworkIosX64 и убедиться, что всё собирается успешно. Пора теперь перейти на нативную сторону, создать экран и проверить, что поля заполняются и методы отрабатывают.</p>
 
@@ -253,11 +252,17 @@ class AuthViewController: UIViewController {
 
     override func start() {
         let vc = AuthViewController()
-        self.window.rootViewController = vc
+        self.navigationController = UINavigationController(rootViewController: vc)
+        self.navigationController?.navigationBar.isHidden = true
+
+        self.window.rootViewController = self.navigationController
     }
 }
 </code></pre>
-<p>Он также несложный. Состоит пока из одного метода start, который помещает на window наш созданный AuthViewController.</p>
+<p>И импортируем UIKit для работы с UINavigationController:</p>
+<pre><code language="language-swift" class="language-swift">import UIKit
+</code></pre>
+<p>Он также несложный. Состоит пока из одного метода start, который создаёт UINavigationController, добавляет в него наш созданный AuthViewController, делает navigationBar скрытым и помещает этот NavigationController на window.</p>
 <p>И чтобы это всё работало изменяем координатор приложения AppCoordinator. Тут нам нужно убрать тестовый зелёный экран и запустить флоу координатора авторизации. :</p>
 <pre><code language="language-swift" class="language-swift">class AppCoordinator: BaseCoordinator {
     override func start() {
@@ -331,7 +336,11 @@ class AuthViewController: UIViewController {
     )
 
     let vc = AuthViewController()
-    self.window.rootViewController = vc
+    self.navigationController = UINavigationController(rootViewController: vc)
+    self.navigationController?.navigationBar.isHidden = true
+    
+    vc.bindViewModel(authViewModel)
+    self.window.rootViewController = self.navigationController
 }
 </code></pre>
 <p>С нативной стороны эта ViewModel требует для инициализации всего один параметр - EventsDispatcher, реализующий протокол AuthViewModelEventsListener. Это необходимо для передачи действий и событий от ViewModel к нативной стороне. У нас пока нет каких-либо событий и этот протокол пустой. Но всё же реализовать его мы обязаны, чтобы соблюдалось соответствие типов. Добавим к координатору extension, реализующий AuthViewModelEventsListener:</p>
@@ -346,8 +355,11 @@ class AuthViewController: UIViewController {
     )
 
     let vc = AuthViewController()
+    self.navigationController = UINavigationController(rootViewController: vc)
+    self.navigationController?.navigationBar.isHidden = true
+
     vc.bindViewModel(authViewModel)
-    self.window.rootViewController = vc
+    self.window.rootViewController = self.navigationController
 }
 </code></pre>
 <p>Вот и всё. Можно запускать приложение и проверить, как работает экран авторизации. Введём в поля данные и нажмём на кнопку авторизации:</p>
@@ -444,12 +456,12 @@ app:layout_constraintEnd_toEndOf=&#34;@id/password&#34;/&gt;
 </ul>
 <pre><code language="language-kotlin" class="language-kotlin">    override val viewModelClass: Class&lt;AuthViewModel&gt; = AuthViewModel::class.java
 
-    override fun viewBindingInflate(
+override fun viewBindingInflate(
         inflater: LayoutInflater,
         container: ViewGroup?
-    ): FragmentAuthBinding {
-        return FragmentAuthBinding.inflate(layoutInflater, container, false)
-    }
+): FragmentAuthBinding {
+    return FragmentAuthBinding.inflate(layoutInflater, container, false)
+}
 
 override fun viewModelFactory(): ViewModelProvider.Factory = ViewModelFactory {
     AppComponent.factory.authFactory.createAuthViewModel(eventsDispatcherOnMain())
@@ -478,11 +490,11 @@ override fun routeToMain() {
 <p>Теперь нам нужно связать наши поля и кнопки с AuthViewModel. Для этого в методе onViewCreated мы можем использовать уже заранее написанные методы bind</p>
 <p>Привязываем мутабл лайвдаты логина и пароля к view</p>
 <pre><code language="language-kotlin" class="language-kotlin">    viewModel.loginField.bindTwoWayToEditTextText(viewLifecycleOwner, binding.login)
-    viewModel.passwordField.bindTwoWayToEditTextText(viewLifecycleOwner, binding.login)
+viewModel.passwordField.bindTwoWayToEditTextText(viewLifecycleOwner, binding.login)
 </code></pre>
 <p>и осталось привязать видимость прогресс бара</p>
 <pre><code language="language-kotlin" class="language-kotlin">    viewModel.isLoading.bindToViewVisibleOrGone(viewLifecycleOwner, binding.loading)
-    viewModel.isButtonEnabled.bindToViewEnabled(viewLifecycleOwner, binding.buttonLogin)
+viewModel.isButtonEnabled.bindToViewEnabled(viewLifecycleOwner, binding.buttonLogin)
 </code></pre>
 <p>Теперь наш фрагмент может отображать данные из viewModel, и передавать ей то что введено в поля ввода. Осталось добавить листенер для кнопки логина</p>
 <pre><code language="language-kotlin" class="language-kotlin">    binding.buttonLogin.setOnClickListener {
@@ -526,7 +538,7 @@ override fun routeToMain() {
 <p>Это позволяет ViewModel не заботиться о том, какая реализация будет у репозитория. Она не знает, что на другой стороне — сервер, база данных, локальные моки, магия, костыльные заглушки и т.п. Для ViewModel важно только то, что есть реализация интерфейса репозитория, покрывающая ещё нужды.</p>
 <p>Сейчас увидим, как это выглядит на практике.</p>
 <h2 is-upgraded>Создаём интерфейс репозитория</h2>
-<p>Так как основная задача репозитория — обеспечить необходимым функционалом ViewModel, то отталкиваться будет от неё. Наша ViewModel простенькая и ей пока нужен всего один метод - авторизоваться по логину и паролю. Создадим и опишем такой репозиторий.</p>
+<p>Так как основная задача репозитория — обеспечить необходимым функционалом ViewModel, то отталкиваться будет от неё. Наша ViewModel простенькая и ей пока нужен всего один метод — авторизоваться по логину и паролю. Создадим и опишем такой репозиторий.</p>
 <p>Переходим в наш проект в AndroidStudio и отправляемся в папку фичи нашей авторизации. В ней мы можем увидеть папку di, которая предназначена для всего, что связано с передачей зависимостей извне. Именно в ней нам и нужно добавить интерфейс репозитория авторизации.</p>
 <p>В AndroidStudio может сразу при создании выбрать нужный тип создаваемого файла, чтобы сгенерировалось первоначальное состояние. Для этого в меню папки di выберем New/Kotlin Class/File:</p>
 <p class="image-container"><img alt="auth-rep-create-file" src="img/f21c0089d52cf8fe.png"></p>
@@ -543,26 +555,26 @@ interface AuthRepository {
 </code></pre>
 <p>Теперь нужно добавить метод для авторизации. Какие у нас по нему требования? Он асинхронный, а на вход принимает логин и пароль. Значит это suspend функция с двумя параметрами:</p>
 <pre><code language="language-kotlin" class="language-kotlin">interface AuthRepository {
-    suspend fun auth(login: String, password: String) 
+    suspend fun auth(login: String, password: String)
 }
 </code></pre>
 <aside class="warning"><p>Тут может возникнуть вопрос &#34;Почему нет результата? Как узнать, успешная ли была авторизация?&#34;. На самом деле ошибки тут нет - в случае получения ошибки её выбросит сама корутина и мы сможем её обработать. Дойдём до этого чуть позже на шаге обработки ошибок</p>
 </aside>
 <h2 is-upgraded>Добавляем репозиторий к AuthViewModel</h2>
-<p>Мы создали интерфейс репозитория - теперь пора его добавить в AuthViewModel и обновить её немного.</p>
+<p>Мы создали интерфейс репозитория — теперь пора его добавить в AuthViewModel и обновить её немного.</p>
 <p>Начнём с того, что добавим репозиторий ещё одним параметром в конструктор AuthViewModel. Сама AndroidStudio при начале ввода имени подскажет варианты для названия с учётом типа. Это удобно, потому что при выборе из списка автомаически добавляется и необходимый импорт. Если мы начнём вводить имя &#34;auth...&#34;, то студия подскажет:</p>
 <p class="image-container"><img alt="auth-vm-rep-tip" src="img/54dc630b326b9988.png"></p>
-<p>нажмём Enter и у нас ватоматически добавится и импорт, и дозаполнится название с типом:</p>
+<p>нажмём Enter и у нас автоматически добавится и импорт, и дозаполнится название с типом:</p>
 <pre><code language="language-kotlin" class="language-kotlin">import org.example.library.feature.auth.di.AuthRepository
 
 class AuthViewModel(
-    private val authRepository: AuthRepository,
-    override val eventsDispatcher: EventsDispatcher&lt;EventsListener&gt;
+        private val authRepository: AuthRepository,
+        override val eventsDispatcher: EventsDispatcher&lt;EventsListener&gt;
 ) : ViewModel(), EventsDispatcherOwner&lt;AuthViewModel.EventsListener&gt;
 
 </code></pre>
 <p>Теперь у ViewModel при создании должна будет приходить реализация интерфейса AuthRepository. Значит мы можем вместо вызова печати в лог вызвать метод авторизации у репозитория. Заменим текущую реализацию <code>sendAuthRequest</code>:</p>
-<pre><code language="language-kotlin" class="language-kotlin">private suspend fun sendAuthRequest() { 
+<pre><code language="language-kotlin" class="language-kotlin">private suspend fun sendAuthRequest() {
     authRepository.auth(login = loginField.value, password = passwordField.value)
 }
 </code></pre>
@@ -572,62 +584,221 @@ class AuthViewModel(
 <p>Если попробовать собрать проект, то мы получим ошибку, т.к. не передали в фабрике авторизации никакой реализации для репозитория для вьюмодели. Надо это исправить. Перейдём в AuthFactory.kt.</p>
 <p>Чтобы фабрика могла передать во ViewModel реализацию репозитория, она сама должна её где-то взять. И эта реализация ей тоже будет приходить параметром. Поэтому добавим в конструктор фабрики такой же параметр, как добавляли в AuthViewModel и пробросим его дальше:</p>
 <pre><code language="language-kotlin" class="language-kotlin">class AuthFactory(
-    private val authRepository: AuthRepository // 1. Получаем репозиторий при создании фабрики 
+        private val authRepository: AuthRepository // 1. Получаем репозиторий при создании фабрики 
 ) {
     fun createAuthViewModel(
-        eventsDispatcher: EventsDispatcher&lt;AuthViewModel.EventsListener&gt;
+            eventsDispatcher: EventsDispatcher&lt;AuthViewModel.EventsListener&gt;
     ) = AuthViewModel(
-        eventsDispatcher = eventsDispatcher,
-        authRepository = authRepository // 2. Передаём его в создание ViewModel
+            eventsDispatcher = eventsDispatcher,
+            authRepository = authRepository // 2. Передаём его в создание ViewModel
     )
 }
 </code></pre>
 <p>И как уже можно было догадаться — теперь надо передать реализацию AuthRepository при создании AuthFactory. Делается это в SharedFactory.kt. Но прежде чем мы его передадим, надо создать саму реализацию.</p>
 <h2 is-upgraded>Реализовываем AuthRepository</h2>
-<p>// Добавить папку с фичами в mpp-library/src, создать под авторизацию, создать имплементацию для репозитория авторизации. Передать в фабрику, показать, что проект собирается и продолжает печатать в лог сообщения</p>
+<p>Реализация репозитория требует как знания о сетевых сущностях и api-классах, там и о требеумом интерфейсе внутри фичи. Следовательно хранятся они в mpp-library. Для них мы заведём отдельную папку - repositoryImpl по пути mpp-library/src/commonMain/kotlin/org/example/library и создадим в ней класс AuthRepositoryImpl:</p>
+<p class="image-container"><img alt="android-studio-create-dict" src="img/a881f6efe1e2ab88.png"></p>
+<p>Далее нам нужно указать, что наш созданный класс реализует интерфейс AuthRepository, который описан в фиче авторизации. Если начнём вводить его название, студия нам подскажет варианты импортов, где будет нужный нам интерфейс:</p>
+<p class="image-container"><img alt="android-studio-create-impl-tip" src="img/b2b07751de4e7e7c.png"></p>
+<p>Выбераем его и студия подставит нужный импорт сама:</p>
+<pre><code language="language-kotlin" class="language-kotlin">import org.example.library.feature.auth.di.AuthRepository
+
+class AuthRepositoryImpl : AuthRepository {
+
+}
+</code></pre>
+<p>Теперь мы получаем ошибку о том, что наш класс не реализует интерфейс AuthRepository, т.к. не переопределён метод логина. Реализуем его. Можно сделать это двумя способами:</p>
+<ol type="1">
+<li>Самому написать переопределение метода, добавив в класс</li>
+</ol>
+<pre><code language="language-kotlin" class="language-kotlin">override suspend fun auth(login: String, password: String) {
+
+}
+</code></pre>
+<ol type="1">
+<li>Либо упростить себе задачу, выделив название класса, которое светится ошибкой, и воспользоваться предложением IDE для решения ошибки, которое вызывается через Alt (option) + Enter. Тогда студия сама подскажет, какие методы нужно реализовать:</li>
+</ol>
+<p class="image-container"><img alt="android-studio-implement-interface-tip" src="img/7d3a174a555fabd6.png"></p>
+<p>Выбираем вариант Implement members и получаем список.</p>
+<p class="image-container"><img alt="android-studio-implemtnt-interface-methods-list" src="img/853f44fb0e3809d3.png"></p>
+<p>У нас тут всего один метод, но если бы их было 10, то выбрать в списке все разом и нажать ОК — сильно быстрее, чем добавлять отдельно. Выбираем наш auth, жмём ОК и получаем реализацию нашего метода:</p>
+<pre><code language="language-kotlin" class="language-kotlin">class AuthRepositoryImpl : AuthRepository {
+    override suspend fun auth(login: String, password: String) {
+        TODO(&#34;Not yet implemented&#34;)
+    }
+}
+</code></pre>
+<p>Вот мы и получили реализацию репозитория. Вернёмся в SharedFactory и передадим её фабрике.</p>
+<p>Импортируем нужный класс:</p>
+<pre><code language="language-kotlin" class="language-kotlin">import org.example.library.repositoryImpl.AuthRepositoryImpl
+</code></pre>
+<p>Создаём экземпляр и передаём параметром в фабрику:</p>
+<pre><code language="language-kotlin" class="language-kotlin">val authFactory: AuthFactory by lazy {
+    AuthFactory(
+        authRepository = AuthRepositoryImpl()
+    )
+}
+</code></pre>
+<p>Проверим, как ведёт себя сейчас авторизация. Собираем проект, больше ошибок никаких нет. Введём данные в поля, нажмём кнопку и... Получим падение приложения.</p>
+<p>В логе увидим сообщение:</p>
+<pre><code>Caused by: kotlin.NotImplementedError: An operation is not implemented: Not yet implemented
+</code></pre>
+<p><code>Not yet implemented</code> - как раз тот текст, который был указан в TODO реализации метода auth. Функция TODO будет выбрасывать исключение NotImplementedError с указанием текстовой причины. Такой подход имеет свои плюсы, но требует внимательности и осторожности.</p>
+<p>Функцией TODO (именно функцией, не путать с комментарием // TODO) стоит пользоваться в случаях, когда имеем дело с функционалом, обязательно требующим реализации на текущем этапе разработки. Например — как у нас сейчас. Мы реализовываем фичу авторизации, поэтому без рабочего метода она бессмысленна, а явное падение приложения поможет нам понять, что реализация была забыта. Но есть и другие ситуации. Допустим, есть некий экран с 5ю вариантами действий, но в текущем этапе мы должны реализовать и передать заказчику только сам экран и всего 2 из 5 рабочих действия. Тогда при реализации мы сразу опишем интерфейс для всех пяти, реализуем только два, но если мы в оставшихся трёх оставим TODO(), то заказчик или QA при нажатии будут получать падения приложения. Да, формально этот функционал и не должен работать, но отсутствие действия в таком случае будет восприниматься сильно мягче, чем жёсткий краш приложения.</p>
+<p>Добавим далее реализацию метода авторизации.</p>
 <h2 is-upgraded>Делаем мок реализации успеха/ошибки</h2>
-<p>// Замокировать реализацию запроса, объяснить, почему мок нужно делать именно на уровне репозитория. Считать правильными hellompp / kotlin, в остальных случаях кидаем эксепшен</p>
+<p>Мы находимся в ситуации, когда у нас сервер ещё не готов, но проверять успешную и ошибочную работу метода мы можем и без него — сами добавим эту тестовую логику.</p>
+<p>Будем считать, что правильным логином/паролем у нас является связка hellompp / kotlin. В этом случае ответ будет успешен, мы получим от сервера токен, сохраним его и продолжим работу.</p>
+<p>В ином случае — нужно вернуть ошибку.</p>
+<p>Перейдём в реализацию метода auth в AuthRepositoryImpl и добавим в него это нехитрое условие:</p>
+<pre><code language="language-kotlin" class="language-kotlin">override suspend fun auth(login: String, password: String) {
+    if (login == &#34;hellompp&#34; &amp;&amp; password == &#34;kotlin&#34;) {
+
+    } else { 
+
+    }
+}
+</code></pre>
+<p>Теперь определим, что должно происходить по условию успеха или ошибки. С успехом всё просто - пока добавим вывод успешного сообщения в лог. А вот для ошибки нам нужно выбросить исключение. Работу с разными типами исключений мы будем рассматривать более детально в отдельном уроке. Пока нам хватит обычного Exception с указанием ему сообщения ошибки:</p>
+<pre><code language="language-kotlin" class="language-kotlin">override suspend fun auth(login: String, password: String) {
+    if (login == &#34;hellompp&#34; &amp;&amp; password == &#34;kotlin&#34;) {
+        println(&#34;login successfull&#34;)
+    } else { 
+        throw Exception(message = &#34;Неверный логин/пароль&#34;)
+    }
+}
+</code></pre>
+<p>Мы сделали так, что при успешной авторизации мы получим сообщение в лог, а при ошибке корутина выбросит исключение. Чтобы это не уронило приложение, а пользователь знал, что происходит, нужно добавить обработку этих ситуаций в AuthViewModel.</p>
 
 
       </google-codelab-step>
     
       <google-codelab-step label="Обработка результата авторизации" duration="0">
-        <p>!!!!! Тут добавляем успешный, неуспешный результат, показываем, как ломается сборка при изменениях общего кода</p>
-<p>Сам вызов suspend функции репозитория нам нужно обернуть в try-catch, так как нам может вернуться Exception. Например, если пользователь ввел неверный логин/пароль, у пользователя пропал интернет или если сервер просто решил отдохнуть.</p>
-<p>Для отображения произошедшей ошибки нам и пригодится eventsDispatcher. Добавим в EventsListener нашей ViewModel обработку нового события showError</p>
-<pre><code language="language-kotlin" class="language-kotlin">interface EventsListener {
-    fun showError(error: StringDesc)
-}
-</code></pre>
-<p>Также нам потребуется мапер, который сможет из полученого исключения сделать красивое сообщение об ошибке, добавим его через конструктор нашей ViewModel</p>
-<pre><code language="language-kotlin" class="language-kotlin">    private val errorMapper: (Exception) -&gt; StringDesc
-</code></pre>
-<p>Наконец обработаем ошибку и не забудем убрать прогресс бар не зависимо от того какой результат мы получили от репозитория</p>
-<pre><code language="language-kotlin" class="language-kotlin">try {
-    repository.login(loginField.value, passwordField.value)
-} catch (exception: Exception) {
-    eventsDispatcher.dispatchEvent { showError(errorMapper(exception)) }
-} finally {
-    _isLoading.value = false
-}
-</code></pre>
-<h2 is-upgraded>Обрабатываем успешный результат</h2>
-<p>Все что осталось это добавить переход на следующий экран при успешном логине. Для этого добавим обработчик события перехода на main экран в EventsListener</p>
-<pre><code language="language-kotlin" class="language-kotlin">interface EventsListener {
-    fun showError(error: StringDesc)
-    fun routeToMain()
-}
-</code></pre>
-<p>И вызов этого события через eventsDispatcher в блоке try</p>
-<pre><code language="language-kotlin" class="language-kotlin">    try {
-        repository.login(loginField.value, passwordField.value)
-        eventsDispatcher.dispatchEvent { routeToMain() }
-    } catch (exception: Exception) { 
-        eventsDispatcher.dispatchEvent { showError(errorMapper(exception)) }
+        <p>Для начала необходимо спасти приложение от падения и обернуть вызов авторизации в try-catch, так как нам может произойти Exception.</p>
+<p>Теперь наш обработчик кнопки станет следующим:</p>
+<pre><code language="language-kotlin" class="language-kotlin">    fun onLoginTap() {
+        println(&#34;Button tapped!&#34;)
+        viewModelScope.launch {
+            try {
+                sendAuthRequest()
+            } catch (exception: Exception) {
+                
+            }
+        }
     }
 </code></pre>
-<p>На этом наша AuthViewModel фактически готова к использованию.</p>
+<p>Но сейчас пользователь никак не узнает о том, что же произошло, потому что мы никак не сообщаем на натив результат его действия. Как раз здесь нам и нужен будет EventsDispatcher. Как мы помним — он нужен для уведомлений натива о разовых событиях, происходящих в общей логике. В результате логина у нас будет либо переход на следующий экран, либо показ ошибки, а это отличные примеры для использования диспатчера.</p>
+<h2 is-upgraded>Обновляем интерфейс EventsListener</h2>
+<p>Чтобы этим воспользоваться, добавим нужные методы в его интерфейс. Назовём экран, на который будем попадать, &#34;Главным&#34;. А метод перехода, соответственно, routeToMain. С ним всё просто — никаких параметров не нужно, натив сам разберётся, как сделать переход и что ему нужно:</p>
+<pre><code language="language-kotlin" class="language-kotlin">interface EventsListener {
+  fun routeToMain()
+}
+</code></pre>
+<p>А вот с показом ошибки нам не обойтись без текста самой ошибки. Натив не должен забирать на себя никакую логику по обработке ошибок и вытаскивания из них текстов для пользователя. Готовый локализованный текст должен приходить из общей логики.</p>
+<p>Для работы с локализованными ресурсами мы используем нашу библиотеку moko-resources. Чтобы передать на натив локализованную строку нужно использовать тип StringDesc. Детально тут останавливаться на нём не будем подробнее можно почитать в readme в <a href="https://github.com/icerockdev/moko-resources" target="_blank">репозитории MOKO-Resources</a>.</p>
+<p>Поэтому импортируем StringDesc:</p>
+<pre><code language="language-kotlin" class="language-kotlin">import dev.icerock.moko.resources.desc.StringDesc
+</code></pre>
+<p>и затем добавляем в интерфейс метод showError с передачей текста ошибки. В итоге он будет выглядеть у нас вот так:</p>
+<pre><code language="language-kotlin" class="language-kotlin">interface EventsListener {
+  fun routeToMain()
+  fun showError(errorText: StringDesc)
+}
+</code></pre>
+<h2 is-upgraded>Добавляем вызов событий через EventsDispatcher</h2>
+<p>Остаётся лишь в нужный момент передать диспатчеру соответствующий метод.</p>
+<p>Сам диспатчер у нас передаётся в конструкторе ViewModel, вот он:</p>
+<pre><code language="language-kotlin" class="language-kotlin">override val eventsDispatcher: EventsDispatcher&lt;EventsListener&gt;
+</code></pre>
+<p>Для вызова методов из интерфейса EventsListener у него есть метод dispatchEvent, который принимает лямбду. В ней мы и осуществляем вызов. Добавим соответствующие вызовы для успеха и ошибки в блоке try-catch.</p>
+<aside class="warning"><p>Так как поле message в Exception опциональное, добавим через elvis-оператор его получение со значением по-умолчанию. Такой вариант мы используем просто для понимания общего принципа, и чтобы не перегружать этот урок данными. Такое получение ошибки мы уже не используем, обработку и преобразование исключения забирает на себя <a href="https://github.com/icerockdev/moko-errors" target="_blank">MOKO-Errors</a>. Позже мы научимся работать и с ним, а пока нам будет достаточно такой реализации.</p>
+</aside>
+<p>В итоге метод обработки кнопки примет вид:</p>
+<pre><code language="language-kotlin" class="language-kotlin">fun onLoginTap() {
+  println(&#34;Button tapped!&#34;)
+  viewModelScope.launch {
+    try {
+      sendAuthRequest()
+      eventsDispatcher.dispatchEvent {
+        routeToMain()
+      }
+    } catch (exception: Exception) {
+      eventsDispatcher.dispatchEvent {
+        val errorMessage = exception.message ?: &#34;Ошибка авторизации&#34;
+        showError(errorText = errorMessage.desc())
+      }
+    }
+  }
+}
+</code></pre>
+<p>Попробуем выполнить Gradle-таску <code>syncMultiPlatformLibraryDebugFrameworkIosX64</code>, чтобы проверить, всё ли у нас правильно. Как результат - ошибок нет. Значит можно переходить к проверке. Собираем нативный проект и... тут будет ошибка. Причём на обеих платформах. Почему так? Мы же ничего не меняли в нативном коде с момента предыдущего запуска? Это действительно так. Но мы изменили содержимое интерфейса EventsListener-а, а его реализуют обе платформы.</p>
+<aside class="warning"><p>Это довольно важный момент. Нам не обязательно лезть в нативный код, чтобы сломать сборку проекта. Достаточно изменить уже реализуемый нативом интерфейс или изменить какие-нибудь публичные методы, поля. Например, если мы переименуем поле ввода логина во ViewModel, то тоже сломаем сборку. Необходимо понимать, что при внесении изменений в общем коде, если затрагивается общая часть, то недостаточно просто поправить сборку на своей платформе. Обязательно нужно помнить, что также ломается и соседняя. В этом случае необходимо либо в реквесте при завершении задачи явно указать, что требуются правки, либо внести их самостоятельно, отметив это в комментарии к реквесту. Например, если iOS-разработчик в процессе работы внёс новые методы в EventsListener и не может реализовать их на андроиде самостоятельно, то при открытии реквеста он укажет в описании &#34;Требуется на андроиде реализовать методы 1,2,3 для AuthViewModel.EventsListener&#34;.</p>
+</aside>
+<p>Поправим нативную сторону и проверим, наконец, работу авторизации.</p>
+<h2 is-upgraded>Реализация новых методов на iOS</h2>
+<p>Перейдём в Xcode. Он явно даёт понять, где именно требуется реализация недостающих методов:</p>
+<p class="image-container"><img alt="ios-eventslistener-error" src="img/5a6877f5ccf264a.png"></p>
+<p>Аналогично тому, как мы реализовывали интерфейс в AndroidStudio, можно либо самому написать методы, либо нажать на точку в строке ошибки и IDE предложит дозаполнить всё необходимое:</p>
+<p class="image-container"><img alt="ios-auth-filled" src="img/a4eb8359616594e4.png"></p>
+<p>Для решения ошибки добавятся методы:</p>
+<pre><code language="language-swift" class="language-swift">extension AuthCoordinator: AuthViewModelEventsListener {
+    func routeToMain() {
 
+    }
+
+    func showError(errorText: StringDesc) {
+
+    }
+}
+</code></pre>
+<p>У базового координатора есть полезный метод показа стандартного алерта - <code>showDefaultAlertDialog</code> из расширения src/Extensions/BaseCoordinator+Extensions.swift. Воспользуемся им для вывода результата. В случае успеха напишем, что авторизация пройдена, а в случае ошибки отобразим тот текст, который приходит в параметре. Нужно только его немного доработать.</p>
+<p>Так как отображение диалогов меняется от проекта к проекту и может кастомизироваться, это расширение каждый проект определяет под себя. Воспользуемся нативным алертом. У нас на вход будут передаваться заголовок, текст и массив доступных вариантов действий UIAction. И сделаем массив действий с пустым значением по-умолчанию, в таком случае будем добавлять только кнопку &#34;Ok&#34;:</p>
+<pre><code language="language-swift" class="language-swift">extension BaseCoordinator {
+    func showDefaultAlertDialog(title: String?, message: String?, actions: [UIAlertAction] = []) {
+        let alert = UIAlertController(title: title,
+                                      message: message,
+                                      preferredStyle: .alert)
+
+        if actions.count == 0 {
+            alert.addAction(UIAlertAction(
+                            title: &#34;Ok&#34;,
+                            style: .default,
+                            handler: nil)
+            )
+        } else {
+            actions.forEach({ (alertAction) in
+                alert.addAction(alertAction)
+            })
+        }
+
+        navigationController?.present(alert, animated: true)
+    }
+}
+</code></pre>
+<p>Остатётся лишь добавить вызов показа диалогов в реализации EventsListener в AuthCoordinator:</p>
+<pre><code language="language-swift" class="language-swift">extension AuthCoordinator: AuthViewModelEventsListener {
+    func routeToMain() {
+        showDefaultAlertDialog(title: &#34;Авторизация пройдена!&#34;, message: &#34;Переходим к Главному экрану приложения&#34;)
+    }
+
+    func showError(errorText: StringDesc) {
+        showDefaultAlertDialog(title: &#34;Ошибка авторизации!&#34;, message: errorText.localized())
+    }
+}
+</code></pre>
+<aside class="special"><p>Для того, чтобы преобразовать StringDesc в обычную строку с учётом локализации используется метод <code>.localized()</code></p>
+</aside>
+<p>Собираем и запускаем проект. Попробуем ввести любые данные и получим ошибку:</p>
+<p class="image-container"><img alt="ios-auth-failed" src="img/1d63f99f385d354.png"></p>
+<p>Введём корректные hellompp / kotlin:</p>
+<p class="image-container"><img alt="ios-auth-success" src="img/3f9d8a4eea3e8cc4.png"></p>
+<h2 is-upgraded>Реализация новых методов на Android</h2>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Заключение" duration="0">
+        
 
       </google-codelab-step>
     
@@ -763,11 +934,11 @@ navController?.navigate(dir)
 </code></pre>
 <p>Отлично, теперь наша ViewModel умеет принимать правила для валидации своих полей. Как же передавать их пользователю? Добавим публичные LiveData для этого. Также две, для каждого поля. Они будут завязаны на уже имеющиеся у нас мутабельные поля. На каждое изменение значения в логине или пароле нам необходимо вызывать соответствующую валидацию. Для этого мы используем маппинг значений от MutableLiveData:</p>
 <pre><code language="language-kotlin" class="language-kotlin">    val loginValidationError: LiveData&lt;StringDesc?&gt; = loginField.map { login -&gt;
-        loginValidation(login)
-    }
-    val passwordValidationError: LiveData&lt;StringDesc?&gt; = passwordField.map { password -&gt;
-        passwordValidation(password)
-    }
+    loginValidation(login)
+}
+val passwordValidationError: LiveData&lt;StringDesc?&gt; = passwordField.map { password -&gt;
+    passwordValidation(password)
+}
 </code></pre>
 <p>Для работы маппинга и возможности использования LiveData нужно также добавить их в импорт:</p>
 <pre><code language="language-kotlin" class="language-kotlin">import dev.icerock.moko.mvvm.livedata.LiveData
@@ -787,9 +958,9 @@ import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import dev.icerock.moko.resources.desc.StringDesc
 
 class AuthViewModel(
-    override val eventsDispatcher: EventsDispatcher&lt;EventsListener&gt;,
-    private val loginValidation: (String) -&gt; StringDesc?,
-    private val passwordValidation: (String) -&gt; StringDesc?
+        override val eventsDispatcher: EventsDispatcher&lt;EventsListener&gt;,
+        private val loginValidation: (String) -&gt; StringDesc?,
+        private val passwordValidation: (String) -&gt; StringDesc?
 ) : ViewModel(), EventsDispatcherOwner&lt;AuthViewModel.EventsListener&gt; {
 
     val loginField: MutableLiveData&lt;String&gt; = MutableLiveData&lt;String&gt;(&#34;&#34;)
