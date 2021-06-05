@@ -1,0 +1,17 @@
+{
+  "environment": "web",
+  "format": "html",
+  "prefix": "https://storage.googleapis.com",
+  "mainga": "UA-49880327-14",
+  "updated": "2021-06-05T10:42:00Z",
+  "id": "kmm-icerock-onboarding-2-ru categories: lang-ru,kmm-icerock-onboarding,moko status: published authors: Andrey",
+  "duration": 135,
+  "title": "IceRock KMM onboarding #2 - реализация фичи авторизации",
+  "summary": "",
+  "source": "./src/kmm-icerock-onboarding/lesson-2/kmm-icerock-onboarding-2.md",
+  "theme": "",
+  "status": null,
+  "category": null,
+  "tags": [],
+  "url": "kmm-icerock-onboarding-2-ru categories: lang-ru,kmm-icerock-onboarding,moko status: published authors: Andrey"
+}
