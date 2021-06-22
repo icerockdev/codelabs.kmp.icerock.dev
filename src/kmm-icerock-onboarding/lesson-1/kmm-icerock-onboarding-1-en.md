@@ -1,5 +1,5 @@
 id: kmm-icerock-onboarding-1-ru
-categories: lang-ruen,kmm-icerock-onboarding,moko
+categories: lang-en,kmm-icerock-onboarding,moko
 status: published
 authors: Andrey Kovalev, Aleksey Lobynya, Aleksey Mikhailov
 tags: onboarding,kmm,ios,android,moko
