@@ -79,7 +79,7 @@
     
 }
 </code></pre>
-<p>После этого нужно реализовать создание интерфейса так, как того требует android. Для начала сделаем верстку экрана, для этого нужно добавить директорию <code>res</code> в <code>mpp-library/src/androidMain</code> и потом в ней <code>New -&gt; Layout XML File</code>. Назовем лейаут <code>screen_info</code>. В файле лейаута сделаем следующую верстку:</p>
+<p>После этого нужно реализовать создание интерфейса так, как того требует android. Для начала сделаем верстку экрана, для этого нужно добавить директорию <code>res</code> в <code>mpp-library/src/androidMain</code> и потом в ней <code>New -> Layout XML File</code>. Назовем лейаут <code>screen_info</code>. В файле лейаута сделаем следующую верстку:</p>
 <pre><code language="language-xml" class="language-xml">&lt;FrameLayout xmlns:android=&#34;http://schemas.android.com/apk/res/android&#34;
     android:layout_width=&#34;match_parent&#34;
     android:layout_height=&#34;match_parent&#34;
@@ -228,7 +228,7 @@ end
 </aside>
 <p>Далее перейдем к настройке интерфейса в <code>mpp-library/src/iosMain/bundle/InfoViewController.xib</code>:</p>
 <ol type="1">
-<li>Укажем в <code>File&#39;s Owner</code> наш класс <code>InfoViewController</code>:</li>
+<li>Укажем в <code>File's Owner</code> наш класс <code>InfoViewController</code>:</li>
 </ol>
 <p class="image-container"><img alt="xib owner" src="img/9e04479c209e3633.png"></p>
 <ol type="1">
@@ -240,7 +240,7 @@ end
 </ol>
 <p class="image-container"><img alt="xib button attributes" src="img/ea62f3a8d9b497f5.png"></p>
 <ol type="1">
-<li>Укажем связь <code>View</code> и <code>File&#39;s Owner</code> - корневая <code>view</code> привязывается к аутлету <code>view</code>, действие <code>onProfileButtonTap</code> привязывается к кнопке на событие <code>Touch Up Inside</code>:</li>
+<li>Укажем связь <code>View</code> и <code>File's Owner</code> - корневая <code>view</code> привязывается к аутлету <code>view</code>, действие <code>onProfileButtonTap</code> привязывается к кнопке на событие <code>Touch Up Inside</code>:</li>
 </ol>
 <p class="image-container"><img alt="xib outlets" src="img/e47d00e7555bfcd5.png"></p>
 <ol type="1">

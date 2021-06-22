@@ -406,7 +406,7 @@ fun ImageView.bindGif(gifUrl: String?) {
     }
 }
 </code></pre>
-<p>We&#39;ve got <code>ListViewModel&lt;Gif&gt;</code> from <code>gifsFactory</code> factory and it will be inserted in <code>viewModel</code> field from <code>activity_gif_list</code> layout.</p>
+<p>We&#39;ve got <code>ListViewModel<Gif></code> from <code>gifsFactory</code> factory and it will be inserted in <code>viewModel</code> field from <code>activity_gif_list</code> layout.</p>
 <p>Also we define <code>setOnRefreshListener</code> in code for proper execution <code>SwipeRefreshLayout</code> and call <code>viewModel.onRefresh</code> that report in lambda when update will be finished and we can turn off the updating animation.</p>
 <h2 is-upgraded>Replace a startup screen</h2>
 <p>Let&#39;s set up  <code>GifListActivity</code> as a launch screen. To do it let&#39;s add <code>GifListActivity</code> in <code>android-app/src/main/AndroidManifest.xml</code> file and remove others (we don&#39;t need it any more).</p>

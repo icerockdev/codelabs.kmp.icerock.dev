@@ -134,7 +134,7 @@
     }
 }
 </code></pre>
-<p>В <code>InputPhoneViewModel</code> мы добавляем внутри интерфейс - <code>EventsListener</code>, это интерфейс со всеми событиями, которые может вызвать <code>ViewModel</code> у <code>Screen</code>‘а. Когда уже есть интерфейс событий, нужно добавить к вьюмодели реализацию интерфейса <code>EventsDispatcherOwner&lt;InputPhoneViewModel.EventsListener&gt;</code> и добавить в конструктор <code>override val eventsDispatcher: EventsDispatcher&lt;EventsListener&gt;</code> - сам <code>EventsDispatcher</code> передается из вне. Остается вызвать у <code>eventsDispatcher</code> метод <code>dispatchEvent</code> в нужный момент и указать какой именно метод должен быть вызван у <code>Screen</code>‘а.</p>
+<p>В <code>InputPhoneViewModel</code> мы добавляем внутри интерфейс - <code>EventsListener</code>, это интерфейс со всеми событиями, которые может вызвать <code>ViewModel</code> у <code>Screen</code>‘а. Когда уже есть интерфейс событий, нужно добавить к вьюмодели реализацию интерфейса <code>EventsDispatcherOwner<InputPhoneViewModel.EventsListener></code> и добавить в конструктор <code>override val eventsDispatcher: EventsDispatcher<EventsListener></code> - сам <code>EventsDispatcher</code> передается из вне. Остается вызвать у <code>eventsDispatcher</code> метод <code>dispatchEvent</code> в нужный момент и указать какой именно метод должен быть вызван у <code>Screen</code>‘а.</p>
 <p>Для эмуляции действий сервера мы сформировали некую строку <code>token</code> и передаем ее в вызов <code>routeInputCode</code>.</p>
 <h2 is-upgraded>Реакция Screen&#39;а на оповещения о необходимости перехода</h2>
 <p>Теперь <code>ViewModel</code> имеет дополнительный аргумент в конструкторе, который должен быть передан самим экраном. А так же в <code>ViewModel</code> есть <code>eventsDispatcher</code>, на который нужно подписаться.</p>
@@ -164,7 +164,7 @@
     }
 }
 </code></pre>
-<p>В данном коде мы добавили в лямбду фабрики вьюмодели что будет передан <code>EventsDispatcher</code>, а так же добавили в конструкторе <code>InputPhoneScreen</code> новый аргумент - <code>routeInputCode</code>. <code>routeInputCode</code> является типом <code>Route&lt;String&gt;</code> и обозначает, что экрану требуется предоставить способ перехода на экран ввода кода, при чем при переходе передаются данные типа <code>String</code>. В получении вьюмодели методом <code>createEventsDispatcher</code> мы создаем новый <code>EventsDispatcher</code> (это происходит только в момент создания новой вьюмодели, а когда она уже есть создания не будет). После получения новой (или старой) вьюмодели, мы обращаемся к ее <code>eventsDispatcher</code> и подписываемся на события методом <code>listen</code>. Туда нужно передать сам экран (на его жизненный цикл будет завязана подписка) и объект, который будет слушать события по интерфейсу <code>InputPhoneViewModel.EventsListener</code> (в нашем случае это сам экран). И сам переход выполняется вызовом метода <code>route</code> у <code>routeInputCode</code> с передачей текущего экрана и данных, которые отправляются (строка с токеном).</p>
+<p>В данном коде мы добавили в лямбду фабрики вьюмодели что будет передан <code>EventsDispatcher</code>, а так же добавили в конструкторе <code>InputPhoneScreen</code> новый аргумент - <code>routeInputCode</code>. <code>routeInputCode</code> является типом <code>Route<String></code> и обозначает, что экрану требуется предоставить способ перехода на экран ввода кода, при чем при переходе передаются данные типа <code>String</code>. В получении вьюмодели методом <code>createEventsDispatcher</code> мы создаем новый <code>EventsDispatcher</code> (это происходит только в момент создания новой вьюмодели, а когда она уже есть создания не будет). После получения новой (или старой) вьюмодели, мы обращаемся к ее <code>eventsDispatcher</code> и подписываемся на события методом <code>listen</code>. Туда нужно передать сам экран (на его жизненный цикл будет завязана подписка) и объект, который будет слушать события по интерфейсу <code>InputPhoneViewModel.EventsListener</code> (в нашем случае это сам экран). И сам переход выполняется вызовом метода <code>route</code> у <code>routeInputCode</code> с передачей текущего экрана и данных, которые отправляются (строка с токеном).</p>
 <h2 is-upgraded>Добавление настроек навигации к экрану</h2>
 <p>Экран <code>InputPhoneScreen</code> будет использоваться в <code>NavigationScreen</code> (это экран с <code>Toolbar</code>/<code>UINavigationBar</code>) и для получения настроек панели навигации <code>NavigationScreen</code> требует имплементации интефрейса <code>NavigationItem</code> у всех экранов, которые добавляются в <code>NavigationScreen</code>. Поэтому нам нужно добавить этот интерфейс и определить требуемые поля.</p>
 <pre><code language="language-kotlin" class="language-kotlin">class InputPhoneScreen(
@@ -256,10 +256,10 @@
 data class Arg(val token: String) : Parcelable
 </code></pre>
 <p>это должен быть <code>Parcelable</code> класс, чтобы android мог корректно его сохранять и передавать между экранами.</p>
-<aside class="warning"><p>Для работы <code>Parcelable</code> надо включить плагин <code>id(&#34;kotlin-android-extensions&#34;)</code> в <code>mpp-library/build.gradle.kts</code></p>
+<aside class="warning"><p>Для работы <code>Parcelable</code> надо включить плагин <code>id("kotlin-android-extensions")</code> в <code>mpp-library/build.gradle.kts</code></p>
 </aside>
 <p>Чтение аргумента происходит при создании вьюмодели, а лямбда <code>viewModelFactory</code> расширена аргументом <code>token</code>.</p>
-<p>Переход <code>routeMain</code> имеет тип <code>Route&lt;Unit&gt;</code>. <code>Unit</code> означает что никаких данных передавать не требуется.</p>
+<p>Переход <code>routeMain</code> имеет тип <code>Route<Unit></code>. <code>Unit</code> означает что никаких данных передавать не требуется.</p>
 
 
       </google-codelab-step>

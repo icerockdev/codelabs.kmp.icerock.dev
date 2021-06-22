@@ -400,7 +400,7 @@ fun ImageView.bindGif(gifUrl: String?) {
     }
 }
 </code></pre>
-<p>Мы получаем из фабрики <code>gifsFactory</code> нашу <code>ListViewModel&lt;Gif&gt;</code> и она будет выставлена в поле <code>viewModel</code> в layout&#39;е <code>activity_gif_list</code>.</p>
+<p>Мы получаем из фабрики <code>gifsFactory</code> нашу <code>ListViewModel<Gif></code> и она будет выставлена в поле <code>viewModel</code> в layout&#39;е <code>activity_gif_list</code>.</p>
 <p>Также для корректной работы <code>SwipeRefreshLayout</code> кодом задаем <code>setOnRefreshListener</code> и вызываем <code>viewModel.onRefresh</code>, который сообщит в лямбду что обновление завершено и мы сможем выключить анимацию обновления.</p>
 <h2 is-upgraded>Замена стартового экрана</h2>
 <p>Сделаем чтобы запускалось приложение сразу с <code>GifListActivity</code>. Для этого в <code>android-app/src/main/AndroidManifest.xml</code> добавим <code>GifListActivity</code>, а другие уберем (они нам не нужны):</p>
