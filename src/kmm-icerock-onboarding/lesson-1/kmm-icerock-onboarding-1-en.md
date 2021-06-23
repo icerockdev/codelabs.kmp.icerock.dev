@@ -1,4 +1,4 @@
-id: kmm-icerock-onboarding-1-ru
+id: kmm-icerock-onboarding-1-en
 categories: lang-en,kmm-icerock-onboarding,moko
 status: published
 authors: Andrey Kovalev, Aleksey Lobynya, Aleksey Mikhailov
