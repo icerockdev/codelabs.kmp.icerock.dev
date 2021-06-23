@@ -1,0 +1,282 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>IceRock KMM onboarding # 1 – deployment of the project</title>
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://storage.googleapis.com/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <google-codelab-analytics gaid="UA-49880327-14"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="kmm-icerock-onboarding-1-en"
+                  title="IceRock KMM onboarding # 1 – deployment of the project"
+                  environment="web"
+                  feedback-link="https://github.com/icerockdev/kmp-codelabs/issues">
+    
+      <google-codelab-step label="Introductory" duration="5">
+        <p>Hey! If you are reading this, then you are starting the process of diving into Multiplatform development at IceRock.</p>
+<p>We have been actively using and promoting this approach since the summer of 2018. For us it&#39;s main value is the ability to combine the business logic of the application in one place for both platforms. Instead of debuging and implementing logic for iOS and Android  separately , we write a common code. The same code for both platforms. Accordingly, bugs related to incorrect logic will not be transmitted from platform to platform. And there is no need to bother both iOS and Android developers, since problems in logic can be fixed by one person in one place and for iOS as well as Android. Isn&#39;t that cool?</p>
+<p>At the same time, user interaction remains 100% native. A full set of all the tools providing native SDKs is available. All the elements are familiar for the user and the application on each platform behaves in the way the users are used to.</p>
+<p>The flip side of the coin is the difficulties at the beginning of entering such an approach and method of development. Nothing really changes for Android developers, since they can use the same Kotlin, modularity, Gradle, coroutines and other things unfamiliar to most iOS-guys. Therefore, iOS developer, getting into his first multi-platform project, goes crazy with the fact that there is a kind of Multiplatform black-box with a bunch of view models implementing some magic with logic, also some dispatchers, units, a screen with complex layout in the controller, which consists of a table and several lines of binding, and it is obviously not clear where all this stuff comes from, and there are more questions than answers.</p>
+<p>In fact, everything is quite simple and logical, and at the same time it is grouped, divided and structured. However, it is difficult to get a sense of this concept when you come to a project that is in a stage of active development due to a large amount of information and logic.</p>
+<p>For this reason we made a set of Codelabs, which are designed to help you walk step by step through the main points of day-to-day development. In them you can perform tasks in turn, increase the functionality of the test project and study the structure of the project from the inside.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setting up the working environment" duration="30">
+        <aside class="special"><p>To be able to work fully-fledged with KMM, you will need macOS, since the iOS application (and the iOS version of Kotlin shared library) can only be compiled on macOS - this is a limitation from Apple (requires Xcode only available on macOS). On other platforms only compilation for Android will be available. The code of a common part can be written and debugged, however you will lack the ability to test its work on iOS.</p>
+</aside>
+<h2 is-upgraded>Git (Android, iOS)</h2>
+<p>For all developers at the company, git is required by default. If it is not installed, you will need to install it (we will not describe it in detail).</p>
+<h2 is-upgraded>Xcode (iOS)</h2>
+<p>To compile an iOS application, as well as Kotlin library for iOS, you need Xcode. It can be installed from AppStore - <a href="https://apps.apple.com/ru/app/xcode/id497799835?mt=12" target="_blank">Xcode</a>.</p>
+<p>For installation you will need an Apple account. If you already have your own Apple ID, you can use it. Otherwise, you can register it to your corporate mail. In the process of registering there is a requirement of a link to a bank card, which cannot be bypassed, so you may link any card (even a salary one) - if you do not make purchases in the AppStore, then there will be no payments (Xcode is free).</p>
+<p>After installing Xcode, it is also important to install <code>Xcode Command Line Tools</code> - they are required to compile Kotlin / Native.</p>
+<pre><code language="language-bash" class="language-bash">xcode-select --install
+</code></pre>
+<p>You can make sure everything is successfully installed by running Xcode and getting in Preferences -&gt; Locations. <img alt="xcode locations" src="img/bd26c8affa045f.png"></p>
+<p>A version of the tools should be indicated in the selection of <code>Command Line Tools</code> (if the installation is not completed, it will be indicated that there are no tools).</p>
+<h2 is-upgraded>Java Development Kit (Android, iOS)</h2>
+<p>To work with Kotlin Multiplatform you will need to install Java Development Kit (JDK) version 11. This requirement is due to the  fact that Kotlin compiler and Gradle build system run on Java Virtual Machine and Java development kit.</p>
+<p>Version of the JDK by Oracle is the most stable in terms of working with Kotlin Multiplatform. To download it, you need to log in (or register). For registration you can use either a corporate or personal email, as the account itself is not required for anything other than downloading of the JDK.</p>
+<p><a href="https://www.oracle.com/java/technologies/javase-jdk11-downloads.html" target="_blank">Download Oracle JDK 11</a></p>
+<p>After installing the JDK, it is required to specify the environment variable <code>JAVA_HOME</code> so that all tools work with the installed version of Java.</p>
+<p>Initially we get the exact path to the newly installed JDK, as all versions are in the directory <code>/Library/Java/JavaVirtualMachines</code>, so enter in <code>Terminal</code>:</p>
+<pre><code language="language-bash" class="language-bash">open /Library/Java/JavaVirtualMachines
+</code></pre>
+<p>After that, in the window that opens, we can find our JDK (it is recommended in order to understand exactly which versions of Java are installed and where we can search for the JDK if required).</p>
+<p>The final path to the JDK will look like this: <code>/Library/Java/JavaVirtualMachines/jdk-11.0.10.jdk/Contents/Home</code> You may have another minor version, but the major version should be 11. The base JDK directory is located in <code>Contents/Home</code>.</p>
+<p>One last thing is saving the path to the JDK in environment variables. This can be done by file changing <code>~/.zshenv</code> (this example is based on <code>zsh</code>, since this is the default shell for macOS).</p>
+<pre><code language="language-bash" class="language-bash">nano ~/.zshenv
+</code></pre>
+<p>and the line should be added in the opened editor:</p>
+<pre><code language="language-bash" class="language-bash">export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk-11.0.10.jdk/Contents/Home
+</code></pre>
+<aside class="warning"><p>Be careful with copy-paste, since the minor version of the JDK you have installed may differ from the given above!</p>
+</aside>
+<h2 is-upgraded>Android Studio (Android, iOS)</h2>
+<p>To work with Kotlin code you need an IDE by JetBrains - IDEA or Android Studio. Kotlin Multiplatform Mobile is currently the main IDE [as it is recognised by Android Studio (https://kotlinlang.org/lp/mobile/ecosystem/), so it is required to be installed.</p>
+<p>In this regard we recommend using <a href="https://www.jetbrains.com/toolbox-app/" target="_blank">JetBrains Toolbox</a>, this application will independently monitor the current version of an IDE used and facilitate the process of installation / updating all IDEs by JetBrains.</p>
+<p class="image-container"><img alt="jetbrains toolbox" src="img/4cdd3fb092a35b1c.png"></p>
+<p>For installation just click Install which is opposite to <code>Android Studio</code>.</p>
+<p>On first launch the initial setup will be performed. Settings can be made at your discretion, but it is important to install the latest version of Android SDK.</p>
+<p>The IDE installation needs a bit of customization. First, it is required to fix the JDK you are using. For this end you go into Android Studio, but <strong>do not open any project</strong>.</p>
+<p class="image-container"><img alt="android studio welcome" src="img/c4f2a128b43308ac.png"></p>
+<p class="image-container"><img alt="android studio jdk" src="img/ac3210f7676fa334.png"></p>
+<p>On the Welcome screen choose <code>Configure</code> -&gt;<code>Default Project Structure</code>. And on the screen that appears select <code>JDK Location</code> from<code>JAVA_HOME</code>:</p>
+<p class="image-container"><img alt="android studio jdk" src="img/ac3210f7676fa334.png"></p>
+<aside class="special"><p>Due to this choice, compilation of the projects through Android Studio will be done with the same version of JDK that Xcode will use. This will allow you to use one Gradle Daemon to compile one project, using resources more efficiently. If Android Studio and Xcode use different JDKs, then when compiling the project in Android Studio and Xcode you will get two independent java processes, each of which will consume many resources (gigabytes of memory).</p>
+</aside>
+<p>After installation of Android Studio, it is worth specifying the environment variable <code>ANDROID_SDK_ROOT</code> for convenience, so that there is no need to open the project through Android Studio before launching it in Xcode.</p>
+<p>If you do not specify an environment variable, then while trying to compile Kotlin code, Gradle will try to read the path to the Android SDK from the <code>local.properties</code> file in the project root. And if this file does not exist, an error will occur. Android Studio automatically creates this file with the correct path to the Android SDK if you open a project through Android Studio, but if you want to avoid dependency on the fact &#34;whether the project was opened through Android Studio before&#34; you should specify the environment variable <code>ANDROID_SDK_ROOT</code>.</p>
+<p>We take the path to the Android SDK, which we could see earlier in <code>Welcome Screen</code> -&gt;<code>Configure</code> -&gt; <code>Default Project Structure</code> and add it to<code>~ / .zshenv</code>. Open editing:</p>
+<pre><code language="language-bash" class="language-bash">nano ~/.zshenv
+</code></pre>
+<p>and add a line with the path to the SDK, for example:</p>
+<pre><code language="language-bash" class="language-bash">export ANDROID_SDK_ROOT=~/Library/android-sdk
+</code></pre>
+<p>After that, even in the absence of <code>local.properties</code> file, the SDK will be found successfully.</p>
+<h2 is-upgraded>CocoaPods (iOS)</h2>
+<p>To work with dependencies on iOS we use CocoaPods, and also Kotlin module is connected to Xcode project via CocoaPods integration. Therefore, you need to install the current version of CocoaPods.</p>
+<p>Detailed documentation for installation <a href="https://cocoapods.org/#install" target="_blank">available on the official website</a>.</p>
+<h2 is-upgraded>Kotlin Multiplatform Mobile plugin (iOS)</h2>
+<p><a href="https://plugins.jetbrains.com/plugin/14936-kotlin-multiplatform-mobile" target="_blank">special IDE plugin called Kotlin Multiplatform Mobile</a> is provided for Android Studio by JetBrains, in which:</p>
+<ul>
+<li>Templates for KMM project / KMM module creation</li>
+<li>iOS application launching from Android Studio</li>
+<li>iOS applications debugging from Android Studio (you can put breakpoints in common code on Kotlin and iOS application will stop at this point when running)</li>
+</ul>
+<p>This plugin is available only on macOS (since launching and debugging iOS application is possible only on macOS).</p>
+<aside class="special"><p>It is important to understand that this plugin is not a compulsory requirement to work with Kotlin Multiplatform Mobile. Naming can be misleading. You can develop KMM applications without this plugin, it may only be needed for more convenient iOS part development - the ability to debug Kotlin from Android Studio is available exclusively through this plugin.</p>
+</aside>
+<aside class="warning"><p>During Kotlin updates plugin may break the work of the IDE (for example, the IDE cannot complete Gradle Sync). In such cases you should turn off this plugin and work without it.</p>
+</aside>
+<h2 is-upgraded>Xcode Kotlin plugin (iOS)</h2>
+<p>As an alternative to Kotlin Multiplatform Mobile plugin for Android Studio, you can use <a href="https://github.com/touchlab/xcode-kotlin" target="_blank">Xcode Kotlin plugin for Xcode</a>.</p>
+<p>It provides the ability to set breakpoints in Kotlin code from Xcode: <img alt="xcode kotlin breakpoint" src="img/ff467c66c359d179.png"></p>
+<p>To install you should just download <a href="https://github.com/touchlab/xcode-kotlin/archive/refs/heads/main.zip" target="_blank">current version from master</a>, unzip and run</p>
+<pre><code language="language-bash" class="language-bash">./setup.sh
+</code></pre>
+<p>Then open Xcode and give permission to use Kotlin plugin (there will be a window when launching)</p>
+<ul>
+<li><code>Load Bundle</code>.</li>
+</ul>
+<aside class="special"><p>After every Xcode update, you need to do a re-installation by downloading the updated version of the plugin from GitHub. After that, in projects where directories with Kotlin code are added via folder-reference, you can open Kotlin files and set breakpoints, and the Xcode debugger will successfully stop at them. We will consider setting breakpoints in more detail a little later in the debugging section.</p>
+</aside>
+<h2 is-upgraded>Checking if all required environment variables are present</h2>
+<p>Open Terminal application and enter <code>export</code> command. The result should include the following variables:</p>
+<ul>
+<li><code>JAVA_HOME</code></li>
+<li><code>ANDROID_SDK_ROOT</code></li>
+</ul>
+<p>If they are absent, you should return to the above mentioned points and set the variables correctly.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create a project" duration="10">
+        <p>Our template project - <strong>mobile-moko-boilerplate</strong> will serve as a starting point. It is used in all new projects for quick deployment and development start. All the minimum required dependencies are connected there already, and there is the necessary folder structure and basic project setup. Therefore, go to GitLab repository https://gitlab.icerockdev.com/scl/boilerplate/mobile-moko-boilerplate and fork into our profile, clone it.</p>
+<p>After cloning, open the project in Android Studio. To do this start the studio, File -&gt; Open -&gt; and select the folder where you cloned the repository. The first time you open it, the following should appear: <img alt="android studio start" src="img/5d69b1a99ea4bdae.png"></p>
+<p>By default, the studio parses directories and shows structure as for Android project. However, here we will work not only with android, but also with Multiplatform. Therefore, we switch the structure render. To do this, click on the Android dropdown on the left and select Project instead: <img alt="android studio project" src="img/9c87ccce445d4dce.png"></p>
+<p>After that, the folder structure will change slightly: <img alt="android studio structure" src="img/38aadee1f5157514.png"></p>
+<aside class="special"><p>In the next CodeLab we will get acquainted in more detail with the structure of the project, and in this part we will understand how to run and debug code on both platforms with the installed toolkit.</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Building Android" duration="5">
+        <p>Launching an Android application is quite simple - you just need to launch the button Run in Android Studio. As easy as normal Android app development.</p>
+<p class="image-container"><img alt="android studio run" src="img/859d7678486ee309.png"></p>
+<p>As a result, Android version of the shared library (mpp-library) and an Android application will be built, and application will run on the selected device / emulator.</p>
+<p class="image-container"><img alt="android studio emulator" src="img/6fd44144986ce781.png"></p>
+<p>If you need just to build an Android application, then you can use corresponding Gradle tasks.</p>
+<p class="image-container"><img alt="android studio android assemble tasks" src="img/31a98e466e0708b2.png"></p>
+<p>All tasks starting with <code>assemble</code> are responsible for compiling the project. The task <code>assembleDevDebug</code> is most often required to compile the debug assembly for the dev environment. Debug types of tasks are executed much faster than Release versions, since they do not have a lot of build optimizations and checks. Debug versions should be used for development.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Building iOS" duration="15">
+        <h2 is-upgraded>Installing CocoaPods dependencies</h2>
+<p>Before the first compilation of iOS it is required to install the dependencies (they are managed via CocoaPods) - go to the <code>ios-app</code> directory and do<code>pod install</code>:</p>
+<pre><code language="language-bash" class="language-bash">(cd ios-app &amp;&amp; pod install)
+</code></pre>
+<aside class="special"><p>In order to avoid switching between IDE and terminal, you can use terminal directly from the studio. Just click the Terminal tab at the bottom of the panel.</p>
+</aside>
+<p class="image-container"><img alt="android studio terminal pod install" src="img/e8d97665b89f4b26.png"></p>
+<p>The initial installation of CocoaPods is required for compilation of the Kotlin module, since our project depends on native CocoaPod modules (more detailed in the next part).</p>
+<h2 is-upgraded>Compilation of MultiPlatformLibrary.framework (Kotlin module for iOS)</h2>
+<p>After we have iOS dependencies installed, we can compile the Kotlin module for iOS. To do this, we need to run the Gradle task  <code>syncMultiPlatformLibraryDebugFrameworkIosX64</code>. We can do this in several ways:</p>
+<ol type="1">
+<li>Run <code>./gradlew syncMultiPlatformLibraryDebugFrameworkIosX64</code> command in Terminal</li>
+<li>Run <code>syncMultiPlatformLibraryDebugFrameworkIosX64</code> task through Android Studio</li>
+</ol>
+<p class="image-container"><img alt="gradle task in android studio" src="img/3386b0f23d2b8247.png"></p>
+<p>It is worth trying both options to find the one that suits you best.</p>
+<p>Compilation will take some time, since Kotlin/Native (Kotlin compiler for native platforms) is not optimized enough for performance. While the compilation is in progress, it is worth reading the article <a href="https://kmm.icerock.dev/docs/for-ios-devs/gradle" target="_blank">Gradle for iOS Developers at kmm.icerock.dev</a> ...</p>
+<h2 is-upgraded>Installing CocoaPods dependencies along with MultiPlatformLibrary</h2>
+<p>After successful completion of the framework building, you need to re-install CocoaPods:</p>
+<pre><code language="language-bash" class="language-bash">(cd ios-app &amp;&amp; pod install)
+</code></pre>
+<p>This is necessary because when you first installed CocoaPods there was no MutliPlatformLibrary.framework file (since it&#39;s compilation requires other CocoaPods dependencies) and therefore CocoaPods did not fully configure the integration of our project with the framework. More precisely, we did not add a framework file and a linking command to the xcode project. Therefore, after successful compilation of the framework, we rerun the installation of CocoaPods dependencies and after that we get a full-fledged integration.</p>
+<p>You can check if the integration of the Kotlin module into iOS project was successful through Xcode:</p>
+<p class="image-container"><img alt="xcode integrated multiplatform library" src="img/f3a6a5caa6641e88.png"></p>
+<p>If the framework is visible in <code>Pods/Development Pods/MultiPlatformLibrary/Frameworks</code>, then the integration is successful. If this framework is not visible, then make sure that you run the CocoaPods installation after you have compiled <code>MultiPlatformLibrary</code> task <code>syncMultiPlatformLibraryDebugFrameworkIosX64</code>.</p>
+<aside class="special"><p>if you have compilation errors of iOS application related to the absence of MultiPlatformLibrary, then check if the integration is successful (by checking the framework from the screenshot above). And also check for the presence of the framework along the path from where the CocoaPods integration takes it</p>
+</aside>
+<ul>
+<li><code>mpp-library/build/cocoapods/framework/MultiPlatformLibrary.framework</code>.</li>
+</ul>
+<h2 is-upgraded>Launching iOS application</h2>
+<p>After successful installation of the CocoaPods dependencies (including MultiPlatformLibrary), you can open the Xcode workspace:</p>
+<pre><code language="language-bash" class="language-bash">open ios-app/ios-app.xcworkspace
+</code></pre>
+<p>We select any simulator and run the project by clicking on the Run button.</p>
+<p class="image-container"><img alt="xcode run app" src="img/5c59f144ce8dc6b1.png"></p>
+<p>As a result, we will see the running application:</p>
+<p class="image-container"><img alt="ios run result" src="img/8081345a4638cfdc.png"></p>
+<h2 is-upgraded>Building directly from Android Studio</h2>
+<p>When using Kotlin Multiplatform Mobile plugin, you may run an iOS application directly from Android Studio.</p>
+<p>This method does not cancel all work with CocoaPods, it can only be an alternative for launching an iOS application through Xcode.</p>
+<p>To get started, you need to set the launch configuration. Select the item <code>Edit Configurations</code> in Android Studio:</p>
+<p class="image-container"><img alt="android studio edit configurations" src="img/4a610d22a072157b.png"></p>
+<p>And in the window that opens select <code>ios-app</code>. In the configuration settings select:</p>
+<ul>
+<li><code>Xcode project scheme</code> =<code>mokoApp</code></li>
+<li><code>Execution target</code> = desired simulator / device</li>
+</ul>
+<p class="image-container"><img alt="android studio ios configuration" src="img/d8826619d37d48f5.png"></p>
+<p>After the settings made click <code>Apply</code> to save, then select <code>ios-app</code> configuration and launch the application. <img alt="android studio run ios" src="img/a374176aa4d252fc.png"></p>
+<h2 is-upgraded>Write-Compile-Debug cycle</h2>
+<p>The development cycle &#34;write code&#34; -&gt; &#34;compile&#34; -&gt; &#34;run&#34; requires fewer steps than described above. After the initial installation of the dependencies, to check the changes in the code you have to press <code>Run</code> in Xcode / Android Studio. The integration via CocoaPods will automatically compile Kotlin module, so changes in the code of the shared library and in the iOS code of the project will be taken into account in the new build. Running <code>pod install</code> may need to be repeated in cases where new native CocoaPods dependencies are added to <code>Podfile</code>.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Debugging Android" duration="5">
+        <p>To debug Android application / shared code on Android, just put a breakpoint and start android via Debug mode (bug icon).</p>
+<p class="image-container"><img alt="android studio android debug" src="img/61f9e217eb7865f6.png"></p>
+<p>When a stop occurs at a breakpoint, it will be possible to view the call stack and all the contents of the frames in the stack.</p>
+<p class="image-container"><img alt="android studio android breakpoint stop" src="img/dee7bb627cdf2fe1.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Debugging iOS" duration="10">
+        <h2 is-upgraded>Debugging using Xcode</h2>
+<p>Due to the installed plugin <a href="https://github.com/touchlab/xcode-kotlin" target="_blank">xcode-kotlin</a> we can specify a breakpoint in Kotlin code directly from Xcode. To do this, you need to add Kotlin code files to the Xcode project through folder-reference. There is a link in our project to the <code>mpp-library</code> directory, in which all multiplatform modules are located.</p>
+<p>To get an example of working with breakpoints, open the file <code>mpp library/src/commonMain/kotlin/org/example/library/SharedFactory.kt</code> in Xcode and set a breakpoint (by clicking on the line number) on the line in the class constructor with initialization of the<code>Napier</code> logger.</p>
+<pre><code language="language-kotlin" class="language-kotlin">Napier.base(CrashReportingAntilog(CrashlyticsLogger()))
+</code></pre>
+<p class="image-container"><img alt="xcode-kotlin breakpoint" src="img/ff467c66c359d179.png"></p>
+<p>Next, we launch the application and immediately upon launch we will get a stop at this breakpoint.</p>
+<p class="image-container"><img alt="xcode-kotlin breakpoint stop" src="img/b78f8b46152e0589.png"></p>
+<p>In the debugger you can see the stack trace with a clear call stack (kotlin functions start with <code>kfun:</code>), and also see that the data available in the current frame is partially visible for analysis:</p>
+<ul>
+<li>you can see the properties of the current object in <code>_this</code></li>
+<li>you can see the constructor arguments <code>settings</code>,<code>antilog</code>, <code>baseUrl</code>,<code>httpClientEngine</code></li>
+</ul>
+<p>The debugger is still not stable with Kotlin code, so step-by-step operations may lead to unexpected results, and lldb commands like <code>po</code> may give crashes, but this will also be improved in the future.</p>
+<h2 is-upgraded>Debugging using Android Studio</h2>
+<p>Using Kotlin Multiplatform Mobile plugin you can debug kotlin code in iOS from Android Studio. To do this you should set the breakpoint (by clicking to the right of the line number) to the desired line:</p>
+<p class="image-container"><img alt="android studio breakpoint" src="img/8f19cc31ac52ce48.png"></p>
+<p>and after that we can launch the application using the Debug button (bug):</p>
+<p class="image-container"><img alt="android studio run ios debug" src="img/d3c679e4f50dc226.png"></p>
+<p>After starting debugging, a breakpoint will stop and we will see the stack trace and data from the current frame - just like in Xcode.</p>
+<p class="image-container"><img alt="android studio ios breakpoint stop" src="img/ca8af673756ad9ce.png"></p>
+<h2 is-upgraded>Debugging via Xcode vs Android Studio</h2>
+<p>When debugging through Xcode, we can see the frame data of not only the Kotlin part but also Swift, we can switch along the stack trace in Swift code and see what was passed to Kotlin when called. When debugging through Android Studio, Swift code will be inaccessible, only Kotlin part will be available to analysis. But at the same time, all navigation and analysis of Kotlin code is available through Android Studio, which are not available when debugging through Xcode. Everyone can choose the most suitable tool for their current needs.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Running tests" duration="5">
+        <p>Tests written in Kotlin module are run in both Android and iOS environments, that allows you to find platform-specific problems.</p>
+<p>Tests are run through gradle tasks:</p>
+<ul>
+<li><code>build</code> - compile all platforms (even those binaries that are not needed for tests) and run all checks (the longest option)</li>
+<li><code>test</code> - run all tests (and compile the binaries needed to run the tests)</li>
+<li><code>iosX64Test</code> - run all tests on the iOS platform</li>
+<li><code>testDebugUnitTest</code> - run all tests on Android platform</li>
+</ul>
+<p>Try running tests through <code>test</code>:</p>
+<p class="image-container"><img alt="android studio test task" src="img/fe81c8d188260d69.png"></p>
+<p>Besides running tasks through gradle, you can run tests pointwise:</p>
+<p class="image-container"><img alt="android studio test selection" src="img/3e711eb46fcec4c0.png"></p>
+<p>Writing tests will be dealt with in more detail in future CodeLabs.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Results" duration="5">
+        <p>And this is our success! We downloaded and assembled Multiplatform project from scratch. All the work with other MPP projects in the company is carried out in a similar way. Therefore, when you get to a production project, you will already know exactly how to download it from the repository, build it and run it.</p>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://storage.googleapis.com/codelab-elements/native-shim.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/prettify.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+
+</body>
+</html>

@@ -4,18 +4,18 @@
   "prefix": "https://storage.googleapis.com",
   "mainga": "UA-49880327-14",
   "updated": "2021-06-23T12:03:33Z",
-  "id": "kmm-icerock-onboarding-2-ru",
-  "duration": 135,
-  "title": "IceRock KMM onboarding #2 - реализация фичи авторизации",
+  "id": "kmm-icerock-onboarding-1-en",
+  "duration": 90,
+  "title": "IceRock KMM onboarding # 1 – deployment of the project",
   "authors": "Andrey Kovalev, Aleksey Lobynya, Aleksey Mikhailov",
   "summary": "",
-  "source": "./src/kmm-icerock-onboarding/lesson-2/kmm-icerock-onboarding-2.md",
+  "source": "./src/kmm-icerock-onboarding/lesson-1/kmm-icerock-onboarding-1-en.md",
   "theme": "",
   "status": [
     "published"
   ],
   "category": [
-    "lang-ru",
+    "lang-en",
     "kmm-icerock-onboarding",
     "moko"
   ],
@@ -27,5 +27,5 @@
     "onboarding"
   ],
   "feedback": "https://github.com/icerockdev/kmp-codelabs/issues",
-  "url": "kmm-icerock-onboarding-2-ru"
+  "url": "kmm-icerock-onboarding-1-en"
 }
