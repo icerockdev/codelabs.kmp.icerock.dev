@@ -69,8 +69,7 @@
     }
 }
 </code></pre>
-<aside class="special"><p>Для создания виджета списка нам требуется передать Id - это нужно чтобы Android мог сохранить положение скролла и восстановить при перезаходе на экран или смене конфигурации.</p>
-</aside>
+<p>Positive : Для создания виджета списка нам требуется передать Id - это нужно чтобы Android мог сохранить положение скролла и восстановить при перезаходе на экран или смене конфигурации.</p>
 <p>Для хранения данных нам потребуется сущность <code>Friend</code>: <code>mpp-library/src/commonMain/kotlin/org/example/mpp/friends/Friend.kt</code>:</p>
 <pre><code language="language-kotlin" class="language-kotlin">data class Friend(
     val id: Int,
@@ -143,8 +142,7 @@
 }
 </code></pre>
 <p>Мы унаследовались от <code>WidgetsTableUnitItem</code>, это специальный <code>TableUnitItem</code>, который умеет создавать элемент списка с контентом полученным из <code>Widget</code>. Для корректной работы на iOS требуется задать уникальный <code>reuseId</code> для данного класса элемента.</p>
-<aside class="special"><p>В метод <code>createWidget</code> передается <code>LiveData<Friend></code>, эта лайвдата будет автоматически изменяться при переиспользовании уже созданной view.</p>
-</aside>
+<p>Positive : В метод <code>createWidget</code> передается <code>LiveData<Friend></code>, эта лайвдата будет автоматически изменяться при переиспользовании уже созданной view.</p>
 <p>Реализуем создание элемента:</p>
 <pre><code language="language-kotlin" class="language-kotlin">class FriendUnitItem(
     ...
@@ -187,8 +185,7 @@
     }
 }
 </code></pre>
-<aside class="special"><p><code>UnitItemRoot</code> - специальный класс, ограничивающий допустимые для использования в элементе списка размеры.</p>
-</aside>
+<p>Positive : <code>UnitItemRoot</code> - специальный класс, ограничивающий допустимые для использования в элементе списка размеры.</p>
 <pre><code language="language-kotlin" class="language-kotlin">inline class UnitItemRoot private constructor(private val wrapper: Wrapper) {
 
     companion object {

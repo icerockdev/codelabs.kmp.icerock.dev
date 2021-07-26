@@ -198,11 +198,9 @@ end
 <li><code>mpp-library/src/iosMain/bundle/InfoViewController.xib</code></li>
 </ul>
 <p>Создаем в группе <code>mppLibraryIos</code>: <img alt="xcode" src="img/86bc1df3658d73e7.png"></p>
-<aside class="special"><p>На вопрос о создании Objective-C Bridging Header ответьте &#34;Нет&#34;</p>
-</aside>
+<p>Positive : На вопрос о создании Objective-C Bridging Header ответьте &#34;Нет&#34;</p>
 <p>Для таргета <code>mppLibraryIos</code>: <img alt="target" src="img/333e9d019218b844.png"></p>
-<aside class="special"><p>После создания обоих файлов нужно повторно выполнить <code>pod install</code> чтобы файлы были корректно подключены к проекту.</p>
-</aside>
+<p>Positive : После создания обоих файлов нужно повторно выполнить <code>pod install</code> чтобы файлы были корректно подключены к проекту.</p>
 <h2 is-upgraded>Реализация нативного экрана</h2>
 <p>В файле <code>mpp-library/src/iosMain/swift/InfoViewController.swift</code> добавим реализацию:</p>
 <pre><code language="language-swift" class="language-swift">@objc public class InfoViewController: UIViewController {
@@ -220,30 +218,27 @@ end
   }
 }
 </code></pre>
-<aside class="special"><p>Директива <code>@objc</code> говорит компилятору что для класс <code>InfoViewController</code> и поле <code>onProfileButtonPressed</code> должны быть доступны из Objective-C - это требуется для работы с данным классом из Kotlin (Kotlin имеет interop с Objective-C и C, но не Swift).</p>
-</aside>
-<aside class="special"><p>По умолчанию в swift используется видимость <code>internal</code>, поэтому для работы с классом из вне фреймворка требуется указать видимость <code>public</code>.</p>
-</aside>
-<aside class="special"><p>Для создания объекта <code>InfoViewController</code> мы передаем <code>nibName = nil</code>, чтобы система использовала имя класса для поиска <code>xib</code>, а так же <code>bundle</code> полученный от класса - чтобы поиск xib производился в правильном framework (в mppLibraryIos.framework)</p>
-</aside>
+<p>Positive : Директива <code>@objc</code> говорит компилятору что для класс <code>InfoViewController</code> и поле <code>onProfileButtonPressed</code> должны быть доступны из Objective-C - это требуется для работы с данным классом из Kotlin (Kotlin имеет interop с Objective-C и C, но не Swift).</p>
+<p>Positive : По умолчанию в swift используется видимость <code>internal</code>, поэтому для работы с классом из вне фреймворка требуется указать видимость <code>public</code>.</p>
+<p>Positive : Для создания объекта <code>InfoViewController</code> мы передаем <code>nibName = nil</code>, чтобы система использовала имя класса для поиска <code>xib</code>, а так же <code>bundle</code> полученный от класса - чтобы поиск xib производился в правильном framework (в mppLibraryIos.framework)</p>
 <p>Далее перейдем к настройке интерфейса в <code>mpp-library/src/iosMain/bundle/InfoViewController.xib</code>:</p>
 <ol type="1">
 <li>Укажем в <code>File's Owner</code> наш класс <code>InfoViewController</code>:</li>
 </ol>
 <p class="image-container"><img alt="xib owner" src="img/9e04479c209e3633.png"></p>
-<ol type="1">
+<ol type="1" start="2">
 <li>Добавим кнопку на корневую <code>View</code> и настроим связи - центрирование по контейнеру:</li>
 </ol>
 <p class="image-container"><img alt="xib button constraints" src="img/e87327bdda537af3.png"></p>
-<ol type="1">
+<ol type="1" start="3">
 <li>Настроим внешний вид кнопки - заголовок, цвет текста, цвет фона:</li>
 </ol>
 <p class="image-container"><img alt="xib button attributes" src="img/ea62f3a8d9b497f5.png"></p>
-<ol type="1">
+<ol type="1" start="4">
 <li>Укажем связь <code>View</code> и <code>File's Owner</code> - корневая <code>view</code> привязывается к аутлету <code>view</code>, действие <code>onProfileButtonTap</code> привязывается к кнопке на событие <code>Touch Up Inside</code>:</li>
 </ol>
 <p class="image-container"><img alt="xib outlets" src="img/e47d00e7555bfcd5.png"></p>
-<ol type="1">
+<ol type="1" start="5">
 <li>Далее попробуем собрать фреймворк - для этого в схемах включим отображение схему <code>mppLibraryIos</code> и, выбрав ее, произведем сборку:</li>
 </ol>
 <p class="image-container"><img alt="ios scheme" src="img/21b733ceca837c7e.png"></p>
@@ -262,8 +257,7 @@ cocoaPods {
 <p>После добавления настройки нужно вызвать <code>Gradle Sync</code> и в панели управления Gradle мы сможем вызвать задачу <code>cinteropCocoapodMppLibraryIosIosX64</code>:</p>
 <p class="image-container"><img alt="xib outlets" src="img/ae6c48ad038f6d24.png"></p>
 <p>После завершения работы задачи <code>cinteropCocoapodMppLibraryIosIosX64</code> требуется сделать <code>Gradle Sync</code>, чтобы IDE корректно считала сгенерированные данной задачей klib&#39;ы с нативными классами.</p>
-<aside class="special"><p>Если не видно из Kotlin классов от CocoaPod - можно удалить директорию <code>mpp-library/build/classes</code> и вызвать по новой cinterop таску, после чего <code>Gradle Sync</code>.</p>
-</aside>
+<p>Positive : Если не видно из Kotlin классов от CocoaPod - можно удалить директорию <code>mpp-library/build/classes</code> и вызвать по новой cinterop таску, после чего <code>Gradle Sync</code>.</p>
 <p>Далее можно открыть <code>mpp-library/src/iosX64Main/kotlin/org/example/mpp/info/PlatformInfoScreen.kt</code> и внести изменения:</p>
 <pre><code language="language-kotlin" class="language-kotlin">actual class PlatformInfoScreen actual constructor(
     ...

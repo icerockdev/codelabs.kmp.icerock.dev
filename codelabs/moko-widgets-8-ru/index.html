@@ -62,8 +62,7 @@
     interface Id : Theme.Id&lt;SliderWidget&lt;out WidgetSize&gt;&gt;
 }
 </code></pre>
-<aside class="special"><p><code>Id</code> это интерфейс наследующийся от специального интерфейса <code>Theme.Id</code>. За счет строгой типизации компилятор проверяет корректные ли операции применяются по id или нет.</p>
-</aside>
+<p>Positive : <code>Id</code> это интерфейс наследующийся от специального интерфейса <code>Theme.Id</code>. За счет строгой типизации компилятор проверяет корректные ли операции применяются по id или нет.</p>
 <p>Базовые свойства виджета уже добавлены, теперь нужно добавить данные этого виджета - то, что не касается визуального оформления элемента. Эти данные будут считываться фабрикой виджета и применяться к ui элементу. <code>mpp-library/src/commonMain/kotlin/org/example/mpp/SliderWidget.kt</code>:</p>
 <pre><code language="language-kotlin" class="language-kotlin">class SliderWidget&lt;WS : WidgetSize&gt;(
     ...

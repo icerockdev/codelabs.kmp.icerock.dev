@@ -55,7 +55,7 @@
 </code></pre>
 <p>Здесь:</p>
 <ul>
-<li>вложенные директории org/example/library/feature/listSimple должны соответствовать имени пакета ([//TODO: ссылка на &#34;почему так?&#34;]())</li>
+<li>вложенные директории org/example/library/feature/listSimple должны соответствовать имени пакета (<a target="_blank">//TODO: ссылка на &#34;почему так?&#34;</a>)</li>
 <li>в директории di будет распологаться весь код внешнего создания вьюмодели доступный внешним модулям, сейчас это фабрика вьюмодели</li>
 <li>в директории presentation будет именно <strong>ViewModel</strong>-логика, то есть сами классы вьюмоделей и возможно что-нибудь вспомогательное для них, доступное только в рамках модуля фичи</li>
 </ul>
@@ -165,7 +165,9 @@ class ListSampleViewController: BaseViewController&lt;ListSampleViewModel&gt; {
     }
 }
 </code></pre>
-<p>*В generic-классе <strong>BaseViewController</strong> заложена вспомогательная логика по очистке вьюмодели, событиях клавиатуры и многого другого, может пополняться полезными функциями от проекта к проекту*</p>
+<p><em>В generic-классе </em></p>
+<p><strong><em>BaseViewController</em></strong></p>
+<p><em> заложена вспомогательная логика по очистке вьюмодели, событиях клавиатуры и многого другого, может пополняться полезными функциями от проекта к проекту</em></p>
 <p>В файле <strong>ListSampleCoordinator</strong> создаем контроллер, вьюмодель и показываем контроллер как корневой у текущего окна:</p>
 <pre><code language="language-swift" class="language-swift">import UIKit
 import MultiPlatformLibrary

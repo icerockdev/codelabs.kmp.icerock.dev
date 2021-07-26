@@ -39,13 +39,12 @@
       </google-codelab-step>
     
       <google-codelab-step label="Настройка рабочего окружения" duration="30">
-        <aside class="special"><p>Для полноценной работы с KMM потребуется macOS, так как iOS приложение (и iOS версию kotlin библиотеки) можно скомпилировать только на macOS - это ограничение от Apple (требуется Xcode доступный только на macOS). На других платформах будет доступна только компиляция под Android. Код common части писать и отлаживать можно, но без возможности проверить его работу под iOS.</p>
-</aside>
+        <p>Positive : Для полноценной работы с KMM потребуется macOS, так как iOS приложение (и iOS версию kotlin библиотеки) можно скомпилировать только на macOS - это ограничение от Apple (требуется Xcode доступный только на macOS). На других платформах будет доступна только компиляция под Android. Код common части писать и отлаживать можно, но без возможности проверить его работу под iOS.</p>
 <h2 is-upgraded>Git (Android, iOS)</h2>
 <p>Для всех разработчиков в компании git требуется по умолчанию. Если он не установлен - нужно установить (описывать это подробно не будем).</p>
 <h2 is-upgraded>Xcode (iOS)</h2>
 <p>Для компиляции iOS приложения, а также Kotlin библиотеки для iOS, потребуется Xcode. Его можно установить из AppStore - <a href="https://apps.apple.com/ru/app/xcode/id497799835?mt=12" target="_blank">Xcode</a>.</p>
-<p>Для установки потребуетя Apple учетная запись. Если у вас уже есть собственный Apple ID - можете использовать его. Если нету - можно зарегистрировать на корпоративную почту. При регистрации потребуется привязка банковской карты, это обойти нельзя, поэтому привяжите любую карту (хоть зарплатную) - если не выполнять покупок в AppStore то никаких списаний не будет (Xcode бесплатный).</p>
+<p>Для установки потребуется Apple учетная запись. Если у вас уже есть собственный Apple ID - можете использовать его. Если нету - можно зарегистрировать на корпоративную почту. При регистрации потребуется привязка банковской карты, это обойти нельзя, поэтому привяжите любую карту (хоть зарплатную) - если не выполнять покупок в AppStore то никаких списаний не будет (Xcode бесплатный).</p>
 <p>После установки Xcode важно также установить <code>Xcode Command Line Tools</code> - они потребуются для компиляции Kotlin/Native.</p>
 <pre><code language="language-bash" class="language-bash">xcode-select --install
 </code></pre>
@@ -66,8 +65,7 @@
 <p>и в открывшемся редакторе добавляем строку:</p>
 <pre><code language="language-bash" class="language-bash">export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk-11.0.10.jdk/Contents/Home
 </code></pre>
-<aside class="warning"><p>Аккуратнее с copy-paste - минорная версия установленной у вас JDK может отличаться от приведенной выше!</p>
-</aside>
+<p>Negative : Аккуратнее с copy-paste - минорная версия установленной у вас JDK может отличаться от приведенной выше!</p>
 <h2 is-upgraded>Android Studio (Android, iOS)</h2>
 <p>Для работы с Kotlin кодом требуется IDE от JetBrains - IDEA либо Android Studio. Команда Kotlin Multiplatform Mobile на данный момент основной IDE <a href="https://kotlinlang.org/lp/mobile/ecosystem/" target="_blank">позиционируют Android Studio</a> поэтому требуется установить ее.</p>
 <p>Для этого рекомендуем использовать <a href="https://www.jetbrains.com/toolbox-app/" target="_blank">JetBrains Toolbox</a> - это приложение будет самостоятельно следить за актуальностью используемой версии IDE и позволяет легко устанавливать/обновлять все IDE от JetBrains.</p>
@@ -78,8 +76,7 @@
 <p class="image-container"><img alt="android studio welcome" src="img/c4f2a128b43308ac.png"></p>
 <p>На Welcome экране выбираем <code>Configure</code> -&gt; <code>Default Project Structure</code>. И в появившемся экране выбираем <code>JDK Location</code> из <code>JAVA_HOME</code>:</p>
 <p class="image-container"><img alt="android studio jdk" src="img/ac3210f7676fa334.png"></p>
-<aside class="special"><p>За счет этого выбора компиляция проектов через Android Studio будет производиться той же версией JDK, которую будет использовать и Xcode. А это в свою очередь позволит использовать один Gradle Daemon для компиляции одного и того же проекта, более эффективно используя ресурсы. Если же Android Studio и Xcode будут использовать разные JDK, то компилируя проект в Android Studio и Xcode вы получите два независимых java процесса, каждый из которых отнимет множество ресурсов (гигабайты памяти).</p>
-</aside>
+<p>Positive : За счет этого выбора компиляция проектов через Android Studio будет производиться той же версией JDK, которую будет использовать и Xcode. А это в свою очередь позволит использовать один Gradle Daemon для компиляции одного и того же проекта, более эффективно используя ресурсы. Если же Android Studio и Xcode будут использовать разные JDK, то компилируя проект в Android Studio и Xcode вы получите два независимых java процесса, каждый из которых отнимет множество ресурсов (гигабайты памяти).</p>
 <p>После установки Android Studio для удобства стоит указать переменную окружения <code>ANDROID_SDK_ROOT</code>, чтобы не было необходимости открывать проект через Android Studio перед запуском в Xcode.</p>
 <p>Если не указывать переменную окружения, то при попытке компиляции Kotlin кода Gradle будет пытаться считать путь до Android SDK из файла <code>local.properties</code> в корне проекта. И если данного файла нет - будет ошибка. Android Studio автоматически создает этот файл с правильным путем до Android SDK при открытии проекта через Android Studio, но если хочется не зависеть от факта &#34;был ли открыт проект через Android Studio ранее&#34; - следует указать перменную окружения <code>ANDROID_SDK_ROOT</code>.</p>
 <p>Берем путь до Android SDK, который мы могли увидеть ранее в <code>Welcome Screen</code> -&gt; <code>Configure</code> -&gt; <code>Default Project Structure</code> и добавляем его в <code>~/.zshenv</code>. Открываем редактирование:</p>
@@ -89,8 +86,7 @@
 <pre><code language="language-bash" class="language-bash">export ANDROID_SDK_ROOT=~/Library/android-sdk
 </code></pre>
 <p>После этого даже при отсутствии файла <code>local.properties</code> SDK будет успешно найдено.</p>
-<aside class="warning"><p>Начиная с Android Studio 4.2 сразу после установки необходимо отключить флаг в <code>Preferences</code> -&gt; <code>Experimental</code> -&gt; <code>Do not build Gradle task during Gradle sync</code> (с включенным флагом задачи на сборку модулей не появятся во вкладке <code>Gradle</code>)</p>
-</aside>
+<p>Negative : Начиная с Android Studio 4.2 сразу после установки необходимо отключить флаг в <code>Preferences</code> -&gt; <code>Experimental</code> -&gt; <code>Do not build Gradle task during Gradle sync</code> (с включенным флагом задачи на сборку модулей не появятся во вкладке <code>Gradle</code>)</p>
 <p class="image-container"><img alt="android studio 4.2 experimental flag" src="img/a3d20ed352ac1397.png"></p>
 <h2 is-upgraded>CocoaPods (iOS)</h2>
 <p>Для работы с зависимостями на iOS мы используем CocoaPods, а также Kotlin модуль подключается в Xcode проект через CocoaPods интеграцию. Поэтому требуется установить актуальную версию CocoaPods.</p>
@@ -103,10 +99,8 @@
 <li>Отладка iOS приложения из Android Studio (можно поставить брейкпоинты в common коде на kotlin и при выполнении iOS приложение остановится в этом месте)</li>
 </ul>
 <p>Доступен данный плагин только на macOS (так как запуск и отладка iOS приложения только на macOS возможна).</p>
-<aside class="special"><p>Важно понимать, что данный плагин не является обязательным требованием для работы с Kotlin Multiplatform Mobile. Именование может вводить в заблуждение. Вы можете разрабатывать KMM приложения и без данного плагина, он нужен только для более удобной разработки iOS части - возможность отлаживать Kotlin доступна из Android Studio только через этот плагин.</p>
-</aside>
-<aside class="warning"><p>При обновлениях Kotlin могут происходить ситуации что данный плагин ломает работу IDE (например IDE не может завершить Gradle Sync) - в таких случаях приходится вынужденно выключать данный плагин и работать без него.</p>
-</aside>
+<p>Positive : Важно понимать, что данный плагин не является обязательным требованием для работы с Kotlin Multiplatform Mobile. Именование может вводить в заблуждение. Вы можете разрабатывать KMM приложения и без данного плагина, он нужен только для более удобной разработки iOS части - возможность отлаживать Kotlin доступна из Android Studio только через этот плагин.</p>
+<p>Negative : При обновлениях Kotlin могут происходить ситуации что данный плагин ломает работу IDE (например IDE не может завершить Gradle Sync) - в таких случаях приходится вынужденно выключать данный плагин и работать без него.</p>
 <h2 is-upgraded>Xcode Kotlin plugin (iOS)</h2>
 <p>Как альтернативу для Kotlin Multiplatform Mobile плагина для Android Studio, можно использовать <a href="https://github.com/touchlab/xcode-kotlin" target="_blank">Xcode Kotlin плагин для Xcode</a>.</p>
 <p>Он предоставляет возможность ставить брейкпоинты в Kotlin коде из Xcode: <img alt="xcode kotlin breakpoint" src="img/ff467c66c359d179.png"></p>
@@ -117,8 +111,7 @@
 <ul>
 <li><code>Load Bundle</code>.</li>
 </ul>
-<aside class="special"><p>После каждого обновления Xcode требуется повторно проводить операцию установки, скачивая актуализированную версию плагина с GitHub.</p>
-</aside>
+<p>Positive : После каждого обновления Xcode требуется повторно проводить операцию установки, скачивая актуализированную версию плагина с GitHub.</p>
 <p>После этого в проектах, где через folder-reference добавлены директории с kotlin кодом, можно открыть kotlin файлы и ставить брейкпоинты, а дебаггер Xcode будет на них успешно останавливаться. Более подробно установку брейкпоинтов рассмотрим чуть позже в разделе отладки.</p>
 <h2 is-upgraded>Проверка наличия всех необходимых переменных окружения</h2>
 <p>Откройте приложение Terminal и введите команду <code>export</code>. В полученном результате должны быть следующие переменные:</p>
@@ -136,8 +129,7 @@
 <p>После клонирования открываем проект в Android Studio. Для этого запускаем студию, File -&gt; Open -&gt; И выбираем папку, в которую склонировали репозиторий. При первом открытии должно появиться следующее:<br><img alt="android studio start" src="img/5d69b1a99ea4bdae.png"></p>
 <p>По-умолчанию студия парсит каталоги и строит отображение как для Android-проекта. Но мы здесь будем работать не только с андроидом, но и с мультиплатформой. Поэтому переключаем отображение. Для этого слева нажимаем на выпадашку Android и выбираем вместо него Project:<br><img alt="android studio project" src="img/9c87ccce445d4dce.png"></p>
 <p>После этого структура папок немного изменится:<br><img alt="android studio structure" src="img/38aadee1f5157514.png"></p>
-<aside class="special"><p>В следующей CodeLab мы познакомимся детальнее с устройством проекта, а в данной части разберемся как запускать и отлаживать код на обеих платформах с установленным нами инструментарием.</p>
-</aside>
+<p>Positive : В следующей CodeLab мы познакомимся детальнее с устройством проекта, а в данной части разберемся как запускать и отлаживать код на обеих платформах с установленным нами инструментарием.</p>
 
 
       </google-codelab-step>
@@ -159,8 +151,7 @@
 <p>Перед первой компиляцией iOS требуется установить зависимости (они управляются через CocoaPods) - переходим в директорию <code>ios-app</code> и выполняем <code>pod install</code>:</p>
 <pre><code language="language-bash" class="language-bash">(cd ios-app &amp;&amp; pod install)
 </code></pre>
-<aside class="special"><p>Чтобы не переключаться между IDE и терминалом - можно пользоваться терминалом прямо из студии. Просто жмем снизу на панеле вкладку Terminal</p>
-</aside>
+<p>Positive : Чтобы не переключаться между IDE и терминалом - можно пользоваться терминалом прямо из студии. Просто жмем снизу на панеле вкладку Terminal</p>
 <p class="image-container"><img alt="android studio terminal pod install" src="img/e8d97665b89f4b26.png"></p>
 <p>Первоначальная установка CocoaPods требуется для компиляции Kotlin модуля, так как наш проект зависит от нативных CocoaPod модулей (детальнее будет описано в следующей части).</p>
 <h2 is-upgraded>Компиляция MultiPlatformLibrary.framework (Kotlin модуль для iOS)</h2>
@@ -180,8 +171,7 @@
 <p>Проверить успешно ли произвелась интеграция Kotlin модуля в iOS проект можно посмотрев через Xcode:</p>
 <p class="image-container"><img alt="xcode integrated multiplatformlibrary" src="img/f3a6a5caa6641e88.png"></p>
 <p>Если в <code>Pods/Development Pods/MultiPlatformLibrary/Frameworks</code> виден фреймворк, то интеграция успешно настроена. Если у вас данный фреймворк не виден, то убедитесь что вы запустили установку CocoaPods после того, как скомпилировали <code>MultiPlatformLibrary</code> задачей <code>syncMultiPlatformLibraryDebugFrameworkIosX64</code>.</p>
-<aside class="special"><p>если у вас происходят ошибки компиляции iOS приложения связанные с отсутствием MultiPlatformLibrary, то проверьте успешна ли интеграция (проверкой наличия фреймворка по скриншоту выше). А также проверьте наличие framework&#39;а по пути, откуда его забирает CocoaPods интеграция</p>
-</aside>
+<p>Positive : если у вас происходят ошибки компиляции iOS приложения связанные с отсутствием MultiPlatformLibrary, то проверьте успешна ли интеграция (проверкой наличия фреймворка по скриншоту выше). А также проверьте наличие framework&#39;а по пути, откуда его забирает CocoaPods интеграция</p>
 <ul>
 <li><code>mpp-library/build/cocoapods/framework/MultiPlatformLibrary.framework</code>.</li>
 </ul>

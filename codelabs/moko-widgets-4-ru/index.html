@@ -139,15 +139,13 @@
     }
 }
 </code></pre>
-<aside class="special"><p>так как <code>Screen</code> это <code>Fragment</code> на android, то <code>this</code> в этой функции имеет все возможности <code>Fragment</code> - включая и <code>requireContext()</code>.</p>
-</aside>
+<p>Positive : так как <code>Screen</code> это <code>Fragment</code> на android, то <code>this</code> в этой функции имеет все возможности <code>Fragment</code> - включая и <code>requireContext()</code>.</p>
 <p>iOS - <code>mpp-library/src/iosMain/kotlin/org/example/mpp/ScreenExt.kt</code>:</p>
 <pre><code language="language-kotlin" class="language-kotlin">actual fun Screen&lt;*&gt;.openUrl(url: String) {
     UIApplication.sharedApplication.openURL(NSURL.URLWithString(url)!!)
 }
 </code></pre>
-<aside class="special"><p>для добавления <code>iosMain</code> в данном шаблоне доступно использование symlinks, подробнее было указано в <a href="https://codelabs.kmp.icerock.dev/codelabs/kmp-mobile-from-zero/index.html?index=..%2F..index#4" target="_blank">codelab</a>.</p>
-</aside>
+<p>Positive : для добавления <code>iosMain</code> в данном шаблоне доступно использование symlinks, подробнее было указано в <a href="https://codelabs.kmp.icerock.dev/codelabs/kmp-mobile-from-zero/index.html?index=..%2F..index#4" target="_blank">codelab</a>.</p>
 <p>Остается в обработчике кнопки вызвать наш новый метод:</p>
 <p><code>mpp-library/src/commonMain/kotlin/org/example/mpp/auth/InputPhoneScreen.kt</code>:</p>
 <pre><code language="language-kotlin" class="language-kotlin">class InputPhoneScreen(
@@ -229,8 +227,7 @@
         .show()
 }
 </code></pre>
-<aside class="warning"><p>В данной реализации сообщение пропадет при смене конфигурации (изменили язык в настройках телефона, или повернули экран или включили разделение экрана). В следующем примере будет разобран вариант с сохранением состояния.</p>
-</aside>
+<p>Negative : В данной реализации сообщение пропадет при смене конфигурации (изменили язык в настройках телефона, или повернули экран или включили разделение экрана). В следующем примере будет разобран вариант с сохранением состояния.</p>
 <p>iOS - <code>mpp-library/src/iosMain/kotlin/org/example/mpp/ScreenExt.kt</code>:</p>
 <pre><code language="language-kotlin" class="language-kotlin">actual fun Screen&lt;*&gt;.showMessage(
     title: StringDesc,
@@ -251,8 +248,7 @@
     viewController.presentViewController(alertController, animated = true, completion = null)
 }
 </code></pre>
-<aside class="special"><p>у <code>Screen</code> в iOS доступен метод <code>viewController</code> для получения <code>UIViewController</code> созданного из <code>Screen</code> и выполнения любых операций над ним.</p>
-</aside>
+<p>Positive : у <code>Screen</code> в iOS доступен метод <code>viewController</code> для получения <code>UIViewController</code> созданного из <code>Screen</code> и выполнения любых операций над ним.</p>
 <p>Остается в обработчике кнопки вызвать наш новый метод:</p>
 <p><code>mpp-library/src/commonMain/kotlin/org/example/mpp/auth/InputPhoneScreen.kt</code>:</p>
 <pre><code language="language-kotlin" class="language-kotlin">class InputPhoneScreen(
@@ -288,8 +284,7 @@
         <p>Усложним пример с показом сообщения - теперь нам нужно показать диалог с вопросом &#34;Open github?&#34; при нажатии на кнопку <code>GitHub</code>. В диалоге должны быть варианты ответа <code>Yes</code> (открывает сайт) и <code>No</code> (просто закрывает диалог).</p>
 <p>Данная задача осложняется тем, что Android может независимо от работы приложения пересоздавать экран, а значит нужно предусмотреть восстановление диалога и привязку обработчиков нажатий.</p>
 <p>Кнопка <code>GitHub</code> у нас уже есть, поэтому сразу переходим к реализации обработчика.</p>
-<aside class="special"><p>Нужно провести обновление проекта до moko-widgets <code>0.1.0-dev-11</code>.</p>
-</aside>
+<p>Positive : Нужно провести обновление проекта до moko-widgets <code>0.1.0-dev-11</code>.</p>
 <h2 is-upgraded>Common code</h2>
 <p>Определим интерфейс работы с диалогом:</p>
 <pre><code language="language-kotlin" class="language-kotlin">expect fun Screen&lt;*&gt;.showDialog(

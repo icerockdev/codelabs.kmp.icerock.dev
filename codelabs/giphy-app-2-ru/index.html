@@ -37,12 +37,10 @@
       <google-codelab-step label="Создание логики списка Gif в общей библиотеке" duration="30">
         <p>Нужно чтобы приложение получало список Gif с сервиса GIPHY. В шаблоне сделан пример получения списка новостей с newsapi, реализовано это с использованием <a href="https://github.com/icerockdev/moko-network" target="_blank">moko-network</a>, который генерирует сетевые сущности и API классы из OpenAPI спецификации.</p>
 <p>Имея OpenAPI спецификацию от GIPHY взятую с <a href="https://apis.guru/browse-apis/" target="_blank">apis.guru</a> можно заменить получение новостей на получение Gif.</p>
-<aside class="special"><p>Фича списка уже присутствует в шаблоне, поэтому логику не придется реализовывать. Для большего понимания как устроена фича следует ознакомиться с <a href="https://github.com/icerockdev/moko-template#list-module-scheme" target="_blank">схемой модуля</a> и посмотреть код в <code>mpp-library:feature:list</code>.</p>
-</aside>
+<p>Positive : Фича списка уже присутствует в шаблоне, поэтому логику не придется реализовывать. Для большего понимания как устроена фича следует ознакомиться с <a href="https://github.com/icerockdev/moko-template#list-module-scheme" target="_blank">схемой модуля</a> и посмотреть код в <code>mpp-library:feature:list</code>.</p>
 <h2 is-upgraded>Замена OpenAPI спецификации</h2>
 <p>Заменим содержимое файла <code>mpp-library/domain/src/openapi.yml</code> содержимым из <a href="/files/giphy-openapi.yml" target="_blank">OpenAPI спецификации сервиса GIPHY</a>. После этого можно вызвать <code>Gradle Sync</code> и по завершению мы увидим что появились ошибки в коде, который работал с <code>newsapi</code>. Нужно обновить этот код под новую API.</p>
-<aside class="special"><p>Сгенерированные файлы находятся по пути <code>mpp-library/domain/build/generate-resources/main/src/main/kotlin</code></p>
-</aside>
+<p>Positive : Сгенерированные файлы находятся по пути <code>mpp-library/domain/build/generate-resources/main/src/main/kotlin</code></p>
 <h2 is-upgraded>Замена новостей на гифки в domain модуле</h2>
 <p>После замены OpenAPI спецификации в <code>domain</code> модуле требуется обновить следующие классы:</p>
 <ul>

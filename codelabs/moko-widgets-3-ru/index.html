@@ -111,8 +111,12 @@
         <p>Следующий этап стилизации - оформление всех кнопок в соответствии дизайну. По дизайну требуется чтобы был фон кнопок оранжевого цвета, текст черный с размером шрифта 15.</p>
 <p>Для применения данных настроек нам нужно воспользоваться возможностями класса <code>Theme</code>. В нашем проекте уже есть создание объекта этого класса и он используется для дальнейшего создания всех виджетов. Сейчас нам нужно задать что в данной теме все кнопки будут создаваться с кастомным стилем.</p>
 <p>Оформление по умолчанию устанавливается через категорию <code>ButtonWidget.DefaultCategory</code> в <code>Theme</code>, его нам и нужно кастомизировать.</p>
-<aside class="special"><p>Если провести аналогию с <code>CSS</code>, то <code>DefaultCategory</code> это стиль наложенный на все элементы данного типа: <code>css<br>button {<br>color: red;<br>text-align: center;<br>}</code><br><br></p>
-</aside>
+<p>Positive : Если провести аналогию с <code>CSS</code>, то <code>DefaultCategory</code> это стиль наложенный на все элементы данного типа:</p>
+<pre><code language="language-css" class="language-css">button {
+  color: red;
+  text-align: center;
+}
+</code></pre>
 <p><code>mpp-library/src/commonMain/kotlin/org/example/mpp/App.kt</code>:</p>
 <pre><code language="language-kotlin" class="language-kotlin">class App : BaseApplication() {
     override fun setup(): ScreenDesc&lt;Args.Empty&gt; {
@@ -176,13 +180,16 @@ class App : BaseApplication() {
     
       <google-codelab-step label="Применение стилей к группе элементов" duration="10">
         <p>Оформление группами реализуется через указание элементам отдельной <code>Category</code> и применение для этой <code>Category</code> своей фабрики в <code>Theme</code>.</p>
-<aside class="special"><p>Если провести аналогию с <code>CSS</code>, то <code>Category</code> это стиль наложенный на class: <code>css<br>.myclass {<br>color: red;<br>text-align: center;<br>}</code><br><br></p>
-</aside>
+<p>Positive : Если провести аналогию с <code>CSS</code>, то <code>Category</code> это стиль наложенный на class:</p>
+<pre><code language="language-css" class="language-css">.myclass {
+  color: red;
+  text-align: center;
+}
+</code></pre>
 <p>Объявим в <code>App.kt</code> новую категорию кнопок. Назовем ее <code>SubmitButtonsCategory</code>:</p>
 <pre><code language="language-kotlin" class="language-kotlin">object SubmitButtonsCategory: ButtonWidget.Category
 </code></pre>
-<aside class="special"><p>За счет специального типизации через вложенный интерфейс <code>ButtonWidget.Category</code> мы можем использовать данную категорию только с кнопками и применять фабрики только кнопок.<br></p>
-</aside>
+<p>Positive : За счет специального типизации через вложенный интерфейс <code>ButtonWidget.Category</code> мы можем использовать данную категорию только с кнопками и применять фабрики только кнопок.</p>
 <p>Далее на экранах входа используем данную категорию. Чтобы не создавать прямую зависимость из пакета <code>auth</code> в <code>App</code> сделаем в <code>AuthFactory</code> специальное свойство:<br><code>mpp-library/src/commonMain/kotlin/org/example/mpp/auth/AuthFactory.kt</code>:</p>
 <pre><code language="language-kotlin" class="language-kotlin">class AuthFactory(
     ...
@@ -279,10 +286,12 @@ class App : BaseApplication() {
     
       <google-codelab-step label="Применение стилей к отдельному элементу" duration="5">
         <p>Оформление группами реализуется через указание элементам определенного <code>Id</code> и применение для этого <code>Id</code> своей фабрики в <code>Theme</code>.</p>
-<aside class="special"><p>Если провести аналогию с <code>CSS</code>, то <code>Id</code> это стиль наложенный на id: &#34;`css</p>
-<p>myclass {</p>
-<p>color: red; text-align: center; } &#34;`</p>
-</aside>
+<p>Positive : Если провести аналогию с <code>CSS</code>, то <code>Id</code> это стиль наложенный на id:</p>
+<pre><code language="language-css" class="language-css">#myclass {
+  color: red;
+  text-align: center;
+}
+</code></pre>
 <p>Например сделаем чтобы лейбл поля ввода телефона был оранжевым. Так как все интерактивные элементы требуют указание Id (для сохранения состояния на Android), то у нас уже есть назначенный этому полю идентификатор и мы можем это использовать:<br><code>mpp-library/src/commonMain/kotlin/org/example/mpp/App.kt</code>:</p>
 <pre><code language="language-kotlin" class="language-kotlin">factory[InputPhoneScreen.Ids.Phone] = SystemInputViewFactory(
     labelTextStyle = TextStyle(color = Colors.orangeDark)

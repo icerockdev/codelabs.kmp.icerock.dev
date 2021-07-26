@@ -82,8 +82,7 @@
 <p>Описанная выше <code>ViewModel</code> содержит в себе поле ввода телефона, с выключенной валидацией (блок <code>liveBlock { null}</code> означает ошибки всегда нет), а так же обработчик нажатия <code>onSubmitPressed</code>, который выведет введенный телефон в лог.</p>
 <h2 is-upgraded>Привязка Screen к ViewModel</h2>
 <p>Теперь нужно привязать экран к <code>InputPhoneViewModel</code>.</p>
-<aside class="special"><p><code>ViewModel</code> переживает смену конфигурации на android. Это означает что если пользователь повернет экран или сменит язык в системе или включит разделение экрана, то данные, которые хранятся в <code>ViewModel</code>, а так же и все действия которые она выполняет, останутся доступны и новый пересозданный системой экран подключится к старой вьюмодели, без потерь данных. Чтобы эта логика работала нужно использовать функции получения <code>ViewModel</code> у <code>Screen</code>: <code>getViewModel {}</code> где в лямбде указывается как создать новую вьюмодель, если старой еще нет.</p>
-</aside>
+<p>Positive : <code>ViewModel</code> переживает смену конфигурации на android. Это означает что если пользователь повернет экран или сменит язык в системе или включит разделение экрана, то данные, которые хранятся в <code>ViewModel</code>, а так же и все действия которые она выполняет, останутся доступны и новый пересозданный системой экран подключится к старой вьюмодели, без потерь данных. Чтобы эта логика работала нужно использовать функции получения <code>ViewModel</code> у <code>Screen</code>: <code>getViewModel {}</code> где в лямбде указывается как создать новую вьюмодель, если старой еще нет.</p>
 <pre><code language="language-kotlin" class="language-kotlin">class InputPhoneScreen(
     ...
     private val viewModelFactory: () -&gt; InputPhoneViewModel
@@ -113,8 +112,7 @@
 <p>Из вне в экран передается фабрика <code>InputPhoneViewModel</code> через конструктор (внедрение зависимости позволяет ослабить связанность компонентов и реже вносить изменения в код экрана). Далее перед созданием виджетов мы получаем объект <code>InputPhoneViewModel</code> вызовом функции <code>getViewModel</code> (эта функция либо вернет существующую вьюмодель либо создаст новую). В лямбде <code>getViewModel</code> мы указываем как создать новую вьюмодель (в нашем случае вызовом <code>viewModelFactory</code>). После получения <code>InputPhoneViewModel</code> мы можем привязать поле ввода к <code>phoneField</code> и обработчик нажатия кнопки <code>viewModel::onSubmitPressed</code> (таким образом передается функция объекта, чтобы не созадвать новую лямбду).</p>
 <h2 is-upgraded>Добавление оповещения Screen&#39;а о необходимости перехода</h2>
 <p>Теперь нам осталось сообщить из <code>InputPhoneViewModel</code> что нужно произвести переход на следующий экран. В реальной логике мы выполним запрос к серверу, передав туда телефон, а сервер отдаст нам токен, с которым мы дальше должны работать. Мы сделаем подобие этой логики в вьюмодели.</p>
-<aside class="special"><p>Для связи <code>ViewModel</code> -&gt; <code>Screen</code> используются либо <code>LiveData</code>, которые автоматически подпишутся и отпишутся от получения изменений в нужный момент жизненного цикла либо <code>EventsDispatcher</code> (тоже работает учитывая жизненный цикл). Разница в том, что <code>LiveData</code> хранит постоянно значения, которые в ней записаны, а <code>EventsDispatcher</code> предназначен для разовых оповещенй, например &#34;перейди на следующий экран&#34; или &#34;покажи тост с ошибкой&#34;.</p>
-</aside>
+<p>Positive : Для связи <code>ViewModel</code> -&gt; <code>Screen</code> используются либо <code>LiveData</code>, которые автоматически подпишутся и отпишутся от получения изменений в нужный момент жизненного цикла либо <code>EventsDispatcher</code> (тоже работает учитывая жизненный цикл). Разница в том, что <code>LiveData</code> хранит постоянно значения, которые в ней записаны, а <code>EventsDispatcher</code> предназначен для разовых оповещенй, например &#34;перейди на следующий экран&#34; или &#34;покажи тост с ошибкой&#34;.</p>
 <pre><code language="language-kotlin" class="language-kotlin">class InputPhoneViewModel(
     override val eventsDispatcher: EventsDispatcher&lt;EventsListener&gt;
 ) : ViewModel(), EventsDispatcherOwner&lt;InputPhoneViewModel.EventsListener&gt; {
@@ -256,8 +254,7 @@
 data class Arg(val token: String) : Parcelable
 </code></pre>
 <p>это должен быть <code>Parcelable</code> класс, чтобы android мог корректно его сохранять и передавать между экранами.</p>
-<aside class="warning"><p>Для работы <code>Parcelable</code> надо включить плагин <code>id("kotlin-android-extensions")</code> в <code>mpp-library/build.gradle.kts</code></p>
-</aside>
+<p>Negative : Для работы <code>Parcelable</code> надо включить плагин <code>id("kotlin-android-extensions")</code> в <code>mpp-library/build.gradle.kts</code></p>
 <p>Чтение аргумента происходит при создании вьюмодели, а лямбда <code>viewModelFactory</code> расширена аргументом <code>token</code>.</p>
 <p>Переход <code>routeMain</code> имеет тип <code>Route<Unit></code>. <code>Unit</code> означает что никаких данных передавать не требуется.</p>
 
