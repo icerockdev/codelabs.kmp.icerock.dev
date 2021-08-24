@@ -416,6 +416,44 @@ After the settings made click `Apply` to save, then select ` ios-app` configurat
 The development cycle "write code" -> "compile" -> "run" requires fewer steps than described above.
 After the initial installation of the dependencies, to check the changes in the code you have to press `Run` in Xcode / Android Studio. The integration via CocoaPods will automatically compile Kotlin module, so changes in the code of the shared library and in the iOS code of the project will be taken into account in the new build. Running `pod install` may need to be repeated in cases where new native CocoaPods dependencies are added to ` Podfile`.
 
+### What JDK does Xcode use?
+
+As we have already found out, when you click on the `Run` button in Xcode, the same `Compile Kotlin/Native` process is started as in Android Studio with, for example, `syncMultiPlatformLibraryDebugFrameworkIosX64`.
+This is specified in `Pods.xcodeproj -> Build Stages`
+
+![xcode pods build phases](assets/onboarding-1-xcode-pods-build-phases.png)
+
+![xcode pods build phases](assets/onboarding-1-xcode-build.png)
+
+Here you can check which JDK uses Xcode when starting the Gradle process.
+
+- You can open `System Monitoring` and find all java processes. If there are several such processes, then when compiling from Xcode and Android Studio, different Grale Daemon's are launched, each of which eats a considerable part of your RAM.
+You need to get rid of such duplication of processes.
+
+![xcode pods build phases](assets/onboarding-1-jdk-1.png)
+
+![xcode pods build phases](assets/onboarding-1-jdk-2.png)
+
+First, you can check which versions of the JDK are installed on your computer. To do this, just enter the command in the terminal:
+```bash
+/usr/libexec/java_home -V
+```
+
+You will see something like this:
+```bash
+Matching Java Virtual Machines (3):
+    12 (x86_64) "Oracle Corporation" - "Java SE 12" /Library/Java/JavaVirtualMachines/jdk-12.jdk/Contents/Home
+    11.0.12 (x86_64) "Oracle Corporation" - "Java SE 11.0.12" /Library/Java/JavaVirtualMachines/jdk-11.0.12.jdk/Contents/Home
+    1.8.0_201 (x86_64) "Oracle Corporation" - "Java SE 8" /Library/Java/JavaVirtualMachines/jdk1.8.0_201.jdk/Contents/Home
+/Library/Java/JavaVirtualMachines/jdk-12.jdk/Contents/Home
+```
+
+In order for Xcode to run Gradle Daemon from the JDK we need, and not from a random one, it is enough to go to `/Library/Java/JavaVirtualMachines/` and delete all the JDKs, except the one that you specified in the `JAVA_HOME` variable.
+
+After all these actions, only one java process with the version we need will hang in the `System Monitoring`. This means that the build process in Android Studio and Xcode use the same Gradle Daemon.
+
+You can read more about Gradle Daemon [here](https://kmm.icerock.dev/docs/for-ios-devs/gradle).
+
 ## Debugging iOS
 
 Duration: 10
@@ -442,6 +480,11 @@ In the debugger you can see the stack trace with a clear call stack (kotlin func
 - you can see the constructor arguments `settings`,` antilog`, `baseUrl`,` httpClientEngine`
 
 The debugger is still not stable with Kotlin code, so step-by-step operations may lead to unexpected results, and lldb commands like `po` may give crashes, but this will also be improved in the future.
+
+![xcode tips](assets/onboarding-1-ios-debugs-tips.png)
+
+You can read about Advanced Debugging with Xcode [here](https://medium.com/headout-engineering/advanced-debugging-with-xcode-9eba2845232a).
+
 
 ### Debugging using Android Studio
 
