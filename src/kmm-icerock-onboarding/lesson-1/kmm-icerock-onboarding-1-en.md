@@ -260,6 +260,9 @@ We are waiting for the successful execution of Gradle Sync so that the necessary
 Positive
 : In the next CodeLab we will get acquainted in more detail with the structure of the project, and in this part we will understand how to run and debug code on both platforms with the installed toolkit.
 
+Negative
+: It is necessary that the path `$HOME/bin` and `usr/local/bin` are added to the `PATH`environment variable
+
 ## Building Android
 
 Duration: 5
