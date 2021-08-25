@@ -129,7 +129,17 @@ After installation of Android Studio, it is worth specifying the environment var
 If you do not specify an environment variable, then while trying to compile Kotlin code, Gradle will try to read the path to the Android SDK from the `local.properties` file in the project root. And if this file does not exist, an error will occur. Android Studio automatically creates this file with the correct path to the Android SDK if you open a project through Android Studio, but if you want to avoid dependency on the fact "whether the project was opened through Android Studio before" you should specify the environment variable `ANDROID_SDK_ROOT`.
 
 We take the path to the Android SDK, which we could see earlier in `Welcome Screen` ->` Configure` -> `Default Project Structure` and add it to` ~ / .zshenv` (or to `~/.bash-profile`). We proceed by analogy with the variable `JAVA_HOME`.
+
+```bash
+export ANDROID_SDK_ROOT=~/Library/android-sdk
+```
+
 After that, even in the absence of `local.properties` file, the SDK will be found successfully.
+
+Negative
+: Starting from Android Studio 4.2, immediately after installation, you must disable the flag in `Preferences - > Experimental - > Do not build Gradle task during Gradle sync` (with the flag enabled, tasks for building modules will not appear in the `Gradle ' tab)
+
+![android studio 4.2 experimental flag](assets/android-studio-gradle-experimental-flag.png)
 
 ### CocoaPods (iOS)
 
@@ -188,7 +198,8 @@ Open Terminal application and enter `export` command. The result should include 
 
 If they are absent, you should return to the above mentioned points and set the variables correctly.
 
-*Attention:* new environment variables will appear only after restarting the terminal session.
+*Attention*
+: new environment variables will appear only after restarting the terminal session.
 
 ### Gradle Build Environment
 
@@ -199,7 +210,7 @@ By opening the file `gradle.properties`, which is located in the root folder of 
 - Param `org.gradle.workers.max` is responsible for the number of parallel "Workers" or processes (by default, the number of cores of your CPU)
 - The other parameters can be [found here](https://docs.gradle.org/current/userguide/build_environment.html).
 
-For a comfortable work, you can change the Gradle params not only for this project, but for everyone.
+For a comfortable work, you can change the Gradle parameters not only for this project, but for all projects on your computer.
 To do this, hust go to user's forlder and open `.gradle` folder:
 
 ```bash
@@ -242,12 +253,16 @@ After cloning, open the project in Android Studio. To do this start the studio, 
 ![android studio start](assets/onboarding-1-android-studio-start.png) 
 
 Gradle Sync should also start, but if this did not happen, then run it yourself.
-*Note:* Gradle Sync it's a Gradle task, that looks through all your dependencies listed in the `build.gradle`, and tries to download the specified version.
+
+*Note*
+: Gradle Sync is a gradle task that looks through all your dependencies listed in the `build.gradle` file, analyzes the structure of the project. All this is necessary for the IDE to work correctly.
 
 By default, the studio parses directories and shows structure as for Android project. However, here we will work not only with android, but also with Multiplatform. Therefore, we switch the structure render. To do this, click on the Android dropdown on the left and select Project instead:
+
 ![android studio project](assets/onboarding-1-android-studio-project.png)
 
 After that, the folder structure will change slightly:
+
 ![android studio structure](assets/onboarding-1-android-studio-structure.png)
 
 We are waiting for the successful execution of Gradle Sync so that the necessary Tasks appear in our project. If Gradle Sync has failed, then we read an error.
@@ -280,7 +295,9 @@ If you need just to build an Android application, then you can use corresponding
 ![android studio android assemble tasks](assets/android-studio-android-assemble-tasks.png)
 
 All tasks starting with `assemble` are responsible for compiling the project. The task `assembleDevDebug` is most often required to compile the debug assembly for the dev environment. Debug types of tasks are executed much faster than Release versions, since they do not have a lot of build optimizations and checks. Debug versions should be used for development.
-### Выбор эмулятора
+
+### Сhoosing an emulator
+
 By default, `Pixel_3a_API_30_x86` is selected for launching.
 To select another device, you need to go to `AVD Manager -> Create Virtual Device...` and create the emulator you need.
 
@@ -297,6 +314,9 @@ After that, you can use the created simulator to launch the project.
 ## Debugging Android
 
 Duration: 5
+
+Positive
+: Debugging of the Android application and the general code is completely the same as in normal Android development.
 
 To debug Android application / shared code on Android, just put a breakpoint and start android via Debug mode (bug icon).
 
