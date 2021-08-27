@@ -189,17 +189,19 @@ Positive
 After that, in projects where directories with Kotlin code are added via folder-reference, you can open Kotlin files and set breakpoints, and the Xcode debugger will successfully stop at them.
 We will consider setting breakpoints in more detail a little later in the debugging section.
 
-### Checking if all required environment variables are present
+###  checking 
 
-Open Terminal application and enter `export` command. The result should include the following variables:
 
-- `JAVA_HOME`
-- `ANDROID_SDK_ROOT`
+To make sure that you have configured everything correctly, you can use the [moko-doctor](https://github.com/icerockdev/moko-doctor) utility.
 
-If they are absent, you should return to the above mentioned points and set the variables correctly.
+```bash
+./doctor.sh
+```
+
+![doctor successful](assets/onboarding-1-doctor-successful.png)
 
 *Attention*
-: new environment variables will appear only after restarting the terminal session.
+: New environment variables will appear only after restarting the terminal session.
 
 ### Gradle Build Environment
 
