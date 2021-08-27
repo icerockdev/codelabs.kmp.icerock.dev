@@ -479,6 +479,15 @@ After all these actions, only one java process with the version we need will han
 
 You can read more about Gradle Daemon [here](https://kmm.icerock.dev/docs/for-ios-devs/gradle).
 
+
+Another way to avoid this problem is to use the [moko-doctor](https://github.com/icerockdev/moko-doctor) utility again.
+
+```bash
+./setup_xcode_environment.sh
+```
+
+After that, Xcode will see the variables `JAVA_HOME` and `ANDROID_SDK_ROOT` declared in your environment during the project build. Thanks to this, we exclude the launch of the Gradle Daemon on different JVMs.
+
 ## Debugging iOS
 
 Duration: 10

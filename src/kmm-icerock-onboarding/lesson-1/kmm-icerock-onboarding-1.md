@@ -598,6 +598,14 @@ Matching Java Virtual Machines (3):
 
 Подробнее о Gradle Daemon можете почитать [тут](https://kmm.icerock.dev/docs/for-ios-devs/gradle).
 
+Другой же способ избежать данной проблемы, это снова воспользоваться утилитой [moko-doctor](https://github.com/icerockdev/moko-doctor).
+
+```bash
+./setup_xcode_environment.sh
+```
+
+После чего Xcode будет видеть переменные `JAVA_HOME` и `ANDROID_SDK_ROOT`, объявленные в вашем окружении, во время сборки проекта. Благодаря этому, мы исключаем запуск Gradle Daemon на разных JVM.
+
 
 ## Отладка iOS
 
