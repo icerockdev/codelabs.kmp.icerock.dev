@@ -31,7 +31,7 @@
         <p>Привет! Если ты это читаешь, значит ты начинаешь погружаться в процессы мультиплатформенной разработки в IceRock.</p>
 <p>Мы активно применяем и продвигаем этот подход с лета 2018 года. Основная его ценность для нас - это возможность объединения бизнес-логики приложения в одном месте для обеих платформ. Вместо того, чтобы отлаживать и реализовывать логику отдельно для iOS и Android мы пишем общий код, который используют обе платформы. Один и тот же код. Соответственно, баги, связанные с некорректной логикой, не будут плавать с платформы на платформу. И не потребуется отвлекать разных разработчиков - проблемы в логике могут быть исправлены одним человеком, в одном месте и починить сразу и iOS, и Android. Круто же)</p>
 <p>При этом взаимодействие с пользователем остаётся 100% нативным. Доступен полный набор всех средств, которые предоставляют нативные SDK. Юзер использует привычные элементы и приложение ведёт себя так, как привыкли пользователи каждой платформы.</p>
-<p>Обратная сторона медали - сложности на первых порах, при вхождении в такой подход и метод разработки. Для андроид-разработчиков особо ничего не меняется - они могут использовать всё тот же Kotlin, модульность, Gradle, корутины и прочие незнакомые большинству iOS-ников вещи. А iOS-разработчик, в свою очередь, попадая впервые на мультиплатформенный проект, едет кукухой от того, что в проект подцепляется какой-то мультиплатформенный под-чёрный-ящик, в котором какая-то куча вьюмоделей, реализующих внутри магию с логикой, кругом какие-то диспатчеры, юниты, экран со сложной вёрсткой в контроллере состоит из таблицы и нескольких строчек биндинга,не понятно откуда что берётся и вопросов больше, чем ответов.</p>
+<p>Обратная сторона медали - сложности на первых порах, при вхождении в такой подход и метод разработки. Для андроид-разработчиков особо ничего не меняется - они могут использовать всё тот же Kotlin, модульность, Gradle, корутины и прочие незнакомые большинству iOS-ников вещи. А iOS-разработчик, в свою очередь, попадая впервые на мультиплатформенный проект, едет кукухой от того, что в проект подцепляется какой-то мультиплатформенный под-чёрный-ящик, в котором какая-то куча вьюмоделей, реализующих внутри магию с логикой, кругом какие-то диспатчеры, юниты, экран со сложной вёрсткой в контроллере состоит из таблицы и нескольких строчек биндинга, не понятно откуда что берётся и вопросов больше, чем ответов.</p>
 <p>На самом же деле всё довольно просто и логично. Сгруппировано, разбито и структурировано. Но вникнуть в эту концепцию придя на уже живущий проект, находящийся в активной разработке сложно из-за большого объёма информации и логики.</p>
 <p>Поэтому мы сделали набор Codelabs, которые призваны помочь пройтись по шагам по основным моментам, ежедневно встречающимся в нашей повседневной разработке. В них ты сможешь по очереди выполнять задания, наращивать функционал тестового проекта и изучать устройство проекта изнутри.</p>
 
@@ -39,7 +39,8 @@
       </google-codelab-step>
     
       <google-codelab-step label="Настройка рабочего окружения" duration="30">
-        <p>Positive : Для полноценной работы с KMM потребуется macOS, так как iOS приложение (и iOS версию kotlin библиотеки) можно скомпилировать только на macOS - это ограничение от Apple (требуется Xcode доступный только на macOS). На других платформах будет доступна только компиляция под Android. Код common части писать и отлаживать можно, но без возможности проверить его работу под iOS.</p>
+        <p>Positive: Для полноценной работы с KMM потребуется macOS, так как iOS приложение (и iOS версию kotlin библиотеки) можно скомпилировать только на macOS - это ограничение от Apple (требуется Xcode доступный только на macOS). На других платформах будет доступна только компиляция под Android. Код common части писать и отлаживать можно, но без возможности проверить его работу под iOS.</p>
+<p>Все нижеописанные инструкции будут выполнены на операционной системе macOS.</p>
 <h2 is-upgraded>Git (Android, iOS)</h2>
 <p>Для всех разработчиков в компании git требуется по умолчанию. Если он не установлен - нужно установить (описывать это подробно не будем).</p>
 <h2 is-upgraded>Xcode (iOS)</h2>
@@ -62,9 +63,15 @@
 <p>Остается только сохранить путь до JDK в переменные окружения. Делается это изменением файла <code>~/.zshenv</code> (пример сделан на базе <code>zsh</code>, так как для macOS это оболочка по умолчанию).</p>
 <pre><code language="language-bash" class="language-bash">nano ~/.zshenv
 </code></pre>
-<p>и в открывшемся редакторе добавляем строку:</p>
-<pre><code language="language-bash" class="language-bash">export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk-11.0.10.jdk/Contents/Home
+<p>или (для тех кто использует Visual Studio Code)</p>
+<pre><code language="language-bash" class="language-bash">code  ~/.zshenv
 </code></pre>
+<p>ну или вы можете открыть файл в Finder (он находится в папке вашего пользователя) : <img alt="android termenv finder" src="img/a453e3eb66716118.png"></p>
+<p>и в открывшемся редакторе добавляем строку:</p>
+<pre><code language="language-bash" class="language-bash">export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk-VERSION.jdk/Contents/Home
+</code></pre>
+<p class="image-container"><img alt="android termenv finder" src="img/de6814fc135967dd.png"></p>
+<p>Если же вы пользуетесь оболочкой bash, то вам нежно менять <code>~/.bash-profile</code>.</p>
 <p>Negative : Аккуратнее с copy-paste - минорная версия установленной у вас JDK может отличаться от приведенной выше!</p>
 <h2 is-upgraded>Android Studio (Android, iOS)</h2>
 <p>Для работы с Kotlin кодом требуется IDE от JetBrains - IDEA либо Android Studio. Команда Kotlin Multiplatform Mobile на данный момент основной IDE <a href="https://kotlinlang.org/lp/mobile/ecosystem/" target="_blank">позиционируют Android Studio</a> поэтому требуется установить ее.</p>
@@ -79,18 +86,16 @@
 <p>Positive : За счет этого выбора компиляция проектов через Android Studio будет производиться той же версией JDK, которую будет использовать и Xcode. А это в свою очередь позволит использовать один Gradle Daemon для компиляции одного и того же проекта, более эффективно используя ресурсы. Если же Android Studio и Xcode будут использовать разные JDK, то компилируя проект в Android Studio и Xcode вы получите два независимых java процесса, каждый из которых отнимет множество ресурсов (гигабайты памяти).</p>
 <p>После установки Android Studio для удобства стоит указать переменную окружения <code>ANDROID_SDK_ROOT</code>, чтобы не было необходимости открывать проект через Android Studio перед запуском в Xcode.</p>
 <p>Если не указывать переменную окружения, то при попытке компиляции Kotlin кода Gradle будет пытаться считать путь до Android SDK из файла <code>local.properties</code> в корне проекта. И если данного файла нет - будет ошибка. Android Studio автоматически создает этот файл с правильным путем до Android SDK при открытии проекта через Android Studio, но если хочется не зависеть от факта &#34;был ли открыт проект через Android Studio ранее&#34; - следует указать перменную окружения <code>ANDROID_SDK_ROOT</code>.</p>
-<p>Берем путь до Android SDK, который мы могли увидеть ранее в <code>Welcome Screen</code> -&gt; <code>Configure</code> -&gt; <code>Default Project Structure</code> и добавляем его в <code>~/.zshenv</code>. Открываем редактирование:</p>
-<pre><code language="language-bash" class="language-bash">nano ~/.zshenv
-</code></pre>
-<p>и добавляем там строку с путем до SDK, например:</p>
+<p>Берем путь до Android SDK, который мы могли увидеть ранее в <code>Welcome Screen</code> -&gt; <code>Configure</code> -&gt; <code>Default Project Structure</code> и добавляем его в <code>~/.zshenv</code> ( или в <code>~/.bash-profile</code> ). Действуем по аналогии с переменной <code>JAVA_HOME</code>.</p>
 <pre><code language="language-bash" class="language-bash">export ANDROID_SDK_ROOT=~/Library/android-sdk
 </code></pre>
 <p>После этого даже при отсутствии файла <code>local.properties</code> SDK будет успешно найдено.</p>
-<p>Negative : Начиная с Android Studio 4.2 сразу после установки необходимо отключить флаг в <code>Preferences</code> -&gt; <code>Experimental</code> -&gt; <code>Do not build Gradle task during Gradle sync</code> (с включенным флагом задачи на сборку модулей не появятся во вкладке <code>Gradle</code>)</p>
+<p>Negative : Начиная с Android Studio 4.2 сразу после установки необходимо отключить флаг в <code>Preferences -> Experimental -> Do not build Gradle task during Gradle sync</code> (с включенным флагом задачи на сборку модулей не появятся во вкладке <code>Gradle</code>)</p>
 <p class="image-container"><img alt="android studio 4.2 experimental flag" src="img/a3d20ed352ac1397.png"></p>
 <h2 is-upgraded>CocoaPods (iOS)</h2>
 <p>Для работы с зависимостями на iOS мы используем CocoaPods, а также Kotlin модуль подключается в Xcode проект через CocoaPods интеграцию. Поэтому требуется установить актуальную версию CocoaPods.</p>
 <p>Подробная документация о установке <a href="https://cocoapods.org/#install" target="_blank">доступна на официальном сайте</a>.</p>
+<p>Для тек кто использует HomeBrew информация о установке <a href="https://formulae.brew.sh/formula/cocoapods" target="_blank">доступна здесь</a></p>
 <h2 is-upgraded>Kotlin Multiplatform Mobile plugin (iOS)</h2>
 <p>JetBrains предоставляют для Android Studio <a href="https://plugins.jetbrains.com/plugin/14936-kotlin-multiplatform-mobile" target="_blank">специальный IDE плагин, под названием Kotlin Multiplatform Mobile</a> , в котором:</p>
 <ul>
@@ -113,35 +118,85 @@
 </ul>
 <p>Positive : После каждого обновления Xcode требуется повторно проводить операцию установки, скачивая актуализированную версию плагина с GitHub.</p>
 <p>После этого в проектах, где через folder-reference добавлены директории с kotlin кодом, можно открыть kotlin файлы и ставить брейкпоинты, а дебаггер Xcode будет на них успешно останавливаться. Более подробно установку брейкпоинтов рассмотрим чуть позже в разделе отладки.</p>
-<h2 is-upgraded>Проверка наличия всех необходимых переменных окружения</h2>
-<p>Откройте приложение Terminal и введите команду <code>export</code>. В полученном результате должны быть следующие переменные:</p>
+<h2 is-upgraded>Проверка</h2>
+<p>Чтобы убедиться, что вы все правильно настроили, можете воспользоваться утилитой <a href="https://github.com/icerockdev/moko-doctor" target="_blank">moko-doctor</a>.</p>
+<pre><code language="language-bash" class="language-bash">./doctor.sh
+</code></pre>
+<p class="image-container"><img alt="doctor successful" src="img/fc8e795dafdb5abd.png"></p>
+<p><em>Внимание</em> : Новые переменные окружения появятся только после перезапуска сессии терминала.</p>
+<h2 is-upgraded>Gradle Build Environment</h2>
+<p>Открыв файл <code>gradle.properties</code>, который расположен в корневой папке проекта можно увидеть параметры сборки проекта.</p>
 <ul>
-<li><code>JAVA_HOME</code></li>
-<li><code>ANDROID_SDK_ROOT</code></li>
+<li>Параметр <code>org.gradle.parallel</code> отвечает за параллельное выполнение задач (если задачи не зависят друг от друга)</li>
+<li>Параметр <code>org.gradle.jvmargs</code> отвечает за запуск Java-машины и выделение ей памяти.</li>
+<li>Параметр <code>org.gradle.workers.max</code> отвечает за количество параллельных &#34;Воркеров&#34; или процессов (по умолчанию используется количество ядер вашего CPU)</li>
+<li>С остальными параметрами можете <a href="https://docs.gradle.org/current/userguide/build_environment.html" target="_blank">ознакомиться тут</a>.</li>
 </ul>
-<p>Если их нет - нужно вернуться к вышестоящим пунктам и корректно установить переменные.</p>
+<p>Для комфортной работы вы можете изменить параметры Gradle не только для этого проекта, а для всех проектов на вашем компьютере. Для этого достаточно перейти в папку вашего пользователя и открыть папку <code>.gradle</code>:</p>
+<pre><code language="language-bash" class="language-bash">cd ./gradle
+</code></pre>
+<p>Нам нужен файл <code>gradle.properties</code></p>
+<p>При его отсутсвии:</p>
+<pre><code language="language-bash" class="language-bash">touch gradle.properties
+</code></pre>
+<p>Октройте его</p>
+<pre><code language="language-bash" class="language-bash">nano gradle.properties
+</code></pre>
+<p>или (для тех кто использует Visual Studio Code)</p>
+<pre><code language="language-bash" class="language-bash">code gradle.properties
+</code></pre>
+<p>Вы также можете воспользоваться Finder: <img alt="gradle properties" src="img/1a0a4ad1ac03b370.png"></p>
+<p>Вы можете объявить в этом файле любые настройки, которые будут приоритетнее чем настройки любого из запущенных проектов. Например: <img alt="my gradle properties" src="img/1a7d7a90044a112c.png"></p>
 
 
       </google-codelab-step>
     
       <google-codelab-step label="Создаем проект" duration="10">
         <p>В качестве отправной точки мы будем использовать наш шаблоный проект - <strong>mobile-moko-boilerplate</strong>. Он используется на всех новых проектах для быстрого развёртывания и старта разработки. Там уже подключены все минимально необходимые зависимости, имеется нужная структура папок и базовая настройка проекта. Так что заходим на GitLab в репозиторий <a href="https://gitlab.icerockdev.com/scl/boilerplate/mobile-moko-boilerplate" target="_blank">https://gitlab.icerockdev.com/scl/boilerplate/mobile-moko-boilerplate</a> и делаем форк себе в профиль, клонируем.</p>
-<p>После клонирования открываем проект в Android Studio. Для этого запускаем студию, File -&gt; Open -&gt; И выбираем папку, в которую склонировали репозиторий. При первом открытии должно появиться следующее:<br><img alt="android studio start" src="img/5d69b1a99ea4bdae.png"></p>
-<p>По-умолчанию студия парсит каталоги и строит отображение как для Android-проекта. Но мы здесь будем работать не только с андроидом, но и с мультиплатформой. Поэтому переключаем отображение. Для этого слева нажимаем на выпадашку Android и выбираем вместо него Project:<br><img alt="android studio project" src="img/9c87ccce445d4dce.png"></p>
-<p>После этого структура папок немного изменится:<br><img alt="android studio structure" src="img/38aadee1f5157514.png"></p>
+<p>После клонирования открываем проект в Android Studio. Для этого запускаем студию, <code>File -> Open -> И выбираем папку, в которую склонировали репозиторий</code>. При первом открытии должно появиться следующее:</p>
+<p class="image-container"><img alt="android studio start" src="img/5d69b1a99ea4bdae.png"></p>
+<p>Так же должен запуститься Gradle Sync , если же этого не прозошло то запустите его самостоятельно.</p>
+<p><em>Примечание</em> : Gradle Sync - это задача gradle, которая просматривает все ваши зависимости, перечисленные в файлах <code>build.gradle</code>, анализирует всю структуру проекта. Все это нужно для корректной работы IDE.</p>
+<p class="image-container"><img alt="android studio gradle sync start" src="img/968d65e15bbf241f.png"></p>
+<p>По-умолчанию студия парсит каталоги и строит отображение как для Android-проекта. Но мы здесь будем работать не только с андроидом, но и с мультиплатформой. Поэтому переключаем отображение. Для этого слева нажимаем на выпадашку Android и выбираем вместо него Project:</p>
+<p class="image-container"><img alt="android studio project" src="img/9c87ccce445d4dce.png"></p>
+<p>После этого структура папок немного изменится:</p>
+<p class="image-container"><img alt="android studio structure" src="img/38aadee1f5157514.png"></p>
+<p>Дожидаемся успешного выполнения Gradle Sync, чтобы в нашем проекте появились нужные Tasks. Если же Gradle Sync зафейлился, то читаем ошибку.</p>
+<p class="image-container"><img alt="android studio gradle sync end" src="img/5dd3a6881f3bfb49.png"></p>
+<p class="image-container"><img alt="android studio gradte tasks after sync" src="img/71fa79e0fd1e544e.png"></p>
 <p>Positive : В следующей CodeLab мы познакомимся детальнее с устройством проекта, а в данной части разберемся как запускать и отлаживать код на обеих платформах с установленным нами инструментарием.</p>
+<p>Negative : Необходимо чтобы в переменной окружения <code>PATH</code> был добавлен путь <code>$HOME/bin</code> и <code>usr/local/bin</code></p>
 
 
       </google-codelab-step>
     
       <google-codelab-step label="Сборка Android" duration="5">
-        <p>Для запуска Android приложения все достаточно просто - достаточно в Android Studio запустить кнопку Run и всё. Также просто как и при обычной разработке Android приложения.</p>
+        <h2 is-upgraded>Сборка и запуск</h2>
+<p>Для запуска Android приложения все достаточно просто - в Android Studio нужно нажать на кнопку Run и всё. Также просто как и при обычной разработке Android приложения.</p>
 <p class="image-container"><img alt="android studio run" src="img/859d7678486ee309.png"></p>
 <p>В результате произойдет сборка android версии общей библиотеки (mpp-library) и android приложения, а после этого приложение запустится на выбранном устройстве / эмуляторе.</p>
 <p class="image-container"><img alt="android studio emulator" src="img/6fd44144986ce781.png"></p>
 <p>Если же нужно просто произвести сборку Android приложения, то можно использовать соответствующие Gradle задачи.</p>
 <p class="image-container"><img alt="android studio android assemble tasks" src="img/31a98e466e0708b2.png"></p>
 <p>Все задачи начинающиеся на <code>assemble</code> отвечают за компиляцию проекта. Чаще всего требуется задача <code>assembleDevDebug</code> - скомпилировать debug сборку для dev окружения. Debug типы задач выполняются заметно быстрее Release версий, так как в них нет множества оптимизаций билда и проверок. Для разработки следует использовать Debug версии.</p>
+<h2 is-upgraded>Выбор эмулятора</h2>
+<p>По умолчанию для запуска выбран <code>Pixel_3a_API_30_x86</code>. Для выбора другого устройства вам нужно перейти в <code>AVD Manager -> Create Virtual Device...</code> и создать нужный вам эмулятор.</p>
+<p class="image-container"><img alt="android studio android assemble tasks" src="img/6e8b14d7ca73ba28.png"></p>
+<p class="image-container"><img alt="android studio android assemble tasks" src="img/2f1dae417789b6ed.png"></p>
+<p class="image-container"><img alt="android studio android assemble tasks" src="img/fd36184e5fa46cd7.png"></p>
+<p>После чего вы можете использовать созданный симулятор для запуска проекта.</p>
+<p class="image-container"><img alt="android studio android assemble tasks" src="img/9bb8bf8e053eab06.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Отладка Android" duration="5">
+        <p>Positive : Отладка Android приложения и общего кода полностью такая же что в обычной Android разработке.</p>
+<p>Для отладки android приложения / общего кода на android достаточно поставить брейкпоинт и запустить android через режим Debug (иконка жука).</p>
+<p class="image-container"><img alt="android studio android debug" src="img/61f9e217eb7865f6.png"></p>
+<p>Когда произойдет остановка на брейкпоинте можно будет посмотреть стек вызовов и все содержимое фреймов в стеке.</p>
+<p class="image-container"><img alt="android studio android breakpoint stop" src="img/dee7bb627cdf2fe1.png"></p>
 
 
       </google-codelab-step>
@@ -157,12 +212,16 @@
 <h2 is-upgraded>Компиляция MultiPlatformLibrary.framework (Kotlin модуль для iOS)</h2>
 <p>Теперь когда у нас установлены iOS зависимости, мы можем произвести компиляцию Kotlin модуля для iOS. Для этого нам нужно запустить Gradle задачу <code>syncMultiPlatformLibraryDebugFrameworkIosX64</code>. Сделать это мы можем несколькими путями:</p>
 <ol type="1">
-<li>Запустить в Terminal команду <code>./gradlew syncMultiPlatformLibraryDebugFrameworkIosX64</code></li>
+<li>Запустить в Terminal команду</li>
+</ol>
+<pre><code language="language-bash" class="language-bash">./gradlew syncMultiPlatformLibraryDebugFrameworkIosX64
+</code></pre>
+<ol type="1" start="2">
 <li>Запустить через Android Studio задачу <code>syncMultiPlatformLibraryDebugFrameworkIosX64</code></li>
 </ol>
 <p class="image-container"><img alt="gradle task in android studio" src="img/3386b0f23d2b8247.png"></p>
 <p>Стоит попробовать оба варианта, чтобы выбрать удобный для себя.</p>
-<p>Компиляция займет некоторое время, так как Kotlin/Native (компилятор Kotlin для нативных платформ) пока недостаточно оптимизирован на производительность. Пока идет компиляция стоит ознакомиться с статьей <a href="https://kmm.icerock.dev/pages/4.1.1-kmm-ios-gradle/" target="_blank">Gradle для iOS разработчиков на kmm.icerock.dev</a> .</p>
+<p>Компиляция займет некоторое время, так как Kotlin/Native (компилятор Kotlin для нативных платформ) пока недостаточно оптимизирован на производительность. Пока идет компиляция стоит ознакомиться с статьей <a href="https://kmm.icerock.dev/docs/for-ios-devs/gradle/" target="_blank">Gradle для iOS разработчиков на kmm.icerock.dev</a></p>
 <h2 is-upgraded>Установка CocoaPods зависимостей вместе с MultiPlatformLibrary</h2>
 <p>После успешного завершения сборки framework нужно повторно запустить установку CocoaPods:</p>
 <pre><code language="language-bash" class="language-bash">(cd ios-app &amp;&amp; pod install)
@@ -171,18 +230,25 @@
 <p>Проверить успешно ли произвелась интеграция Kotlin модуля в iOS проект можно посмотрев через Xcode:</p>
 <p class="image-container"><img alt="xcode integrated multiplatformlibrary" src="img/f3a6a5caa6641e88.png"></p>
 <p>Если в <code>Pods/Development Pods/MultiPlatformLibrary/Frameworks</code> виден фреймворк, то интеграция успешно настроена. Если у вас данный фреймворк не виден, то убедитесь что вы запустили установку CocoaPods после того, как скомпилировали <code>MultiPlatformLibrary</code> задачей <code>syncMultiPlatformLibraryDebugFrameworkIosX64</code>.</p>
-<p>Positive : если у вас происходят ошибки компиляции iOS приложения связанные с отсутствием MultiPlatformLibrary, то проверьте успешна ли интеграция (проверкой наличия фреймворка по скриншоту выше). А также проверьте наличие framework&#39;а по пути, откуда его забирает CocoaPods интеграция</p>
-<ul>
-<li><code>mpp-library/build/cocoapods/framework/MultiPlatformLibrary.framework</code>.</li>
-</ul>
+<p>Positive : если у вас происходят ошибки компиляции iOS приложения связанные с отсутствием MultiPlatformLibrary, то проверьте успешна ли интеграция (проверкой наличия фреймворка по скриншоту выше). А также проверьте наличие framework&#39;а по пути, откуда его забирает CocoaPods интеграция <code>mpp-library/build/cocoapods/framework/MultiPlatformLibrary.framework</code>.</p>
 <h2 is-upgraded>Запуск iOS приложения</h2>
 <p>После успешной установки зависимостей CocoaPods (включая и MultiPlatformLibrary) можно открыть Xcode workspace:</p>
 <pre><code language="language-bash" class="language-bash">open ios-app/ios-app.xcworkspace
 </code></pre>
+<h3 is-upgraded>Запуск на эмуляторе</h3>
 <p>Выбираем любой симулятор и запускаем проект нажатием на кнопку Run.</p>
 <p class="image-container"><img alt="xcode run app" src="img/5c59f144ce8dc6b1.png"></p>
 <p>В результате увидим запущенное приложение:</p>
 <p class="image-container"><img alt="ios run result" src="img/8081345a4638cfdc.png"></p>
+<h3 is-upgraded>Запуск на реальном устройстве</h3>
+<p>При запуске на реальном устройстве у вас появится ошибка:</p>
+<p class="image-container"><img alt="ios run result" src="img/7896c04f494b2fec.png"></p>
+<p>Для решения этой проблемы перейдите в <code>ios-app.xcodeproj -> Targets -> Signing & Capabilities</code> и укажите там <code>Team</code> и <code>Bundle Identifier</code>.</p>
+<p>После этого нужно заменить <code>Bundle Identifier</code> в названии файла синхронизации Firebase и <code>BUNDLE_ID</code> внутри самого файла.</p>
+<p class="image-container"><img alt="ios run bundle" src="img/afb2bedf11580da0.png"></p>
+<p>После этих действий пробуем запустить приложение на девайсе и видим это:</p>
+<p class="image-container"><img alt="ios run device" src="img/9e9eb218ed3681b3.png"></p>
+<p>У нас получилось запустить приложение на реальном устройстве.</p>
 <h2 is-upgraded>Сборка напрямую из Android Studio</h2>
 <p>При использовании плагина Kotlin Multiplatform Mobile доступна возможность запускать ios приложение напрямую из Android Studio.</p>
 <p>Данный способ не отменяет всей работы с CocoaPods - он может быть альтернативой только для запуска iOS приложения через Xcode.</p>
@@ -198,15 +264,33 @@
 <p class="image-container"><img alt="android studio run ios" src="img/a374176aa4d252fc.png"></p>
 <h2 is-upgraded>Write-Compile-Debug cycle</h2>
 <p>Цикл разработки &#34;пишем код&#34; -&gt; &#34;компилируем&#34; -&gt; &#34;запускаем&#34; требует меньше действий чем описано выше. После первичной установки зависимостей для проверки изменений в коде достаточно просто нажимать <code>Run</code> в Xcode / Android Studio - интеграция через CocoaPods автоматически произведет компиляцию и Kotlin модуля, поэтому изменения в коде общей библиотеки и в коде ios проекта будут учтены в новом билде. Запуск <code>pod install</code> может потребоваться повторно в случаях когда добавлюятся новые нативные CocoaPods зависимости в <code>Podfile</code>.</p>
-
-
-      </google-codelab-step>
-    
-      <google-codelab-step label="Отладка Android" duration="5">
-        <p>Для отладки android приложения / общего кода на android достаточно поставить брейкпоинт и запустить android через режим Debug (иконка жука).</p>
-<p class="image-container"><img alt="android studio android debug" src="img/61f9e217eb7865f6.png"></p>
-<p>Когда произойдет остановка на брейкпоинте можно будет посмотреть стек вызовов и все содержимое фреймов в стеке.</p>
-<p class="image-container"><img alt="android studio android breakpoint stop" src="img/dee7bb627cdf2fe1.png"></p>
+<h2 is-upgraded>Какой JDK использует Xcode?</h2>
+<p>Как мы уже выяснили, при нажатии на кнопку <code>Run</code> в Xcode запускается тот же самый процес <code>Compile Kotlin/Native</code> что и в Android Studio при, например, <code>syncMultiPlatformLibraryDebugFrameworkIosX64</code>. Это указано в <code>Pods.xcodeproj -> Build Phases</code></p>
+<p class="image-container"><img alt="xcode pods build phases" src="img/c4919eb01122e7e0.png"></p>
+<p class="image-container"><img alt="xcode pods build phases" src="img/227200541adb3d52.png"></p>
+<p>Тут вы можете проверить какой JDK использует Xcode при запуске Gradle процесса.</p>
+<ul>
+<li>Вы можете открыть <code>Мониторинг системы</code> и найти все java-процессы. Если таких процессов несколько то, при компиляции из Xcode и Android Studio запускаются разные Grale Daemon&#39;ы, каждый из которых ест немалую часть вашей ОЗУ. От такого дублирования процессов нужно избавиться.</li>
+</ul>
+<p class="image-container"><img alt="xcode pods build phases" src="img/9ad5bfdc225cbe9a.png"></p>
+<p class="image-container"><img alt="xcode pods build phases" src="img/95c70e73e6fea536.png"></p>
+<p>Для начала можно проверить какие версии JDK установлены на вашем компьютере. Для этого достаточно ввести в терминал команду:</p>
+<pre><code language="language-bash" class="language-bash">/usr/libexec/java_home -V
+</code></pre>
+<p>Вы увидите что-то вроде этого:</p>
+<pre><code language="language-bash" class="language-bash">Matching Java Virtual Machines (3):
+    12 (x86_64) &#34;Oracle Corporation&#34; - &#34;Java SE 12&#34; /Library/Java/JavaVirtualMachines/jdk-12.jdk/Contents/Home
+    11.0.12 (x86_64) &#34;Oracle Corporation&#34; - &#34;Java SE 11.0.12&#34; /Library/Java/JavaVirtualMachines/jdk-11.0.12.jdk/Contents/Home
+    1.8.0_201 (x86_64) &#34;Oracle Corporation&#34; - &#34;Java SE 8&#34; /Library/Java/JavaVirtualMachines/jdk1.8.0_201.jdk/Contents/Home
+/Library/Java/JavaVirtualMachines/jdk-12.jdk/Contents/Home
+</code></pre>
+<p>Чтобы Xcode мог запускать Gradle Daemon с нужного нам JDK, а не со случайного, достаточно перейти в <code>/Library/Java/JavaVirtualMachines/</code> и удалить все JDK, кроме того, который вы указали в переменную <code>JAVA_HOME</code>.</p>
+<p>После всех этих действий в <code>Мониторинге системы</code> будет висеть только один java-процесс с нужной нам версией. Это означает, что build процесс в Android Studio и Xcode используют один и тот же Gradle Daemon.</p>
+<p>Подробнее о Gradle Daemon можете почитать <a href="https://kmm.icerock.dev/docs/for-ios-devs/gradle" target="_blank">тут</a>.</p>
+<p>Другой же способ избежать данной проблемы, это снова воспользоваться утилитой <a href="https://github.com/icerockdev/moko-doctor" target="_blank">moko-doctor</a>.</p>
+<pre><code language="language-bash" class="language-bash">./setup_xcode_environment.sh
+</code></pre>
+<p>После чего Xcode будет видеть переменные <code>JAVA_HOME</code> и <code>ANDROID_SDK_ROOT</code>, объявленные в вашем окружении, во время сборки проекта. Благодаря этому, мы исключаем запуск Gradle Daemon на разных JVM.</p>
 
 
       </google-codelab-step>
@@ -226,6 +310,8 @@
 <li>видно аргументы конструктора <code>settings</code>, <code>antilog</code>, <code>baseUrl</code>, <code>httpClientEngine</code></li>
 </ul>
 <p>Отладчик все еще не стабильно работает с Kotlin кодом, поэтому операции пошагового выполнения могут приводить к неожиданным результатам, а команды lldb типа <code>po</code> выдавать креши, но в будущем это тоже будет улучшено.</p>
+<p class="image-container"><img alt="xcode tips" src="img/98708a2e2338549d.png"></p>
+<p>Об Advanced Debugging with Xcode можете почитать <a href="https://medium.com/headout-engineering/advanced-debugging-with-xcode-9eba2845232a" target="_blank">тут</a>.</p>
 <h2 is-upgraded>Отладка используя Android Studio</h2>
 <p>При использовании плагина Kotlin Multiplatform Mobile можно проводить отладку kotlin кода в iOS из Android Studio. Для этого устанавливаем брейкпоинт (нажатием справа от номера строки) на нужную строку:</p>
 <p class="image-container"><img alt="android studio breakpoint" src="img/8f19cc31ac52ce48.png"></p>
