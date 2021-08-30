@@ -76,11 +76,24 @@ One last thing is saving the path to the JDK in environment variables. This can 
 ```bash
 nano ~/.zshenv
 ```
-and the line should be added in the opened editor:
+or (who use Visual Studio Code)
 
 ```bash
-export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk-11.0.10.jdk/Contents/Home
+code  ~/.zshenv
 ```
+
+well, or you can open the file in the Finder (it is located in your user's folder) : 
+![android termenv finder](assets/onboarding-1-termenv-finder.png)
+
+and in the editor that opens, add the line:
+
+```bash
+export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk-VERSION.jdk/Contents/Home
+```
+![android termenv finder](assets/onboarding-1-termenv-edit.png)
+
+If you use bash, then you need to change `~/.bash-profile`.
+
 Negative
 : Be careful with copy-paste, since the minor version of the JDK you have installed may differ from the given above!
 
@@ -115,24 +128,27 @@ After installation of Android Studio, it is worth specifying the environment var
 
 If you do not specify an environment variable, then while trying to compile Kotlin code, Gradle will try to read the path to the Android SDK from the `local.properties` file in the project root. And if this file does not exist, an error will occur. Android Studio automatically creates this file with the correct path to the Android SDK if you open a project through Android Studio, but if you want to avoid dependency on the fact "whether the project was opened through Android Studio before" you should specify the environment variable `ANDROID_SDK_ROOT`.
 
-We take the path to the Android SDK, which we could see earlier in `Welcome Screen` ->` Configure` -> `Default Project Structure` and add it to` ~ / .zshenv`. Open editing:
-
-```bash
-nano ~/.zshenv
-```
-and add a line with the path to the SDK, for example:
+We take the path to the Android SDK, which we could see earlier in `Welcome Screen` ->` Configure` -> `Default Project Structure` and add it to` ~ / .zshenv` (or to `~/.bash-profile`). We proceed by analogy with the variable `JAVA_HOME`.
 
 ```bash
 export ANDROID_SDK_ROOT=~/Library/android-sdk
 ```
+
 After that, even in the absence of `local.properties` file, the SDK will be found successfully.
+
+Negative
+: Starting from Android Studio 4.2, immediately after installation, you must disable the flag in `Preferences - > Experimental - > Do not build Gradle task during Gradle sync` (with the flag enabled, tasks for building modules will not appear in the `Gradle ' tab)
+
+![android studio 4.2 experimental flag](assets/android-studio-gradle-experimental-flag.png)
 
 ### CocoaPods (iOS)
 
 To work with dependencies on iOS we use CocoaPods, and also Kotlin module is connected to
 Xcode project via CocoaPods integration. Therefore, you need to install the current version of CocoaPods.
 
-Detailed documentation for installation [available on the official website] (https://cocoapods.org/#install).
+Detailed documentation for installation [available on the official website](https://cocoapods.org/#install).
+
+For HomeBrew users, installation information is [available here](https://formulae.brew.sh/formula/cocoapods)
 
 ### Kotlin Multiplatform Mobile plugin (iOS)
 
@@ -173,14 +189,58 @@ Positive
 After that, in projects where directories with Kotlin code are added via folder-reference, you can open Kotlin files and set breakpoints, and the Xcode debugger will successfully stop at them.
 We will consider setting breakpoints in more detail a little later in the debugging section.
 
-### Checking if all required environment variables are present
+###  checking 
 
-Open Terminal application and enter `export` command. The result should include the following variables:
 
-- `JAVA_HOME`
-- `ANDROID_SDK_ROOT`
+To make sure that you have configured everything correctly, you can use the [moko-doctor](https://github.com/icerockdev/moko-doctor) utility.
 
-If they are absent, you should return to the above mentioned points and set the variables correctly.
+```bash
+./doctor.sh
+```
+
+![doctor successful](assets/onboarding-1-doctor-successful.png)
+
+*Attention*
+: New environment variables will appear only after restarting the terminal session.
+
+### Gradle Build Environment
+
+By opening the file `gradle.properties`, which is located in the root folder of the project, you can see the project build parameters.
+
+- Param `org.gradle.parallel` is responsible for the parallel execution of tasks (if the tasks do not depend on each other)
+- Param `org.gradle.jvmargs` is responsible for starting the Java machine and allocating memory to it.
+- Param `org.gradle.workers.max` is responsible for the number of parallel "Workers" or processes (by default, the number of cores of your CPU)
+- The other parameters can be [found here](https://docs.gradle.org/current/userguide/build_environment.html).
+
+For a comfortable work, you can change the Gradle parameters not only for this project, but for all projects on your computer.
+To do this, hust go to user's forlder and open `.gradle` folder:
+
+```bash
+cd ./gradle
+```
+
+We need the file `gradle.properties`
+
+If it's missing:
+```bash
+touch gradle.properties
+```
+
+Open it
+```bash
+nano gradle.properties
+```
+or (who use Visual Studio Code)
+```bash
+code gradle.properties
+```
+
+You can alse use the Finder: 
+![gradle properties](assets/onboarding-1-gradle-properties.png)
+
+You can declare any settings in this file that will take priority over the settings of any of the running projects. For example: 
+![my gradle properties](assets/onboarding-1-my-gradle-props.png)
+
 
 ## Create a project
 
@@ -194,14 +254,31 @@ https://gitlab.icerockdev.com/scl/boilerplate/mobile-moko-boilerplate and fork i
 After cloning, open the project in Android Studio. To do this start the studio, File -> Open -> and select the folder where you cloned the repository. The first time you open it, the following should appear:
 ![android studio start](assets/onboarding-1-android-studio-start.png) 
 
+Gradle Sync should also start, but if this did not happen, then run it yourself.
+
+*Note*
+: Gradle Sync is a gradle task that looks through all your dependencies listed in the `build.gradle` file, analyzes the structure of the project. All this is necessary for the IDE to work correctly.
+
 By default, the studio parses directories and shows structure as for Android project. However, here we will work not only with android, but also with Multiplatform. Therefore, we switch the structure render. To do this, click on the Android dropdown on the left and select Project instead:
+
 ![android studio project](assets/onboarding-1-android-studio-project.png)
 
 After that, the folder structure will change slightly:
+
 ![android studio structure](assets/onboarding-1-android-studio-structure.png)
+
+We are waiting for the successful execution of Gradle Sync so that the necessary Tasks appear in our project. If Gradle Sync has failed, then we read an error.
+
+![android studio gradle sync end](assets/onboarding-1-android-studio-gradle-sync-end.png)
+
+![android studio gradte tasks after sync](assets/onboarding-1-android-studio-gradle-tasks-sync.png)
+
 
 Positive
 : In the next CodeLab we will get acquainted in more detail with the structure of the project, and in this part we will understand how to run and debug code on both platforms with the installed toolkit.
+
+Negative
+: It is necessary that the path `$HOME/bin` and `usr/local/bin` are added to the `PATH`environment variable
 
 ## Building Android
 
@@ -220,6 +297,36 @@ If you need just to build an Android application, then you can use corresponding
 ![android studio android assemble tasks](assets/android-studio-android-assemble-tasks.png)
 
 All tasks starting with `assemble` are responsible for compiling the project. The task `assembleDevDebug` is most often required to compile the debug assembly for the dev environment. Debug types of tasks are executed much faster than Release versions, since they do not have a lot of build optimizations and checks. Debug versions should be used for development.
+
+### Сhoosing an emulator
+
+By default, `Pixel_3a_API_30_x86` is selected for launching.
+To select another device, you need to go to `AVD Manager -> Create Virtual Device...` and create the emulator you need.
+
+![android studio android assemble tasks](assets/onboarding-1-android-avd-choose-device.png)
+
+![android studio android assemble tasks](assets/onboarding-1-android-avd-choose-version.png)
+
+![android studio android assemble tasks](assets/onboarding-1-android-avd-verify.png)
+
+After that, you can use the created simulator to launch the project.
+
+![android studio android assemble tasks](assets/onboarding-1-android-avd-start.png)
+
+## Debugging Android
+
+Duration: 5
+
+Positive
+: Debugging of the Android application and the general code is completely the same as in normal Android development.
+
+To debug Android application / shared code on Android, just put a breakpoint and start android via Debug mode (bug icon).
+
+![android studio android debug](assets/android-studio-android-debug.png)
+
+When a stop occurs at a breakpoint, it will be possible to view the call stack and all the contents of the frames in the stack.
+
+![android studio android breakpoint stop](assets/android-studio-android-breakpoint-stop.png)
 
 ## Building iOS
 
@@ -251,7 +358,7 @@ We can do this in several ways:
 
 It is worth trying both options to find the one that suits you best.
 
-Compilation will take some time, since Kotlin/Native (Kotlin compiler for native platforms) is not optimized enough for performance. While the compilation is in progress, it is worth reading the article [Gradle for iOS Developers at kmm.icerock.dev](https://kmm.icerock.dev/docs/for-ios-devs/gradle)
+Compilation will take some time, since Kotlin/Native (Kotlin compiler for native platforms) is not optimized enough for performance. While the compilation is in progress, it is worth reading the article [Gradle for iOS Developers at kmm.icerock.dev](https://kmm.icerock.dev/docs/for-ios-devs/gradle/)
 ...
 
 ### Installing CocoaPods dependencies along with MultiPlatformLibrary
@@ -282,6 +389,9 @@ After successful installation of the CocoaPods dependencies (including MultiPlat
 ```bash
 open ios-app/ios-app.xcworkspace
 ```
+
+#### Launcing in simulator
+
 We select any simulator and run the project by clicking on the Run button.
 
 ![xcode run app](assets/xcode-run-app.png)
@@ -289,6 +399,22 @@ We select any simulator and run the project by clicking on the Run button.
 As a result, we will see the running application:
 
 ![ios run result](assets/onboarding-1-ios-simulator.png)
+
+#### Launcing in real device
+
+When running on a real device, you will get an error:
+![ios run result](assets/onboarding-1-real-device-error.png)
+
+To solve this problem, go to `ios-app.xcodeproj -> Targets -> Signing & Capabilities` and point `Team` and `Bundle Identifier`.
+
+After that, you need to replace the `Bundle Identifier` in the name of the Firebase synchronization file and the `BUNDLE_ID` inside the file itself.
+![ios run bundle](assets/onboarding-1-real-device-bundle.png)
+
+After these actions, we try to launch the application on the device and see this:
+
+![ios run device](assets/onboarding-1-real-device.png)
+
+We managed to launch the application on a real device.
 
 ### Building directly from Android Studio
 
@@ -315,17 +441,52 @@ After the settings made click `Apply` to save, then select ` ios-app` configurat
 The development cycle "write code" -> "compile" -> "run" requires fewer steps than described above.
 After the initial installation of the dependencies, to check the changes in the code you have to press `Run` in Xcode / Android Studio. The integration via CocoaPods will automatically compile Kotlin module, so changes in the code of the shared library and in the iOS code of the project will be taken into account in the new build. Running `pod install` may need to be repeated in cases where new native CocoaPods dependencies are added to ` Podfile`.
 
-## Debugging Android
+### What JDK does Xcode use?
 
-Duration: 5
+As we have already found out, when you click on the `Run` button in Xcode, the same `Compile Kotlin/Native` process is started as in Android Studio with, for example, `syncMultiPlatformLibraryDebugFrameworkIosX64`.
+This is specified in `Pods.xcodeproj -> Build Stages`
 
-To debug Android application / shared code on Android, just put a breakpoint and start android via Debug mode (bug icon).
+![xcode pods build phases](assets/onboarding-1-xcode-pods-build-phases.png)
 
-![android studio android debug](assets/android-studio-android-debug.png)
+![xcode pods build phases](assets/onboarding-1-xcode-build.png)
 
-When a stop occurs at a breakpoint, it will be possible to view the call stack and all the contents of the frames in the stack.
+Here you can check which JDK uses Xcode when starting the Gradle process.
 
-![android studio android breakpoint stop](assets/android-studio-android-breakpoint-stop.png)
+- You can open `System Monitoring` and find all java processes. If there are several such processes, then when compiling from Xcode and Android Studio, different Grale Daemon's are launched, each of which eats a considerable part of your RAM.
+You need to get rid of such duplication of processes.
+
+![xcode pods build phases](assets/onboarding-1-jdk-1.png)
+
+![xcode pods build phases](assets/onboarding-1-jdk-2.png)
+
+First, you can check which versions of the JDK are installed on your computer. To do this, just enter the command in the terminal:
+```bash
+/usr/libexec/java_home -V
+```
+
+You will see something like this:
+```bash
+Matching Java Virtual Machines (3):
+    12 (x86_64) "Oracle Corporation" - "Java SE 12" /Library/Java/JavaVirtualMachines/jdk-12.jdk/Contents/Home
+    11.0.12 (x86_64) "Oracle Corporation" - "Java SE 11.0.12" /Library/Java/JavaVirtualMachines/jdk-11.0.12.jdk/Contents/Home
+    1.8.0_201 (x86_64) "Oracle Corporation" - "Java SE 8" /Library/Java/JavaVirtualMachines/jdk1.8.0_201.jdk/Contents/Home
+/Library/Java/JavaVirtualMachines/jdk-12.jdk/Contents/Home
+```
+
+In order for Xcode to run Gradle Daemon from the JDK we need, and not from a random one, it is enough to go to `/Library/Java/JavaVirtualMachines/` and delete all the JDKs, except the one that you specified in the `JAVA_HOME` variable.
+
+After all these actions, only one java process with the version we need will hang in the `System Monitoring`. This means that the build process in Android Studio and Xcode use the same Gradle Daemon.
+
+You can read more about Gradle Daemon [here](https://kmm.icerock.dev/docs/for-ios-devs/gradle).
+
+
+Another way to avoid this problem is to use the [moko-doctor](https://github.com/icerockdev/moko-doctor) utility again.
+
+```bash
+./setup_xcode_environment.sh
+```
+
+After that, Xcode will see the variables `JAVA_HOME` and `ANDROID_SDK_ROOT` declared in your environment during the project build. Thanks to this, we exclude the launch of the Gradle Daemon on different JVMs.
 
 ## Debugging iOS
 
@@ -353,6 +514,11 @@ In the debugger you can see the stack trace with a clear call stack (kotlin func
 - you can see the constructor arguments `settings`,` antilog`, `baseUrl`,` httpClientEngine`
 
 The debugger is still not stable with Kotlin code, so step-by-step operations may lead to unexpected results, and lldb commands like `po` may give crashes, but this will also be improved in the future.
+
+![xcode tips](assets/onboarding-1-ios-debugs-tips.png)
+
+You can read about Advanced Debugging with Xcode [here](https://medium.com/headout-engineering/advanced-debugging-with-xcode-9eba2845232a).
+
 
 ### Debugging using Android Studio
 
