@@ -110,13 +110,13 @@ For installation just click Install which is opposite to `Android Studio`.
 On first launch the initial setup will be performed. Settings can be made at your discretion, but
 it is important to install the latest version of Android SDK.
 
-The IDE installation needs a bit of customization. First, it is required to fix the JDK you are using. For this end you go into Android Studio, but **do not open any project**.
+The IDE installation needs a bit of customization. First, it is required to fix the JDK you are using. For this end you go into Android Studio.
 
 ![android studio welcome](assets/android-studio-welcome.png)
 
-![android studio jdk](assets/android-studio-jdk.png)
+Starting with Android Studio Arctic Fox 2020.3.0 the location of the JDK is specified for a specific project after it's opened.
 
-On the Welcome screen choose `Configure` ->` Default Project Structure`. And on the screen that appears select `JDK Location` from` JAVA_HOME`:
+After opening the project, go to `Android Studio -> Preferences -> Build, Execution, Deployment -> Build Tools -> Gradle` and specify `Gradle JDK` there.
 
 ![android studio jdk](assets/android-studio-jdk.png)
 
@@ -141,6 +141,10 @@ Negative
 
 ![android studio 4.2 experimental flag](assets/android-studio-gradle-experimental-flag.png)
 
+*Note*
+: When specifying all paths in Andoid Studio, don't use the `~` character.
+With it, the path is determined incorrectly and the builds fail.
+
 ### CocoaPods (iOS)
 
 To work with dependencies on iOS we use CocoaPods, and also Kotlin module is connected to
@@ -152,13 +156,17 @@ For HomeBrew users, installation information is [available here](https://formula
 
 ### Kotlin Multiplatform Mobile plugin (iOS)
 
-[special IDE plugin called Kotlin Multiplatform Mobile](https://plugins.jetbrains.com/plugin/14936-kotlin-multiplatform-mobile) is provided for Android Studio by JetBrains, in which:
+[Special IDE plugin called Kotlin Multiplatform Mobile](https://plugins.jetbrains.com/plugin/14936-kotlin-multiplatform-mobile) is provided for Android Studio by JetBrains, in which:
 
 - Templates for KMM project / KMM module creation
 - iOS application launching from Android Studio
 - iOS applications debugging from Android Studio (you can put breakpoints in common code on Kotlin and iOS application will stop at this point when running)
 
 This plugin is available only on macOS (since launching and debugging iOS application is possible only on macOS).
+
+To install this plugin, go to `Preferences -> Plugins -> Marketplace` and find `Kotlin Multiplatform Mobile`, then just click `Install` and wait for the download to finish.
+
+![android-studio-plugis](assets/android-studio-plugins.png)
 
 Positive
 : It is important to understand that this plugin is not a compulsory requirement to work with Kotlin Multiplatform Mobile. Naming can be misleading. You can develop KMM applications without this plugin, it may only be needed for more convenient iOS part development - the ability to debug Kotlin from Android Studio is available exclusively through this plugin.
@@ -189,7 +197,7 @@ Positive
 After that, in projects where directories with Kotlin code are added via folder-reference, you can open Kotlin files and set breakpoints, and the Xcode debugger will successfully stop at them.
 We will consider setting breakpoints in more detail a little later in the debugging section.
 
-###  checking 
+###  Сhecking 
 
 
 To make sure that you have configured everything correctly, you can use the [moko-doctor](https://github.com/icerockdev/moko-doctor) utility.
@@ -208,8 +216,8 @@ To make sure that you have configured everything correctly, you can use the [mok
 By opening the file `gradle.properties`, which is located in the root folder of the project, you can see the project build parameters.
 
 - Param `org.gradle.parallel` is responsible for the parallel execution of tasks (if the tasks do not depend on each other)
-- Param `org.gradle.jvmargs` is responsible for starting the Java machine and allocating memory to it.
-- Param `org.gradle.workers.max` is responsible for the number of parallel "Workers" or processes (by default, the number of cores of your CPU)
+- Param `org.gradle.jvmargs` is responsible for starting the Java machine and allocating memory to it. When setting this parameter, you should take into account the amount of RAM on your device and leave a couple of backup GB. For example, on a device with 16 GB of RAM, you can put `org.gradle.jvmargs=-Xmx8g`, the remaining 8 GB is quite enough to use the browser, etc., while waiting for the build to complete.
+- Param `org.gradle.workers.max` is responsible for the number of parallel "Workers" or processes (by default, the number of cores of your CPU). In a similar way, you should leave a couple of backup cores for comfortable work until the build is completed. For example, on a computer with 8 cores, you can completely leave 6 workers: `org.gradle.workers.max=6`
 - The other parameters can be [found here](https://docs.gradle.org/current/userguide/build_environment.html).
 
 For a comfortable work, you can change the Gradle parameters not only for this project, but for all projects on your computer.
