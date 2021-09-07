@@ -79,10 +79,11 @@
 <p class="image-container"><img alt="jetbrains toolbox" src="img/4cdd3fb092a35b1c.png"></p>
 <p>Для установки просто нажимем Install напротив пункта <code>Android Studio</code>.</p>
 <p>При первом запуске будет произведена первичная настройка. Настройки делайте на свое усмотрение, но важно установить Android SDK последней версии.</p>
-<p>Поле установки IDE требуется немного настроить. Во первых нужно исправить используемую JDK. Для этого заходим в Android Studio, но <strong>не открываем никакой проект</strong>.</p>
-<p class="image-container"><img alt="android studio welcome" src="img/c4f2a128b43308ac.png"></p>
-<p>На Welcome экране выбираем <code>Configure</code> -&gt; <code>Default Project Structure</code>. И в появившемся экране выбираем <code>JDK Location</code> из <code>JAVA_HOME</code>:</p>
-<p class="image-container"><img alt="android studio jdk" src="img/ac3210f7676fa334.png"></p>
+<p>Поле установки IDE требуется немного настроить. Во первых нужно исправить используемую JDK. Для этого заходим в Android Studio.</p>
+<p class="image-container"><img alt="android studio welcome" src="img/b317e126dd282bef.png"></p>
+<p>Начиная с Android Studio Arctic Fox 2020.3.0 JDK  Location указывается для конкретного проекта после его открытия.</p>
+<p>После открытия проекта идем в <code>Android Studio -> Preferences -> Build, Execution, Deployment -> Build Tools -> Gradle</code> и там указываем <code>Gradle JDK</code>.</p>
+<p class="image-container"><img alt="android studio jdk" src="img/ca02d6ad7332ced7.png"></p>
 <p>Positive : За счет этого выбора компиляция проектов через Android Studio будет производиться той же версией JDK, которую будет использовать и Xcode. А это в свою очередь позволит использовать один Gradle Daemon для компиляции одного и того же проекта, более эффективно используя ресурсы. Если же Android Studio и Xcode будут использовать разные JDK, то компилируя проект в Android Studio и Xcode вы получите два независимых java процесса, каждый из которых отнимет множество ресурсов (гигабайты памяти).</p>
 <p>После установки Android Studio для удобства стоит указать переменную окружения <code>ANDROID_SDK_ROOT</code>, чтобы не было необходимости открывать проект через Android Studio перед запуском в Xcode.</p>
 <p>Если не указывать переменную окружения, то при попытке компиляции Kotlin кода Gradle будет пытаться считать путь до Android SDK из файла <code>local.properties</code> в корне проекта. И если данного файла нет - будет ошибка. Android Studio автоматически создает этот файл с правильным путем до Android SDK при открытии проекта через Android Studio, но если хочется не зависеть от факта &#34;был ли открыт проект через Android Studio ранее&#34; - следует указать перменную окружения <code>ANDROID_SDK_ROOT</code>.</p>
@@ -92,6 +93,7 @@
 <p>После этого даже при отсутствии файла <code>local.properties</code> SDK будет успешно найдено.</p>
 <p>Negative : Начиная с Android Studio 4.2 сразу после установки необходимо отключить флаг в <code>Preferences -> Experimental -> Do not build Gradle task during Gradle sync</code> (с включенным флагом задачи на сборку модулей не появятся во вкладке <code>Gradle</code>)</p>
 <p class="image-container"><img alt="android studio 4.2 experimental flag" src="img/a3d20ed352ac1397.png"></p>
+<p><em>Примечание</em> : При указании всех путей в Andoid Studio не используйте символ <code>~</code> (тильда). С ней путь определяется некорректно и сборки фейлятся.</p>
 <h2 is-upgraded>CocoaPods (iOS)</h2>
 <p>Для работы с зависимостями на iOS мы используем CocoaPods, а также Kotlin модуль подключается в Xcode проект через CocoaPods интеграцию. Поэтому требуется установить актуальную версию CocoaPods.</p>
 <p>Подробная документация о установке <a href="https://cocoapods.org/#install" target="_blank">доступна на официальном сайте</a>.</p>
@@ -104,6 +106,8 @@
 <li>Отладка iOS приложения из Android Studio (можно поставить брейкпоинты в common коде на kotlin и при выполнении iOS приложение остановится в этом месте)</li>
 </ul>
 <p>Доступен данный плагин только на macOS (так как запуск и отладка iOS приложения только на macOS возможна).</p>
+<p>Для устанвок данного плагина нужно перейти в <code>Preferences -> Plugins -> Marketplace</code> и найти <code>Kotlin Multiplatform Mobile</code>, после чего достаточно нажать <code>Install</code> и дождаться окончания загрузки.</p>
+<p class="image-container"><img alt="android-studio-plugis" src="img/e6db87393e081cc9.png"></p>
 <p>Positive : Важно понимать, что данный плагин не является обязательным требованием для работы с Kotlin Multiplatform Mobile. Именование может вводить в заблуждение. Вы можете разрабатывать KMM приложения и без данного плагина, он нужен только для более удобной разработки iOS части - возможность отлаживать Kotlin доступна из Android Studio только через этот плагин.</p>
 <p>Negative : При обновлениях Kotlin могут происходить ситуации что данный плагин ломает работу IDE (например IDE не может завершить Gradle Sync) - в таких случаях приходится вынужденно выключать данный плагин и работать без него.</p>
 <h2 is-upgraded>Xcode Kotlin plugin (iOS)</h2>
@@ -128,8 +132,8 @@
 <p>Открыв файл <code>gradle.properties</code>, который расположен в корневой папке проекта можно увидеть параметры сборки проекта.</p>
 <ul>
 <li>Параметр <code>org.gradle.parallel</code> отвечает за параллельное выполнение задач (если задачи не зависят друг от друга)</li>
-<li>Параметр <code>org.gradle.jvmargs</code> отвечает за запуск Java-машины и выделение ей памяти.</li>
-<li>Параметр <code>org.gradle.workers.max</code> отвечает за количество параллельных &#34;Воркеров&#34; или процессов (по умолчанию используется количество ядер вашего CPU)</li>
+<li>Параметр <code>org.gradle.jvmargs</code> отвечает за запуск Java-машины и выделение ей памяти. При настройке этого параметра стоит учитывать количество ОЗУ на вашем устройстве и оставлять пару резервных ГБ. Например, на устройстве с 16 ГБ ОЗУ можно поставить <code>org.gradle.jvmargs=-Xmx8g</code>, остальных 8 ГБ вполне хватит, чтоб пользоваться браузером и т.п, пока ждете завершения сборки.</li>
+<li>Параметр <code>org.gradle.workers.max</code> отвечает за количество параллельных &#34;Воркеров&#34; или процессов (по умолчанию используется количество ядер вашего CPU). Аналогичным способом стоит оставить пару резервных ядер для комфортной работы до завершения сборки. Например на компьютере с 8 ядрами можно вполне оставить 6 воркеров: <code>org.gradle.workers.max=6</code></li>
 <li>С остальными параметрами можете <a href="https://docs.gradle.org/current/userguide/build_environment.html" target="_blank">ознакомиться тут</a>.</li>
 </ul>
 <p>Для комфортной работы вы можете изменить параметры Gradle не только для этого проекта, а для всех проектов на вашем компьютере. Для этого достаточно перейти в папку вашего пользователя и открыть папку <code>.gradle</code>:</p>

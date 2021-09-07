@@ -79,11 +79,11 @@
 <p class="image-container"><img alt="jetbrains toolbox" src="img/4cdd3fb092a35b1c.png"></p>
 <p>For installation just click Install which is opposite to <code>Android Studio</code>.</p>
 <p>On first launch the initial setup will be performed. Settings can be made at your discretion, but it is important to install the latest version of Android SDK.</p>
-<p>The IDE installation needs a bit of customization. First, it is required to fix the JDK you are using. For this end you go into Android Studio, but <strong>do not open any project</strong>.</p>
-<p class="image-container"><img alt="android studio welcome" src="img/c4f2a128b43308ac.png"></p>
-<p class="image-container"><img alt="android studio jdk" src="img/ac3210f7676fa334.png"></p>
-<p>On the Welcome screen choose <code>Configure</code> -&gt; <code>Default Project Structure</code>. And on the screen that appears select <code>JDK Location</code> from <code>JAVA_HOME</code>:</p>
-<p class="image-container"><img alt="android studio jdk" src="img/ac3210f7676fa334.png"></p>
+<p>The IDE installation needs a bit of customization. First, it is required to fix the JDK you are using. For this end you go into Android Studio.</p>
+<p class="image-container"><img alt="android studio welcome" src="img/b317e126dd282bef.png"></p>
+<p>Starting with Android Studio Arctic Fox 2020.3.0 the location of the JDK is specified for a specific project after it&#39;s opened.</p>
+<p>After opening the project, go to <code>Android Studio -> Preferences -> Build, Execution, Deployment -> Build Tools -> Gradle</code> and specify <code>Gradle JDK</code> there.</p>
+<p class="image-container"><img alt="android studio jdk" src="img/ca02d6ad7332ced7.png"></p>
 <p>Positive : Due to this choice, compilation of the projects through Android Studio will be done with the same version of JDK that Xcode will use. This will allow you to use one Gradle Daemon to compile one project, using resources more efficiently. If Android Studio and Xcode use different JDKs, then when compiling the project in Android Studio and Xcode you will get two independent java processes, each of which will consume many resources (gigabytes of memory).</p>
 <p>After installation of Android Studio, it is worth specifying the environment variable <code>ANDROID_SDK_ROOT</code> for convenience, so that there is no need to open the project through Android Studio before launching it in Xcode.</p>
 <p>If you do not specify an environment variable, then while trying to compile Kotlin code, Gradle will try to read the path to the Android SDK from the <code>local.properties</code> file in the project root. And if this file does not exist, an error will occur. Android Studio automatically creates this file with the correct path to the Android SDK if you open a project through Android Studio, but if you want to avoid dependency on the fact &#34;whether the project was opened through Android Studio before&#34; you should specify the environment variable <code>ANDROID_SDK_ROOT</code>.</p>
@@ -93,18 +93,21 @@
 <p>After that, even in the absence of <code>local.properties</code> file, the SDK will be found successfully.</p>
 <p>Negative : Starting from Android Studio 4.2, immediately after installation, you must disable the flag in <code>Preferences - > Experimental - > Do not build Gradle task during Gradle sync</code> (with the flag enabled, tasks for building modules will not appear in the `Gradle &#39; tab)</p>
 <p class="image-container"><img alt="android studio 4.2 experimental flag" src="img/a3d20ed352ac1397.png"></p>
+<p><em>Note</em> : When specifying all paths in Andoid Studio, don&#39;t use the <code>~</code> character. With it, the path is determined incorrectly and the builds fail.</p>
 <h2 is-upgraded>CocoaPods (iOS)</h2>
 <p>To work with dependencies on iOS we use CocoaPods, and also Kotlin module is connected to Xcode project via CocoaPods integration. Therefore, you need to install the current version of CocoaPods.</p>
 <p>Detailed documentation for installation <a href="https://cocoapods.org/#install" target="_blank">available on the official website</a>.</p>
 <p>For HomeBrew users, installation information is <a href="https://formulae.brew.sh/formula/cocoapods" target="_blank">available here</a></p>
 <h2 is-upgraded>Kotlin Multiplatform Mobile plugin (iOS)</h2>
-<p><a href="https://plugins.jetbrains.com/plugin/14936-kotlin-multiplatform-mobile" target="_blank">special IDE plugin called Kotlin Multiplatform Mobile</a> is provided for Android Studio by JetBrains, in which:</p>
+<p><a href="https://plugins.jetbrains.com/plugin/14936-kotlin-multiplatform-mobile" target="_blank">Special IDE plugin called Kotlin Multiplatform Mobile</a> is provided for Android Studio by JetBrains, in which:</p>
 <ul>
 <li>Templates for KMM project / KMM module creation</li>
 <li>iOS application launching from Android Studio</li>
 <li>iOS applications debugging from Android Studio (you can put breakpoints in common code on Kotlin and iOS application will stop at this point when running)</li>
 </ul>
 <p>This plugin is available only on macOS (since launching and debugging iOS application is possible only on macOS).</p>
+<p>To install this plugin, go to <code>Preferences -> Plugins -> Marketplace</code> and find <code>Kotlin Multiplatform Mobile</code>, then just click <code>Install</code> and wait for the download to finish.</p>
+<p class="image-container"><img alt="android-studio-plugis" src="img/e6db87393e081cc9.png"></p>
 <p>Positive : It is important to understand that this plugin is not a compulsory requirement to work with Kotlin Multiplatform Mobile. Naming can be misleading. You can develop KMM applications without this plugin, it may only be needed for more convenient iOS part development - the ability to debug Kotlin from Android Studio is available exclusively through this plugin.</p>
 <p>Negative : During Kotlin updates plugin may break the work of the IDE (for example, the IDE cannot complete Gradle Sync). In such cases you should turn off this plugin and work without it.</p>
 <h2 is-upgraded>Xcode Kotlin plugin (iOS)</h2>
@@ -118,7 +121,7 @@
 <li><code>Load Bundle</code>.</li>
 </ul>
 <p>Positive : After every Xcode update, you need to do a re-installation by downloading the updated version of the plugin from GitHub. After that, in projects where directories with Kotlin code are added via folder-reference, you can open Kotlin files and set breakpoints, and the Xcode debugger will successfully stop at them. We will consider setting breakpoints in more detail a little later in the debugging section.</p>
-<h2 is-upgraded>checking</h2>
+<h2 is-upgraded>Сhecking</h2>
 <p>To make sure that you have configured everything correctly, you can use the <a href="https://github.com/icerockdev/moko-doctor" target="_blank">moko-doctor</a> utility.</p>
 <pre><code language="language-bash" class="language-bash">./doctor.sh
 </code></pre>
@@ -128,8 +131,8 @@
 <p>By opening the file <code>gradle.properties</code>, which is located in the root folder of the project, you can see the project build parameters.</p>
 <ul>
 <li>Param <code>org.gradle.parallel</code> is responsible for the parallel execution of tasks (if the tasks do not depend on each other)</li>
-<li>Param <code>org.gradle.jvmargs</code> is responsible for starting the Java machine and allocating memory to it.</li>
-<li>Param <code>org.gradle.workers.max</code> is responsible for the number of parallel &#34;Workers&#34; or processes (by default, the number of cores of your CPU)</li>
+<li>Param <code>org.gradle.jvmargs</code> is responsible for starting the Java machine and allocating memory to it. When setting this parameter, you should take into account the amount of RAM on your device and leave a couple of backup GB. For example, on a device with 16 GB of RAM, you can put <code>org.gradle.jvmargs=-Xmx8g</code>, the remaining 8 GB is quite enough to use the browser, etc., while waiting for the build to complete.</li>
+<li>Param <code>org.gradle.workers.max</code> is responsible for the number of parallel &#34;Workers&#34; or processes (by default, the number of cores of your CPU). In a similar way, you should leave a couple of backup cores for comfortable work until the build is completed. For example, on a computer with 8 cores, you can completely leave 6 workers: <code>org.gradle.workers.max=6</code></li>
 <li>The other parameters can be <a href="https://docs.gradle.org/current/userguide/build_environment.html" target="_blank">found here</a>.</li>
 </ul>
 <p>For a comfortable work, you can change the Gradle parameters not only for this project, but for all projects on your computer. To do this, hust go to user&#39;s forlder and open <code>.gradle</code> folder:</p>
