@@ -37,7 +37,7 @@ For all developers at the company, git is required by default. If it is not inst
 ### Xcode (iOS)
 
 To compile an iOS application, as well as Kotlin library for iOS, you need Xcode. It can be
-installed from AppStore - [Xcode] (https://apps.apple.com/ru/app/xcode/id497799835?mt=12).
+installed from AppStore - [Xcode](https://apps.apple.com/ru/app/xcode/id497799835?mt=12).
 
 For installation you will need an Apple account. If you already have your own Apple ID, you can use it. Otherwise, you can register it to your corporate mail. In the process of registering there is a requirement of a link to a bank card, which cannot be bypassed, so you may link any card (even a salary one) - if you do not make purchases in the AppStore, then there will be no payments (Xcode is free).
 
@@ -101,7 +101,7 @@ Negative
 
 To work with Kotlin code you need an IDE by JetBrains - IDEA or Android Studio. Kotlin Multiplatform Mobile is currently the main IDE [as it is recognised by Android Studio (https://kotlinlang.org/lp/mobile/ecosystem/), so it is required to be installed.
 
-In this regard we recommend using [JetBrains Toolbox] (https://www.jetbrains.com/toolbox-app/), this application will independently monitor the current version of an IDE used and facilitate the process of installation / updating all IDEs by JetBrains.
+In this regard we recommend using [JetBrains Toolbox](https://www.jetbrains.com/toolbox-app/), this application will independently monitor the current version of an IDE used and facilitate the process of installation / updating all IDEs by JetBrains.
 
 ![jetbrains toolbox](assets/jetbrains-toolbox.png)
 
@@ -182,7 +182,7 @@ As an alternative to Kotlin Multiplatform Mobile plugin for Android Studio, you 
 It provides the ability to set breakpoints in Kotlin code from Xcode:
 ![xcode kotlin breakpoint](assets/xcode-kotlin-breakpoint.png) 
 
-To install you should just download [current version from master] (https://github.com/touchlab/xcode-kotlin/archive/refs/heads/main.zip), unzip and run
+To install you should just download [current version from master](https://github.com/touchlab/xcode-kotlin/archive/refs/heads/main.zip), unzip and run
 
 ```bash
 ./setup.sh
@@ -502,7 +502,7 @@ Duration: 10
 
 ### Debugging using Xcode
 
-Due to the installed plugin [xcode-kotlin] (https://github.com/touchlab/xcode-kotlin) we can specify a breakpoint in Kotlin code directly from Xcode. To do this, you need to add Kotlin code files to the Xcode project through folder-reference. There is a link in our project to the `mpp-library` directory, in which all multiplatform modules are located.
+Due to the installed plugin [xcode-kotlin](https://github.com/touchlab/xcode-kotlin) we can specify a breakpoint in Kotlin code directly from Xcode. To do this, you need to add Kotlin code files to the Xcode project through folder-reference. There is a link in our project to the `mpp-library` directory, in which all multiplatform modules are located.
 
 To get an example of working with breakpoints, open the file
 `mpp library/src/commonMain/kotlin/org/example/library/SharedFactory.kt` in Xcode and set a breakpoint (by clicking on the line number) on the line in the class constructor with initialization of the` Napier` logger.
