@@ -478,7 +478,7 @@ iOS. Для этого нам нужно запустить Gradle задачу 
 
 Компиляция займет некоторое время, так как Kotlin/Native (компилятор Kotlin для нативных платформ)
 пока недостаточно оптимизирован на производительность. Пока идет компиляция стоит ознакомиться с
-статьей [Gradle для iOS разработчиков на kmm.icerock.dev](https://kmm.icerock.dev/docs/for-ios-devs/gradle/)
+статьей [Gradle для iOS разработчиков на kmm.icerock.dev](https://kmm.icerock.dev/learning/gradle/intro-gradle)
 
 ### Установка CocoaPods зависимостей вместе с MultiPlatformLibrary
 
