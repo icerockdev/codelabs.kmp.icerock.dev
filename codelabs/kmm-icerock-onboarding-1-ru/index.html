@@ -71,7 +71,7 @@
 <pre><code language="language-bash" class="language-bash">export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk-VERSION.jdk/Contents/Home
 </code></pre>
 <p class="image-container"><img alt="android termenv finder" src="img/de6814fc135967dd.png"></p>
-<p>Если же вы пользуетесь оболочкой bash, то вам нежно менять <code>~/.bash-profile</code>.</p>
+<p>Если же вы пользуетесь оболочкой bash, то вам нужно менять <code>~/.bash-profile</code>.</p>
 <p>Negative : Аккуратнее с copy-paste - минорная версия установленной у вас JDK может отличаться от приведенной выше!</p>
 <h2 is-upgraded>Android Studio (Android, iOS)</h2>
 <p>Для работы с Kotlin кодом требуется IDE от JetBrains - IDEA либо Android Studio. Команда Kotlin Multiplatform Mobile на данный момент основной IDE <a href="https://kotlinlang.org/lp/mobile/ecosystem/" target="_blank">позиционируют Android Studio</a> поэтому требуется установить ее.</p>
@@ -106,7 +106,7 @@
 <li>Отладка iOS приложения из Android Studio (можно поставить брейкпоинты в common коде на kotlin и при выполнении iOS приложение остановится в этом месте)</li>
 </ul>
 <p>Доступен данный плагин только на macOS (так как запуск и отладка iOS приложения только на macOS возможна).</p>
-<p>Для устанвок данного плагина нужно перейти в <code>Preferences -> Plugins -> Marketplace</code> и найти <code>Kotlin Multiplatform Mobile</code>, после чего достаточно нажать <code>Install</code> и дождаться окончания загрузки.</p>
+<p>Для установки данного плагина нужно перейти в <code>Preferences -> Plugins -> Marketplace</code> и найти <code>Kotlin Multiplatform Mobile</code>, после чего достаточно нажать <code>Install</code> и дождаться окончания загрузки.</p>
 <p class="image-container"><img alt="android-studio-plugis" src="img/e6db87393e081cc9.png"></p>
 <p>Positive : Важно понимать, что данный плагин не является обязательным требованием для работы с Kotlin Multiplatform Mobile. Именование может вводить в заблуждение. Вы можете разрабатывать KMM приложения и без данного плагина, он нужен только для более удобной разработки iOS части - возможность отлаживать Kotlin доступна из Android Studio только через этот плагин.</p>
 <p>Negative : При обновлениях Kotlin могут происходить ситуации что данный плагин ломает работу IDE (например IDE не может завершить Gradle Sync) - в таких случаях приходится вынужденно выключать данный плагин и работать без него.</p>
@@ -140,7 +140,7 @@
 <pre><code language="language-bash" class="language-bash">cd ./gradle
 </code></pre>
 <p>Нам нужен файл <code>gradle.properties</code></p>
-<p>При его отсутсвии:</p>
+<p>При его отсутствии:</p>
 <pre><code language="language-bash" class="language-bash">touch gradle.properties
 </code></pre>
 <p>Октройте его</p>
@@ -156,10 +156,10 @@
       </google-codelab-step>
     
       <google-codelab-step label="Создаем проект" duration="10">
-        <p>В качестве отправной точки мы будем использовать наш шаблоный проект - <strong>mobile-moko-boilerplate</strong>. Он используется на всех новых проектах для быстрого развёртывания и старта разработки. Там уже подключены все минимально необходимые зависимости, имеется нужная структура папок и базовая настройка проекта. Так что заходим на GitLab в репозиторий <a href="https://gitlab.icerockdev.com/scl/boilerplate/mobile-moko-boilerplate" target="_blank">https://gitlab.icerockdev.com/scl/boilerplate/mobile-moko-boilerplate</a> и делаем форк себе в профиль, клонируем.</p>
+        <p>В качестве отправной точки мы будем использовать наш шаблонный проект - <strong>mobile-moko-boilerplate</strong>. Он используется на всех новых проектах для быстрого развёртывания и старта разработки. Там уже подключены все минимально необходимые зависимости, имеется нужная структура папок и базовая настройка проекта. Так что заходим на GitLab в репозиторий <a href="https://gitlab.icerockdev.com/scl/boilerplate/mobile-moko-boilerplate" target="_blank">https://gitlab.icerockdev.com/scl/boilerplate/mobile-moko-boilerplate</a> и делаем форк себе в профиль, клонируем.</p>
 <p>После клонирования открываем проект в Android Studio. Для этого запускаем студию, <code>File -> Open -> И выбираем папку, в которую склонировали репозиторий</code>. При первом открытии должно появиться следующее:</p>
 <p class="image-container"><img alt="android studio start" src="img/5d69b1a99ea4bdae.png"></p>
-<p>Так же должен запуститься Gradle Sync , если же этого не прозошло то запустите его самостоятельно.</p>
+<p>Так же должен запуститься Gradle Sync , если же этого не произошло то запустите его самостоятельно.</p>
 <p><em>Примечание</em> : Gradle Sync - это задача gradle, которая просматривает все ваши зависимости, перечисленные в файлах <code>build.gradle</code>, анализирует всю структуру проекта. Все это нужно для корректной работы IDE.</p>
 <p class="image-container"><img alt="android studio gradle sync start" src="img/968d65e15bbf241f.png"></p>
 <p>По-умолчанию студия парсит каталоги и строит отображение как для Android-проекта. Но мы здесь будем работать не только с андроидом, но и с мультиплатформой. Поэтому переключаем отображение. Для этого слева нажимаем на выпадашку Android и выбираем вместо него Project:</p>
@@ -272,7 +272,7 @@
 <p>После настроек жмем <code>Apply</code> для сохранения, выбираем конфигурацию <code>ios-app</code> и запускаем приложение.</p>
 <p class="image-container"><img alt="android studio run ios" src="img/a374176aa4d252fc.png"></p>
 <h2 is-upgraded>Write-Compile-Debug cycle</h2>
-<p>Цикл разработки &#34;пишем код&#34; -&gt; &#34;компилируем&#34; -&gt; &#34;запускаем&#34; требует меньше действий чем описано выше. После первичной установки зависимостей для проверки изменений в коде достаточно просто нажимать <code>Run</code> в Xcode / Android Studio - интеграция через CocoaPods автоматически произведет компиляцию и Kotlin модуля, поэтому изменения в коде общей библиотеки и в коде ios проекта будут учтены в новом билде. Запуск <code>pod install</code> может потребоваться повторно в случаях когда добавлюятся новые нативные CocoaPods зависимости в <code>Podfile</code>.</p>
+<p>Цикл разработки &#34;пишем код&#34; -&gt; &#34;компилируем&#34; -&gt; &#34;запускаем&#34; требует меньше действий чем описано выше. После первичной установки зависимостей для проверки изменений в коде достаточно просто нажимать <code>Run</code> в Xcode / Android Studio - интеграция через CocoaPods автоматически произведет компиляцию и Kotlin модуля, поэтому изменения в коде общей библиотеки и в коде ios проекта будут учтены в новом билде. Запуск <code>pod install</code> может потребоваться повторно в случаях когда добавляются новые нативные CocoaPods зависимости в <code>Podfile</code>.</p>
 <h2 is-upgraded>Какой JDK использует Xcode?</h2>
 <p>Как мы уже выяснили, при нажатии на кнопку <code>Run</code> в Xcode запускается тот же самый процес <code>Compile Kotlin/Native</code> что и в Android Studio при, например, <code>syncMultiPlatformLibraryDebugFrameworkIosX64</code>. Это указано в <code>Pods.xcodeproj -> Build Phases</code></p>
 <p class="image-container"><img alt="xcode pods build phases" src="img/c4919eb01122e7e0.png"></p>
