@@ -54,6 +54,7 @@
 <p>Для работы с Kotlin Multiplatform потребуется установка Java Development Kit (JDK) версии 11. Это требуется так как компилятор Kotlin и билд-система Gradle работают на базе Java Virtual Machine и инструментария разработчиков Java.</p>
 <p>Наиболее стабильно работает с Kotlin Multiplatform версия JDK от Oracle. Для скачивания потребуется авторизоваться (либо зарегистрироваться), для регистрации можно использовать либо корпоративный либо личный email - сама учетная запись ни для чего кроме скачивания JDK нам не потребуется.</p>
 <p><a href="https://www.oracle.com/java/technologies/javase-jdk11-downloads.html" target="_blank">Download Oracle JDK 11</a></p>
+<p>Также, JDK можно скачать напрямую из Android Studio. Для этого в любом проекте откройте module settings <img alt="module settings.png" src="img/32b764b8b7434837.png"> Нажмите на &#34;+&#34; и выберите <code>Download JDK</code><img alt="download jdk.png" src="img/f5b79abb370f7ca7.png"> Если у вас M1 - вам нужно скачать Azul aarch64 <img alt="azul jdk.png" src="img/6de4d30cb7569bac.png"></p>
 <p>После установки JDK требуется указать переменную окружения <code>JAVA_HOME</code>, чтобы все инструменты работали с той версией Java, которую мы установили.</p>
 <p>Сначала получим точный путь до только что установленного JDK - все версии лежат в директории <code>/Library/Java/JavaVirtualMachines</code>, поэтому вводим в <code>Terminal</code>:</p>
 <pre><code language="language-bash" class="language-bash">open /Library/Java/JavaVirtualMachines
