@@ -98,7 +98,7 @@ xcode-select --install
 ![module settings.png](assets/module-settings.png)
 Нажмите на "+" и выберите `Download JDK`
 ![download jdk.png](assets/download-jdk.png)
-Если у вас M1 - вам нужно скачать 
+Если у вас M1 - вам нужно скачать Azul aarch64
 ![azul jdk.png](assets/azul-jdk.png)
 
 После установки JDK требуется указать переменную окружения `JAVA_HOME`, чтобы все инструменты
