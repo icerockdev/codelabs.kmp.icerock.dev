@@ -94,6 +94,13 @@ xcode-select --install
 
 [Download Oracle JDK 11](https://www.oracle.com/java/technologies/javase-jdk11-downloads.html)
 
+Также, JDK можно скачать напрямую из Android Studio. Для этого в любом проекте откройте module settings 
+![module settings.png](assets/module-settings.png)
+Нажмите на "+" и выберите `Download JDK`
+![download jdk.png](assets/download-jdk.png)
+Если у вас M1 - вам нужно скачать Azul aarch64
+![azul jdk.png](assets/azul-jdk.png)
+
 После установки JDK требуется указать переменную окружения `JAVA_HOME`, чтобы все инструменты
 работали с той версией Java, которую мы установили.
 
