@@ -21,7 +21,7 @@ jobs:
       - name: Install node modules
         run: npm install
       - name: Install Codelabs command line tool
-        run: go get github.com/googlecodelabs/tools/claat
+        run: go get github.com/googlecodelabs/tools/claat@latest
       - name: Publish
         run: ./publish-to-github-pages.sh
         env:
